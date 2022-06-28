@@ -1,4 +1,4 @@
-Attribute VB_Name = "M_Declaration"
+Attribute VB_Name = "Declaration"
 Option Explicit
 
 'constant linked to the different columns to be translated in the workbook sheets

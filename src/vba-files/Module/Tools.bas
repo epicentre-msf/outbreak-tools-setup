@@ -1,10 +1,10 @@
-Attribute VB_Name = "M_Tools"
+Attribute VB_Name = "Tools"
 Option Explicit
 
 Sub ClicCmdAddRows(Lo As ListObject)
 
     'Begining of the tables
-    Dim iRowHearder As Long
+    Dim iRowHeader As Long
     Dim iColHeader  As Long
 
     'End of the listobject table
@@ -22,7 +22,7 @@ Sub ClicCmdAddRows(Lo As ListObject)
     iRowsEnd = Lo.Range.Rows.Count
     iColsEnd = Lo.Range.Columns.Count
 
-    Lo.Resize Range(Cells(iRowHearder, iColHeader), Cells(iRowsEnd + C_iNbLinesLLData, iColsEnd))
+    Lo.Resize Range(Cells(iRowHeader, iColHeader), Cells(iRowsEnd + C_iNbLinesLLData, iColsEnd))
 
     Application.EnableEvents = True
     Call ProtectSheet

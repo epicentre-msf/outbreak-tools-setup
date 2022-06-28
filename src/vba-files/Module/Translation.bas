@@ -1,10 +1,11 @@
-Attribute VB_Name = "M_Translation"
+Attribute VB_Name = "Translation"
 Option Explicit
 
-Dim iRow As Integer, iColStart As Integer, iWrite As Integer
+Dim iRow As Integer
+Dim iColStart As Integer
+Dim iWrite As Integer
 
 Sub Translate_Manage(Optional sType As String)
-Attribute Translate_Manage.VB_ProcData.VB_Invoke_Func = " \n14"
 
     Dim iCol As Integer
     Dim iLastRow As Integer
@@ -19,6 +20,7 @@ Attribute Translate_Manage.VB_ProcData.VB_Invoke_Func = " \n14"
     Dim sText As String, sMessage As String
     Dim arrColumn() As String
     Dim SheetActive As Worksheet
+    Dim idelRow As Long
 
     Application.ScreenUpdating = False
 
@@ -55,7 +57,7 @@ Attribute Translate_Manage.VB_ProcData.VB_Invoke_Func = " \n14"
                 iLastRow = 3 + SheetActive.ListObjects("Tab_global_summary").DataBodyRange.Rows.Count
         End Select
 
-    'level column
+        'level column
         For iCptCol = LBound(arrColumn, 1) To UBound(arrColumn, 1)
 
             If Not SheetActive.Rows(iRowStart - 1).Find(What:=arrColumn(iCptCol), LookAt:=xlWhole) Is Nothing Then _
@@ -63,7 +65,7 @@ Attribute Translate_Manage.VB_ProcData.VB_Invoke_Func = " \n14"
 
             iCptRow = iRowStart
 
-        'level Row
+            'level Row
             Do While iCptRow <= iLastRow
                 If SheetActive.Cells(iCptRow, iCol).Value <> "" Then
                     sText = SheetActive.Cells(iCptRow, iCol).Value
@@ -115,7 +117,14 @@ Attribute Translate_Manage.VB_ProcData.VB_Invoke_Func = " \n14"
 
     iRow = sheetTranslation.[T_Translate_Start].Row + 1
 
-    sheetTranslation.Select
+    'Delete rows not found
+    For i = iRow To iCptRow
+        If sheetTranslation.Cells(i, iColStart - 1).Value <> 1 Then
+            idelRow = sheetTranslation.Cells(i, iColStart - 1).Row
+            sheetTranslation.Rows(idelRow).EntireRow.Delete
+        End If
+    Next
+
     sheetTranslation.Range(Cells(iRow, iColStart - 1), Cells(iCptRow - 1, iColStart - 1)).ClearContents
 
 
@@ -176,20 +185,24 @@ Call ProtectTranslationSheet
     'Lock the first column
 
     ActiveWorkbook.Save
-
 End Sub
 
 Sub WriteTranslate(sLabel As String)
 'files the sheet translations
+    Dim Rng As Range
 
-    If Not sheetTranslation.[Tab_Translations].Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = sheetTranslation.[Tab_Translations].Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=False).Row
+    Set Rng = sheetTranslation.ListObjects("Tab_Translations").Listcolumns(1).Range
+
+    If Not Rng.Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        iRow = Rng.Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=False).Row
         sheetTranslation.Cells(iRow, iColStart - 1).Value = 1
     Else
         sheetTranslation.Cells(iWrite, iColStart).Value = sLabel
         sheetTranslation.Cells(iWrite, iColStart - 1).Value = 1
         iWrite = iWrite + 1
     End If
+
+    Set Rng = Nothing
 End Sub
 
 Sub LockFirstColumn()
@@ -212,4 +225,8 @@ Sub ProtectTranslationSheet()
         AllowInsertingRows:=False, AllowInsertingHyperlinks:=True, _
         AllowDeletingRows:=False, AllowSorting:=False, AllowFiltering:=True, _
         AllowUsingPivotTables:=True
+End Sub
+
+Sub UpdateTranslation()
+    Call Translate_Manage
 End Sub

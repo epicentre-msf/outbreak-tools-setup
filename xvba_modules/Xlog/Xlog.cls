@@ -1,6 +1,6 @@
 VERSION 1.0 CLASS
 BEGIN
-MultiUse = -1  'True
+  MultiUse = -1  'True
 END
 Attribute VB_Name = "Xlog"
 Attribute VB_GlobalNameSpace = False
@@ -26,7 +26,7 @@ Option Explicit
 Private param As String
 
 Private Sub class_initialize()
-  param = Application.ThisWorkbook.Path  & "\app.log"
+  param = Application.ThisWorkbook.Path & "\app.log"
 End Sub
 
 
@@ -34,15 +34,15 @@ End Sub
 '
 'Set Log Message
 '
-'@param[Integer] messageType 
+'@param[Integer] messageType
 '@param["String"] messageText
 '@param[String] filePath
 '*/
-Public Function message(messageType As Integer, messageText As String,Optional filePath)
+Public Function message(messageType As Integer, messageText As String, Optional filePath)
  
   If IsMissing(filePath) Then
     filePath = param
-  End if 
+  End If
   Dim FileNum As Integer
   
   FileNum = FreeFile
