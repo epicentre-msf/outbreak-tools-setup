@@ -16,9 +16,20 @@ Public Reponse As Byte
 
 
 'Different string constants
-Public Const C_sPassword As String = "1234"   'Password
-Public Const C_sTabDictionary As String = "Tab_Dictionary"
-Public Const C_sTabChoices As String = "Tab_Choices"
-Public Const C_sTabExports As String = "Tab_Export"
+Public Const C_sPassword        As String = "1234"   'Password
+Public Const C_sTabDictionary   As String = "Tab_Dictionary"
+Public Const C_sTabChoices      As String = "Tab_Choices"
+Public Const C_sTabExports      As String = "Tab_Export"
+Public Const C_sTabGS           As String = "Tab_Global_Summary"
+Public Const C_sTabUA           As String = "Tab_Univariate_Analysis"
+Public Const C_sTabBA           As String = "Tab_Bivariate_Analysis"
+
+Public Const C_sModifyGS        As String = "Add or remove rows of Global Summary"
+Public Const C_sModifyUA        As String = "Add or remove rows of Univariate Analysis"
+Public Const C_sModifyBA        As String = "Add or remove rows of Bivariate Analysis"
+
+'Public Const C_sTab   As String = "Tab_"
+
+
 
 

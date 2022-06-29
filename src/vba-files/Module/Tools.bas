@@ -1,17 +1,34 @@
 Attribute VB_Name = "Tools"
 Option Explicit
 
-Sub ClicCmdAddRows(Lo As ListObject)
+Sub BeginWork()
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    Application.EnableAnimations = False
+End Sub
+
+Sub EndWork()
+
+    Application.EnableEvents = True
+    Application.ScreenUpdating = True
+    Application.EnableAnimations = True
+
+End Sub
+
+Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True)
 
     'Begining of the tables
     Dim iRowHeader As Long
     Dim iColHeader  As Long
+    Dim i As Long
+    Dim iFirstColumnRow As Long
 
     'End of the listobject table
     Dim iRowsEnd As Long
     Dim iColsEnd As Long
 
-    Application.EnableEvents = False
+
+
     ActiveSheet.Unprotect C_sPassword
 
     'Rows and columns at the begining of the table to resize
@@ -19,33 +36,155 @@ Sub ClicCmdAddRows(Lo As ListObject)
     iColHeader = Lo.Range.Column
 
     'Rows and Columns at the end of the Table to resize
-    iRowsEnd = Lo.Range.Rows.Count
+    iRowsEnd = iRowHeader + Lo.Range.Rows.Count
     iColsEnd = Lo.Range.Columns.Count
 
-    Lo.Resize Range(Cells(iRowHeader, iColHeader), Cells(iRowsEnd + C_iNbLinesLLData, iColsEnd))
+    If Not AddRows Then
+        ActiveSheet.Rows(iRowsEnd + 1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColHeader).End(xlDown).Row
 
-    Application.EnableEvents = True
+        If iFirstColumnRow < iRowsEnd Then
+            For i = iRowsEnd To iFirstColumnRow + 1 Step -1
+                ActiveSheet.Rows(i).EntireRow.Delete
+            Next
+
+            iRowsEnd = iFirstColumnRow
+        End If
+    Else
+        For i = 1 To C_iNbLinesLLData + 1
+            ActiveSheet.Rows(iRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        Next
+        iRowsEnd = iRowsEnd + C_iNbLinesLLData
+    End If
+
+    Lo.Resize Range(Cells(iRowHeader, iColHeader), Cells(iRowsEnd, iColHeader + iColsEnd - 1))
+
+
     Call ProtectSheet
 
 End Sub
 
-
 Sub ProtectSheet()
-ActiveSheet.Protect Password:=C_sPassword, DrawingObjects:=True, Contents:=True, Scenarios:=True _
-        , AllowFormattingColumns:=True, AllowFormattingRows:=True, _
-        AllowInsertingRows:=True, AllowInsertingHyperlinks:=True, _
-        AllowDeletingRows:=True, AllowSorting:=True, AllowFiltering:=True, _
-        AllowUsingPivotTables:=True
+    ActiveSheet.Protect Password:=C_sPassword, DrawingObjects:=True, Contents:=True, Scenarios:=True _
+                                                                                                 , AllowFormattingColumns:=True, AllowFormattingRows:=True, _
+                        AllowInsertingRows:=True, AllowInsertingHyperlinks:=True, _
+                        AllowDeletingRows:=True, AllowSorting:=True, AllowFiltering:=True, _
+                        AllowUsingPivotTables:=True
 
 End Sub
 
-
 'Resize the dictionary table object
 Public Sub AddRowsDict()
-    Call ClicCmdAddRows(sheetDictionary.ListObjects(C_sTabDictionary))
+    Call ResizeLo(sheetDictionary.ListObjects(C_sTabDictionary))
 End Sub
 
 'Resize the choices table object
 Public Sub AddRowsChoices()
-    Call ClicCmdAddRows(SheetChoice.ListObjects(C_sTabChoices))
+    Call ResizeLo(SheetChoice.ListObjects(C_sTabChoices))
 End Sub
+
+Public Sub AddRowsGS()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabGS))
+End Sub
+
+Public Sub AddRowsUA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabUA))
+End Sub
+
+Public Sub AddRowsBA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabBA))
+End Sub
+
+'resize the tables (delete empty rows at the bottom)----------------------------
+
+'Resize the dictionary table object
+Public Sub RemoveRowsDict()
+    BeginWork
+
+    Call ResizeLo(sheetDictionary.ListObjects(C_sTabDictionary), AddRows:=False)
+
+    EndWork
+End Sub
+
+'Resize the choices table object
+Public Sub RemoveRowsChoices()
+    BeginWork
+
+    Call ResizeLo(SheetChoice.ListObjects(C_sTabChoices), AddRows:=False)
+
+    EndWork
+End Sub
+
+Public Sub RemoveRowsGS()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabGS), AddRows:=False)
+End Sub
+
+Public Sub RemoveRowsUA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabUA), AddRows:=False)
+End Sub
+
+Public Sub RemoveRowsBA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabBA), AddRows:=False)
+End Sub
+
+Public Sub AddRowsAna()
+
+    BeginWork
+
+    Select Case Application.WorksheetFunction.Trim(sheetAnalysis.Range("RNG_table_modify").Value)
+
+    Case C_sModifyGS
+
+        Call AddRowsGS
+
+    Case C_sModifyUA
+
+        Call AddRowsUA
+
+    Case C_sModifyBA
+
+        Call AddRowsBA
+
+    Case Else
+
+        AddRowsGS
+        AddRowsUA
+        AddRowsBA
+
+    End Select
+
+    EndWork
+
+End Sub
+
+Public Sub RemoveRowsAna()
+
+    BeginWork
+
+    Select Case Application.WorksheetFunction.Trim(sheetAnalysis.Range("RNG_table_modify").Value)
+
+    Case C_sModifyGS
+
+        Call RemoveRowsGS
+
+    Case C_sModifyUA
+
+        Call RemoveRowsUA
+
+    Case C_sModifyBA
+
+        Call RemoveRowsBA
+
+    Case Else
+
+        RemoveRowsGS
+        RemoveRowsUA
+        RemoveRowsBA
+
+    End Select
+
+    EndWork
+
+End Sub
+
+
