@@ -6,6 +6,8 @@
     "create_ate": "Tue Jun 28 2022 12:11:04 GMT+0200 (heure d’été d’Europe centrale)",
     "excel_file": "setup_measles_pilot.xlsb",
     "vba_folder": "src/vba-files",
+    "ribbon_folder": "src/ribbons",
+    "ribbon_file": "setup_ribbon",
     "logs": "on",
     "xvba_packages": {},
     "xvba_dev_packages": {}

@@ -187,4 +187,44 @@ Public Sub RemoveRowsAna()
 
 End Sub
 
+'Update the list of variables when moving to analysis
+
+Sub UpdateVariablesList()
+
+    Dim iControlColumn As Integer
+    Dim iDictLength As Long
+    Dim i As Long 'counters for the variables and for the list
+    Dim j As Long
+    Dim iVarColumn As Integer
+    Dim Rng As Range
+
+
+    Set Rng = sheetDictionary.ListObjects(C_sTabDictionary).HeaderRowRange
+
+    If Not Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing _
+    And Not Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+
+        iVarColumn = Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True).Column
+        iControlColumn = Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True).Column
+    Else
+        Exit Sub
+    End If
+
+    iDictLength = sheetDictionary.Cells(Rng.Row, iVarColumn).End(xlDown).Row
+
+    j = 1
+    With sheetDictionary
+        For i = Rng.Row + 1 To iDictLength
+
+            If .Cells(i, iControlColumn).Value = C_sDictControlChoice Or _
+            .Cells(i, iControlColumn).Value = C_sDictControlFormulaChoice Then
+
+            End If
+
+        Next
+    End With
+
+
+
+End Sub
 

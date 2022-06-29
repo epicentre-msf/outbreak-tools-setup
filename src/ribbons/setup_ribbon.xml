@@ -1,0 +1,14 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon startFromScratch="false">
+    <tabs>
+      <tab id="analysis_tab" label="Work on Analysis">
+        <group id="customGroup1" label="Default">
+          <button id="btn1" label="Update List of Variables" imageMso="RightArrow2" size="normal" onAction="UpdateAnalysisVariables" />
+        </group>
+        <group id="customGroup2" label="Second">
+          <button id="btn3" label="Button-3" imageMso="MasterDocumentShow" size="normal" onAction="MyRibbon.btn3" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

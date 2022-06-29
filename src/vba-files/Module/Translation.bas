@@ -5,7 +5,7 @@ Dim iRow As Integer
 Dim iColStart As Integer
 Dim iWrite As Integer
 
-Sub Translate_Manage(Optional sType As String)
+Sub AddLabelsToTranslationTable(Optional sType As String)
 
     Dim iCol As Integer
     Dim iLastRow As Integer
@@ -228,5 +228,5 @@ Sub ProtectTranslationSheet()
 End Sub
 
 Sub UpdateTranslation()
-    Call Translate_Manage
+    Call AddLabelsToTranslationTable
 End Sub
