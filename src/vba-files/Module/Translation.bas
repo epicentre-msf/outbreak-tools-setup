@@ -5,7 +5,7 @@ Dim iRow As Integer
 Dim iColStart As Integer
 Dim iWrite As Integer
 
-Sub AddLabelsToTranslationTable(Optional sType As String)
+Sub Translate_Manage(Optional sType As String)
 
     Dim iCol As Integer
     Dim iLastRow As Integer
@@ -60,8 +60,8 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
         'level column
         For iCptCol = LBound(arrColumn, 1) To UBound(arrColumn, 1)
 
-            If Not SheetActive.Rows(iRowStart - 1).Find(What:=arrColumn(iCptCol), LookAt:=xlWhole) Is Nothing Then _
-            iCol = SheetActive.Rows(iRowStart - 1).Find(What:=arrColumn(iCptCol), LookAt:=xlWhole).Column
+            If Not SheetActive.Rows(iRowStart - 1).Find(What:=arrColumn(iCptCol), lookAt:=xlWhole) Is Nothing Then _
+            iCol = SheetActive.Rows(iRowStart - 1).Find(What:=arrColumn(iCptCol), lookAt:=xlWhole).Column
 
             iCptRow = iRowStart
 
@@ -193,8 +193,8 @@ Sub WriteTranslate(sLabel As String)
 
     Set Rng = sheetTranslation.ListObjects("Tab_Translations").Listcolumns(1).Range
 
-    If Not Rng.Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = Rng.Find(What:=sLabel, LookAt:=xlWhole, MatchCase:=False).Row
+    If Not Rng.Find(What:=sLabel, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        iRow = Rng.Find(What:=sLabel, lookAt:=xlWhole, MatchCase:=False).Row
         sheetTranslation.Cells(iRow, iColStart - 1).Value = 1
     Else
         sheetTranslation.Cells(iWrite, iColStart).Value = sLabel
@@ -228,5 +228,5 @@ Sub ProtectTranslationSheet()
 End Sub
 
 Sub UpdateTranslation()
-    Call AddLabelsToTranslationTable
+    Call Translate_Manage
 End Sub

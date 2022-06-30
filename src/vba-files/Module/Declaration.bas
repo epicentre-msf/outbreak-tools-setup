@@ -23,10 +23,20 @@ Public Const C_sTabExports      As String = "Tab_Export"
 Public Const C_sTabGS           As String = "Tab_Global_Summary"
 Public Const C_sTabUA           As String = "Tab_Univariate_Analysis"
 Public Const C_sTabBA           As String = "Tab_Bivariate_Analysis"
+Public Const C_sTabVarList      As String = "var_list_table"
 
 Public Const C_sModifyGS        As String = "Add or remove rows of Global Summary"
 Public Const C_sModifyUA        As String = "Add or remove rows of Univariate Analysis"
 Public Const C_sModifyBA        As String = "Add or remove rows of Bivariate Analysis"
+
+
+'Different types of controls
+Public Const C_sDictControlChoice  As String = "choice"
+Public Const C_sDictControlFormulaChoice As String = "formula_choice"
+
+Public Const C_sDictHeaderVarName As String = "Variable name"
+Public Const C_sDictHeaderControl As String = "Control"
+
 
 'Public Const C_sTab   As String = "Tab_"
 

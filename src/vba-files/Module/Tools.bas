@@ -196,35 +196,39 @@ Sub UpdateVariablesList()
     Dim i As Long 'counters for the variables and for the list
     Dim j As Long
     Dim iVarColumn As Integer
+    Dim iListVarColumn As Integer
     Dim Rng As Range
 
 
+    BeginWork
+
     Set Rng = sheetDictionary.ListObjects(C_sTabDictionary).HeaderRowRange
 
-    If Not Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing _
-    And Not Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-
+    If Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
+         Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        Exit Sub
+    Else
         iVarColumn = Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True).Column
         iControlColumn = Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True).Column
-    Else
-        Exit Sub
+
     End If
 
     iDictLength = sheetDictionary.Cells(Rng.Row, iVarColumn).End(xlDown).Row
+    iListVarColumn = sheetLists.ListObjects(C_sTabVarList).Range.Column
 
     j = 1
     With sheetDictionary
         For i = Rng.Row + 1 To iDictLength
 
             If .Cells(i, iControlColumn).Value = C_sDictControlChoice Or _
-            .Cells(i, iControlColumn).Value = C_sDictControlFormulaChoice Then
-
+                .Cells(i, iControlColumn).Value = C_sDictControlFormulaChoice Then
+                j = j + 1
+                sheetLists.Cells(j, iListVarColumn).Value = .Cells(i, iVarColumn).Value
             End If
-
         Next
     End With
 
-
+    EndWork
 
 End Sub
 

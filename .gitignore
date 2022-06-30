@@ -1,4 +1,4 @@
 /node_modules
 logs
+*.logs
 /xvba_excel_backup
-.gitignore
