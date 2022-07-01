@@ -5,6 +5,8 @@ Sub BeginWork()
     Application.EnableEvents = False
     Application.ScreenUpdating = False
     Application.EnableAnimations = False
+    Application.Calculation = xlCalculationManual
+    
 End Sub
 
 Sub EndWork()
@@ -12,6 +14,7 @@ Sub EndWork()
     Application.EnableEvents = True
     Application.ScreenUpdating = True
     Application.EnableAnimations = True
+    Application.Calculation = xlCalculationAutomatic
 
 End Sub
 
