@@ -13,8 +13,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
 
     If bUpdate Then Exit Sub
 
-    bUpdate = Not (
-      Intersect(Target, sheetDictionary.ListObjec(C_sTabDictionary). _
+    bUpdate = Not (Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
         ListColumns(C_sDictHeaderVarName).Range) Is Nothing And _
       Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
         ListColumns(C_sDictHeaderControl).Range) Is Nothing And _
@@ -33,6 +32,6 @@ Private Sub Worksheet_Change(ByVal Target As Range)
       Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
         ListColumns(C_sDictHeaderFormula).Range) Is Nothing And _
       Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
-        ListColumns(C_sDictHeaderMessage).Range) Is Nothing
-    )
+        ListColumns(C_sDictHeaderMessage).Range) Is Nothing)
 End Sub
+

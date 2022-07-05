@@ -8,17 +8,18 @@ Sub WriteTranslate(sLabel As String, Optional iColStart As Integer = 2)
 
     Dim Rng As Range
     Dim iRow As Long
+    Dim sLab As String
 
     Dim iLineWrite As Long
 
     Set Rng = sheetTranslation.ListObjects(C_sTabTranslations).ListColumns(1).Range
     iLineWrite = Rng.Rows.Count + Rng.Row
-
-    If Not Rng.Find(What:=sLabel, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = Rng.Find(What:=sLabel, lookAt:=xlWhole, MatchCase:=False).Row
+    sLab = Application.WorksheetFunction.Trim(sLabel)
+    If Not Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=False).Row
         sheetTranslation.Cells(iRow, iColStart - 1).Value = 1
     Else
-        sheetTranslation.Cells(iLineWrite, iColStart).Value = sLabel
+        sheetTranslation.Cells(iLineWrite, iColStart).Value = sLab
         sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = 1
     End If
 

@@ -17,3 +17,4 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     bUpdate = Not (Intersect(Target, sheetExport.ListObjects(C_sTabExports). _
                 ListColumns(C_sExportHeaderLabelButton).Range) Is Nothing)
 End Sub
+
