@@ -6,7 +6,7 @@ Sub BeginWork()
     Application.ScreenUpdating = False
     Application.EnableAnimations = False
     Application.Calculation = xlCalculationManual
-    
+
 End Sub
 
 Sub EndWork()

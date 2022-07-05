@@ -181,8 +181,6 @@ Sub WriteAnalysis()
 End Sub
 
 
-
-
 'Write values for the Analysis sheet
 
 
@@ -208,6 +206,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     Set TransLo = sheetTranslation.ListObjects(C_sTabTranslations)
     iRow = TransLo.DataBodyRange.Row
     iColStart = TransLo.Range.Column
+    sheetTranslation.Range("A" & iColStart - 1).ClearContents
     
     If bUpdate Or Not multipleTime Then
 

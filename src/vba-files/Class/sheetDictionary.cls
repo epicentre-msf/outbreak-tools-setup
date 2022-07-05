@@ -11,22 +11,28 @@ Option Explicit
 
 Private Sub Worksheet_Change(ByVal Target As Range)
 
-    Dim vPage As Variant
-    
     If bUpdate Then Exit Sub
-    
-    If Not Intersect(Target, sheetDictionary.Range("Tab_Dictionary")) Is Nothing Then
-    
-        'note the changes in the columns to be translated
-        For Each vPage In ActiveWorkbook.Names
-            If Right(vPage.Name, 3) = Left(ActiveSheet.Name, 3) Then
-                If Not Intersect(Target, sheetDictionary.Range(vPage.Name)) Is Nothing Then
-                    bUpdate = True
-                    Exit Sub
-                End If
-            End If
-        Next
 
-    End If
-
+    bUpdate = Not (
+      Intersect(Target, sheetDictionary.ListObjec(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderVarName).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderControl).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderMainLabel).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderSubLabel).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderNote).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderSheetName).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderMainSection).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderSubSection).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderFormula).Range) Is Nothing And _
+      Intersect(Target, sheetDictionary.ListObjects(C_sTabDictionary). _
+        ListColumns(C_sDictHeaderMessage).Range) Is Nothing
+    )
 End Sub

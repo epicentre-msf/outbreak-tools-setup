@@ -14,3 +14,19 @@ Private Sub Worksheet_Activate()
 End Sub
 
 
+Private Sub Worksheet_Change(ByVal Target As Range)
+
+    If bUpdate Then Exit Sub
+
+    bUpdate = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS). _
+                ListColumns(C_sAnaHeaderSL).Range) Is Nothing And _
+                Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA). _
+                ListColumns(C_sAnaHeaderSL).Range) Is Nothing And _
+                Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA). _
+                ListColumns(C_sAnaHeaderSC).Range) Is Nothing And _
+                Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA). _
+                ListColumns(C_sAnaHeaderSL).Range) Is Nothing And _
+                Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA). _
+                ListColumns(C_sAnaHeaderSC).Range) Is Nothing)
+End Sub
+

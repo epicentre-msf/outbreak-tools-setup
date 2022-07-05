@@ -11,22 +11,11 @@ Option Explicit
 
 Private Sub Worksheet_Change(ByVal Target As Range)
 
-    Dim vPage As Variant
-
     If bUpdate Then Exit Sub
-    
-    If Not Intersect(Target, SheetChoice.Range("Tab_Choices")) Is Nothing Then
-    
-        'note the changes in the columns to be translated
-        For Each vPage In ActiveWorkbook.Names
-            If Right(vPage.Name, 3) = Left(ActiveSheet.Name, 3) Then
-                If Not Intersect(Target, SheetChoice.Range(vPage.Name)) Is Nothing Then
-                    bUpdate = True
-                    Exit Sub
-                End If
-            End If
-        Next
 
-    End If
+    bUpdate = Not (Intersect(Target, SheetChoice.ListObjects(C_sTabChoices). _
+                ListColumns(C_sChoHeaderLabelShort).Range) Is Nothing And _
+                Intersect(Target, SheetChoice.ListObjects(C_sTabChoices). _
+                ListColumns(C_sChoHeaderLabel).Range) Is Nothing)
 
 End Sub

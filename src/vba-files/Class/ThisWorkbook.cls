@@ -12,8 +12,6 @@ Option Explicit
 
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
 
-    Dim vPage As Variant
-
     Responses = 0
 
     On Error GoTo ManageError
