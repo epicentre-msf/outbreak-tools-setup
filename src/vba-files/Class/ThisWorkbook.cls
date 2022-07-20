@@ -10,24 +10,3 @@ Attribute VB_Exposed = True
 Option Explicit
 
 
-Private Sub Workbook_BeforeClose(Cancel As Boolean)
-
-    Responses = 0
-
-    On Error GoTo ManageError
-
-    If bUpdate Then Call AddLabelsToTranslationTable("Close")
-
-    If Responses = vbNo Then
-        Cancel = True 'cancel closing the workbook
-        Exit Sub
-    End If
-
-    ActiveWorkbook.Save
-
-ManageError:
-    Resume Next
-
-End Sub
-
-

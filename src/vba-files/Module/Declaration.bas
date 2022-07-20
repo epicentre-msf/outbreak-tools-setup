@@ -2,8 +2,6 @@ Attribute VB_Name = "Declaration"
 Option Explicit
 
 'constant linked to the different columns to be translated in the workbook sheets
-Public Const sCstColGlobalSummary As String = "Summary label|Summary function"
-Public Const sCstColExport As String = "Label button"
 Public Const C_iNbLinesLLData As Integer = 5
 Public Const C_iStartLinesTrans As Integer = 5
 
@@ -21,16 +19,20 @@ Public Const C_sTabUA                       As String = "Tab_Univariate_Analysis
 Public Const C_sTabBA                       As String = "Tab_Bivariate_Analysis"
 Public Const C_sTabVarList                  As String = "var_list_table"
 Public Const C_sTabTranslations             As String = "Tab_Translations"
+Public Const C_sTabTSA                      As String = "Tab_TimeSeries_Analysis"
+Public Const C_sTabOA                       As String = "Tab_Origin_Analysis"
 
 'Analysis dropdowns
 Public Const C_sModifyGS                    As String = "Add or remove rows of Global Summary"
 Public Const C_sModifyUA                    As String = "Add or remove rows of Univariate Analysis"
 Public Const C_sModifyBA                    As String = "Add or remove rows of Bivariate Analysis"
+Public Const C_sModifyOA                    As String = "Add or remove rows of Origin Analysis"
+Public Const C_sModifyTSA                   As String = "Add or remove rows of Time Series Analysis"
 
 
 'Different types of controls
 Public Const C_sDictControlChoice           As String = "choices"
-Public Const C_sDictControlFormulaChoice    As String = "formula_choices"
+Public Const C_sDictControlCaseWhen         As String = "case_when"
 
 'Some headers of the dictionary
 Public Const C_sDictHeaderVarName           As String = "Variable Name"

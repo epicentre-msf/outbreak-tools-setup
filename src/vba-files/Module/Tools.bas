@@ -42,9 +42,21 @@ Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True)
     iRowsEnd = iRowHeader + Lo.Range.Rows.Count
     iColsEnd = Lo.Range.Columns.Count
 
-    If Not AddRows Then
+    If Not AddRows Then 'Remove rows
         ActiveSheet.Rows(iRowsEnd + 1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+
+        'First Column Row is the last row of the first column of the listobject
         iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColHeader).End(xlDown).Row
+
+        'If the listobject is empty, change the row end and start to resize to
+        'only the first row
+        
+        If Not Lo.DataBodyRange Is Nothing Then
+            If Application.WorksheetFunction.CountA(Lo.DataBodyRange) = 0 Then
+                iFirstColumnRow = iRowHeader + 1
+            End If
+        End If
+
 
         If iFirstColumnRow < iRowsEnd Then
             For i = iRowsEnd To iFirstColumnRow + 1 Step -1
@@ -53,7 +65,7 @@ Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True)
 
             iRowsEnd = iFirstColumnRow
         End If
-    Else
+    Else 'Add rows
         For i = 1 To C_iNbLinesLLData + 1
             ActiveSheet.Rows(iRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
         Next
@@ -69,7 +81,7 @@ End Sub
 
 Sub ProtectSheet()
     ActiveSheet.Protect Password:=C_sPassword, DrawingObjects:=True, Contents:=True, Scenarios:=True _
-                                                                                                 , AllowFormattingColumns:=True, AllowFormattingRows:=True, _
+                        , AllowFormattingColumns:=True, AllowFormattingRows:=True, _
                         AllowInsertingRows:=True, AllowInsertingHyperlinks:=True, _
                         AllowDeletingRows:=True, AllowSorting:=True, AllowFiltering:=True, _
                         AllowUsingPivotTables:=True
@@ -96,6 +108,14 @@ End Sub
 
 Public Sub AddRowsBA()
     Call ResizeLo(sheetAnalysis.ListObjects(C_sTabBA))
+End Sub
+
+Public Sub AddRowsTSA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabTSA))
+End Sub
+
+Public Sub AddRowsOA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabOA))
 End Sub
 
 'resize the tables (delete empty rows at the bottom)----------------------------
@@ -130,6 +150,14 @@ Public Sub RemoveRowsBA()
     Call ResizeLo(sheetAnalysis.ListObjects(C_sTabBA), AddRows:=False)
 End Sub
 
+Public Sub RemoveRowsOA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabOA), AddRows:=False)
+End Sub
+
+Public Sub RemoveRowsTSA()
+    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabTSA), AddRows:=False)
+End Sub
+
 Public Sub AddRowsAna()
 
     BeginWork
@@ -147,12 +175,22 @@ Public Sub AddRowsAna()
     Case C_sModifyBA
 
         Call AddRowsBA
+    
+    Case C_sModifyOA
+        
+        Call AddRowsOA
+    
+    Case C_sModifyTSA
+    
+        Call AddRowsTSA
 
     Case Else
 
         AddRowsGS
         AddRowsUA
         AddRowsBA
+        AddRowsTSA
+        AddRowsOA
 
     End Select
 
@@ -177,12 +215,22 @@ Public Sub RemoveRowsAna()
     Case C_sModifyBA
 
         Call RemoveRowsBA
+    
+     Case C_sModifyOA
+        
+        Call RemoveRowsOA
+    
+    Case C_sModifyTSA
+    
+        Call RemoveRowsTSA
 
     Case Else
 
         RemoveRowsGS
         RemoveRowsUA
         RemoveRowsBA
+        RemoveRowsTSA
+        RemoveRowsOA
 
     End Select
 
@@ -224,7 +272,7 @@ Sub UpdateVariablesList()
         For i = Rng.Row + 1 To iDictLength
 
             If .Cells(i, iControlColumn).Value = C_sDictControlChoice Or _
-                .Cells(i, iControlColumn).Value = C_sDictControlFormulaChoice Then
+                .Cells(i, iControlColumn).Value = C_sDictControlCaseWhen Then
                 j = j + 1
                 sheetLists.Cells(j, iListVarColumn).Value = .Cells(i, iVarColumn).Value
             End If
