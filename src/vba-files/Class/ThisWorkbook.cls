@@ -9,4 +9,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Private Sub Workbook_Open()
+  Call SetAllUpdates(toValue:=True)
+  nbTimesTrans = 0
+End Sub
+
 

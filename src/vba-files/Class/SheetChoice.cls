@@ -11,12 +11,8 @@ Option Explicit
 
 Private Sub Worksheet_Change(ByVal Target As Range)
 
-    If bUpdate Then Exit Sub
-
-    bUpdate = Not (Intersect(Target, SheetChoice.ListObjects(C_sTabChoices). _
-                ListColumns(C_sChoHeaderLabelShort).Range) Is Nothing And _
-                Intersect(Target, SheetChoice.ListObjects(C_sTabChoices). _
-                ListColumns(C_sChoHeaderLabel).Range) Is Nothing)
+    If Not bUpdateChoiLabelShort Then bUpdateChoiLabelShort = Not (Intersect(Target, SheetChoice.ListObjects(C_sTabChoices).ListColumns(C_sChoHeaderLabelShort).Range) Is Nothing)
+    If Not bUpdateChoiLabel Then bUpdateChoiLabel = Not (Intersect(Target, SheetChoice.ListObjects(C_sTabChoices).ListColumns(C_sChoHeaderLabel).Range) Is Nothing)
 
 End Sub
 

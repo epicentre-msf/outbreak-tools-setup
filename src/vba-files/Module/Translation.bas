@@ -4,7 +4,7 @@ Option Explicit
 Public Responses As Byte
 
 'Write one value to the  translation table
-Sub WriteTranslate(sLabel As String, Optional iColStart As Integer = 2)
+Sub WriteTranslate(sLabel As String, sIndicator As String, Optional iColStart As Integer = 2)
 
     Dim Rng As Range
     Dim iRow As Long
@@ -13,21 +13,27 @@ Sub WriteTranslate(sLabel As String, Optional iColStart As Integer = 2)
     Dim iLineWrite As Long
 
     Set Rng = sheetTranslation.ListObjects(C_sTabTranslations).ListColumns(1).Range
-    iLineWrite = Rng.Rows.Count + Rng.Row
+    
+    If Application.WorksheetFunction.CountBlank(Rng) = Rng.Rows.Count - 1 Then
+        iLineWrite = Rng.Row + 1
+    Else
+        iLineWrite = Rng.Rows.Count + Rng.Row
+    End If
+    
     sLab = Application.WorksheetFunction.Trim(sLabel)
     If Not Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=False).Row
-        sheetTranslation.Cells(iRow, iColStart - 1).Value = 1
+        iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
+        sheetTranslation.Cells(iRow, iColStart - 1).Value = sIndicator & "_" & nbTimesTrans
     Else
         sheetTranslation.Cells(iLineWrite, iColStart).Value = sLab
-        sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = 1
+        sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = sIndicator & "_" & nbTimesTrans
     End If
 
     Set Rng = Nothing
 End Sub
 
 'Split a formula to extract values inside the "", and add them to the translation table
-Public Sub SplitAndWriteFormula(sFormula As String)
+Public Sub SplitAndWriteFormula(sFormula As String, sIndicator As String)
 
     Dim sText As String
     Dim iStart As Long
@@ -41,7 +47,7 @@ Public Sub SplitAndWriteFormula(sFormula As String)
                 If iStart = 0 Then
                     iStart = i + 1
                 Else
-                    Call WriteTranslate(Mid(sText, iStart, i - iStart))
+                    Call WriteTranslate(Mid(sText, iStart, i - iStart), sIndicator:=sIndicator)
                     iStart = 0
                 End If
             End If
@@ -50,18 +56,18 @@ Public Sub SplitAndWriteFormula(sFormula As String)
 End Sub
 
 'Extract values for one column with characters or formulas in it
-Sub WriteColumn(Rng As Range, Optional ContainsFormula As Boolean = False)
+Sub WriteColumn(Rng As Range, sIndicator As String, Optional ContainsFormula As Boolean = False)
     Dim c As Range 'cell value
 
     If Not Rng Is Nothing Then
 
         If ContainsFormula Then
             For Each c In Rng
-                Call SplitAndWriteFormula(c.Value)
+                Call SplitAndWriteFormula(c.Value, sIndicator:=sIndicator)
             Next
         Else
             For Each c In Rng
-                If Not c Is Nothing Then Call WriteTranslate(c.Value)
+                If Not c Is Nothing Then Call WriteTranslate(c.Value, sIndicator:=sIndicator)
             Next
         End If
 
@@ -73,7 +79,7 @@ End Sub
 
 'Write values for the dictionary sheet
 
-Sub WriteSheetColumn(Lo As ListObject, sColName As String, Optional ContainsFormula As Boolean = False)
+Sub WriteSheetColumn(Lo As ListObject, sColName As String, sIndicator As String, Optional ContainsFormula As Boolean = False)
 
     Dim iCol As Integer 'column to add to translation table
     Dim HeaderRng As Range 'Range of Headers to translate
@@ -89,38 +95,40 @@ Sub WriteSheetColumn(Lo As ListObject, sColName As String, Optional ContainsForm
 
     iCol = HeaderRng.Find(What:=sColName, lookAt:=xlWhole).Column - HeaderRng.Column + 1
     Set ColumnRng = Lo.ListColumns(iCol).DataBodyRange
-    Call WriteColumn(ColumnRng, ContainsFormula)
+    Call WriteColumn(Rng:=ColumnRng, sIndicator:=sIndicator, ContainsFormula:=ContainsFormula)
 End Sub
 
 Sub WriteDictionary()
 
     Dim DictLo As ListObject
+    Dim sIndicator As String
     Set DictLo = sheetDictionary.ListObjects(C_sTabDictionary)
+    sIndicator = "Dict "
 
     'Main Label
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainLabel
+    If bUpdateDictMainLabel Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainLabel, sIndicator:=sIndicator & C_sDictHeaderMainLabel
 
     'Sub Label
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubLabel
+    If bUpdateDictSubLabel Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubLabel, sIndicator:=sIndicator & C_sDictHeaderSubLabel
 
     'Note
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderNote
+    If bUpdateDictNote Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderNote, sIndicator:=sIndicator & C_sDictHeaderNote
 
     'Sheet Name
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSheetName
+    If bUpdateDictSheetName Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSheetName, sIndicator:=sIndicator & C_sDictHeaderSheetName
 
     'Main section
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainSection
+    If bUpdateDictMainSection Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainSection, sIndicator:=sIndicator & C_sDictHeaderMainSection
 
     'Sub-section
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubSection
+    If bUpdateDictSubSection Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubSection, sIndicator:=sIndicator & C_sDictHeaderSubSection
 
     'Formula
 
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderFormula, ContainsFormula:=True
+    If bUpdateDictFormula Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderFormula, sIndicator:=sIndicator & C_sDictHeaderFormula, ContainsFormula:=True
 
     'Message
-    WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMessage
+    If bUpdateDictMessage Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMessage, sIndicator:=sIndicator & C_sDictHeaderMessage
 
     Set DictLo = Nothing
 
@@ -132,14 +140,15 @@ End Sub
 Sub WriteChoice()
 
     Dim ChoLo As ListObject
-
+    Dim sIndicator As String
     Set ChoLo = SheetChoice.ListObjects(C_sTabChoices)
+    sIndicator = "Choi"
 
     'Label short
-    WriteSheetColumn Lo:=ChoLo, sColName:=C_sChoHeaderLabelShort
+    If bUpdateChoiLabelShort Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabelShort, sColName:=C_sChoHeaderLabelShort
 
     'Label
-    WriteSheetColumn Lo:=ChoLo, sColName:=C_sChoHeaderLabel
+    If bUpdateChoiLabel Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabel, sColName:=C_sChoHeaderLabel
 
     Set ChoLo = Nothing
 End Sub
@@ -150,10 +159,13 @@ End Sub
 Sub WriteExport()
 
     Dim ExpLo As ListObject
+    Dim sIndicator As String
+
+    sIndicator = "Exp"
 
     Set ExpLo = sheetExport.ListObjects(C_sTabExports)
     'Label short
-    WriteSheetColumn Lo:=ExpLo, sColName:=C_sExportHeaderLabelButton
+    If bUpdateExp Then WriteSheetColumn Lo:=ExpLo, sIndicator:=sIndicator & C_sExportHeaderLabelButton, sColName:=C_sExportHeaderLabelButton
 
     Set ExpLo = Nothing
 End Sub
@@ -164,24 +176,35 @@ End Sub
 Sub WriteAnalysis()
 
     Dim AnaLo As ListObject
+    Dim sIndicator As String
+
 
     'Global summary, First column
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabGS)
-
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSL
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    sIndicator = "AnaGS"
+    If bUpdateAnaGS_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If bUpdateAnaGS_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     'Univariate analysis column
+    sIndicator = "AnaUA"
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabUA)
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSC
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSL
+    If bUpdateAnaUA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If bUpdateAnaUA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If bUpdateAnaUA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     'Bivariate analysis column
+    sIndicator = "AnaBA"
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabBA)
-     WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSC
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
-    WriteSheetColumn Lo:=AnaLo, sColName:=C_sAnaHeaderSL
+    If bUpdateAnaBA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If bUpdateAnaBA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    If bUpdateAnaBA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+
+     'Time Series Analysis column
+    Set AnaLo = sheetAnalysis.ListObjects(C_sTabTA)
+    sIndicator = "AnaTA"
+    If bUpdateAnaTA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If bUpdateAnaTA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If bUpdateAnaTA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     Set AnaLo = Nothing
 
@@ -203,19 +226,20 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     Dim sMessage As String
     Dim iNbBLanks As Long
     Dim idelRow As Long
+    Dim Rng As Range
+    Dim RngSort As Range
 
-
+    On Error GoTo errHand
+    
     BeginWork
-    sheetTranslation.Unprotect C_sPassword
     Application.Cursor = xlWait
-
+    sheetTranslation.Unprotect C_sPassword
 
     Set TransLo = sheetTranslation.ListObjects(C_sTabTranslations)
 
-
-
-    iRow = TransLo.DataBodyRange.Row
-    iLastRow = TransLo.DataBodyRange.Rows.Count + iRow
+    
+    iRow = TransLo.Range.Row + 1
+    iLastRow = TransLo.Range.Rows.Count + iRow
 
     iColStart = TransLo.Range.Column
     iNbColumns = TransLo.HeaderRowRange.Columns.Count
@@ -227,9 +251,6 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
 
         If i > iLastColumn Then
             TransLo.Resize Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow - 1, i))
-
-            'update some values previously set
-            bUpdate = True
             iNbColumns = TransLo.HeaderRowRange.Columns.Count
             iLastColumn = iColStart + iNbColumns - 1
         End If
@@ -237,33 +258,49 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     End With
 
 
-    sheetTranslation.Columns(iColStart - 1).ClearContents
+    If nbTimesTrans = 0 Then sheetTranslation.Columns(iColStart - 1).ClearContents
+    nbTimesTrans = nbTimesTrans + 1
 
-    If bUpdate Then
+    'Write label for each of the sheets
+    Call WriteDictionary
+    Call WriteChoice
+    Call WriteExport
+    Call WriteAnalysis
 
-        'Write label for each of the sheets
-        Call WriteDictionary
-        Call WriteChoice
-        Call WriteExport
-        Call WriteAnalysis
-
-        'Delete rows not found
-        For i = iRow To iLastRow
-            If sheetTranslation.Cells(i, iColStart - 1).Value <> 1 Or sheetTranslation.Cells(i, iColStart).Value = vbNullString Then
-                idelRow = sheetTranslation.Cells(i, iColStart - 1).Row
-                sheetTranslation.Rows(idelRow).EntireRow.Delete
-            End If
-        Next
-
-        sheetTranslation.Range(Cells(iRow, iColStart - 1), Cells(iLastRow, iColStart - 1)).ClearContents
-
-        'sort the first column
-        sheetTranslation.Sort.SortFields.Clear
-        TransLo.DataBodyRange.Sort key1:=Cells(iRow, iColStart), Header:=xlYes, Orientation:=xlTopToBottom
-
-    End If
+    'Re-initialize the lastrow
+    iLastRow = TransLo.Range.Rows.Count - 1 + iRow
 
 
+     With sheetTranslation.Columns(iColStart - 1)
+        .Interior.Color = vbWhite
+         .Font.Color = vbWhite
+         .FormulaHidden = True
+     End With
+
+     'Delete rows not found
+    Call DeleteUnfoundLabels(iColStart, iRow - 1, iLastRow)
+
+    'sort the first column
+    sheetTranslation.Sort.SortFields.Clear
+    
+    'Unlist to sort using update values
+    TransLo.Unlist
+    
+    With sheetTranslation
+        .Cells(iRow - 1, iColStart - 1).Value = "TestValues"
+        Set Rng = Range(.Cells(iRow - 1, iColStart - 1), .Cells(iLastRow, iLastColumn))
+        Set RngSort = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iColStart))
+    End With
+    
+    Rng.Sort key1:=RngSort, Header:=xlYes, Orientation:=xlTopToBottom
+    
+    With sheetTranslation
+        iLastRow = .Cells(.Rows.Count, iColStart).End(xlUp).Row
+        Set Rng = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn))
+        .ListObjects.Add(xlSrcRange, Rng, , xlYes, , "TableStyleLight8").Name = C_sTabTranslations
+        Set TransLo = .ListObjects(C_sTabTranslations)
+    End With
+    
     sMessage = vbNullString
 
     'Count blank labels
@@ -277,10 +314,6 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
         End If
     Next
 
-
-    Application.Cursor = xlDefault
-
-
     If sMessage <> vbNullString Then
         If sType = "Close" Then
             Responses = MsgBox(sMessage & Chr(10) & "Do you really want to close the workbook ?", vbYesNo, "verification of translations")
@@ -289,17 +322,28 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
         End If
     End If
 
-    bUpdate = False
-
-    sheetTranslation.Columns(iColStart - 1).ClearContents
+    Call SetAllUpdates(toValue:=False)
 
     ActiveWorkbook.Save
-
     'Lock the first Column and protect the sheet
     Call LockFirstColumn
     Call ProtectTranslationSheet
-
+    
+    Set Rng = Nothing
+    Set RngSort = Nothing
+    Application.Cursor = xlDefault
     EndWork
+    
+    Exit Sub
+    
+errHand:
+    MsgBox "Unexpected error" & vbNewLine & Err.Description, vbCritical
+    Call LockFirstColumn
+    Call ProtectTranslationSheet
+    Call SetAllUpdates(True)
+    Application.Cursort = xlDefault
+    EndWork
+    Exit Sub
 End Sub
 
 
@@ -325,6 +369,69 @@ Sub ProtectTranslationSheet()
         AllowUsingPivotTables:=True, AllowDeletingColumns:=True
 End Sub
 
+
+Sub DeleteUnfoundLabels(iColStart As Integer, iStartRow, iLastRow As Long)
+    Dim i As Long
+    Dim sValue As String
+    Dim sValueFirstcol As String
+    Dim DeleteRow As Boolean
+    Dim iLast As Long
+
+    i = iStartRow
+    iLast = iLastRow
+
+    Do While (i < iLast And i > iStartRow - 1)
+        DeleteRow = False
+        sValue = sheetTranslation.Cells(i + 1, iColStart - 1).Value
+
+        sValueFirstcol = sheetTranslation.Cells(i + 1, iColStart).Value
+
+        If sValueFirstcol = vbNullString Then DeleteRow = True
+
+        If Not DeleteRow And Not (InStr(1, sValue, CStr(nbTimesTrans)) > 0) Then
+           'The update have been done previously
+            DeleteRow = _
+                (bUpdateDictVarName And InStr(1, sValue, "Dict" & C_sDictHeaderVarName) > 0) Or _
+                (bUpdateDictMainLabel And InStr(1, sValue, "Dict" & C_sDictHeaderMainLabel) > 0) Or _
+                (bUpdateDictSubLabel And InStr(1, sValue, "Dict" & C_sDictHeaderSubLabel) > 0) Or _
+                (bUpdateDictNote And InStr(1, sValue, "Dict" & C_sDictHeaderNote) > 0) Or _
+                (bUpdateDictSheetName And InStr(1, sValue, "Dict" & C_sDictHeaderSheetName) > 0) Or _
+                (bUpdateDictMainSection And InStr(1, sValue, "Dict" & C_sDictHeaderMainSection) > 0) Or _
+                (bUpdateDictSubSection And InStr(1, sValue, "Dict" & C_sDictHeaderSubSection) > 0) Or _
+                (bUpdateDictFormula And InStr(1, sValue, "Dict" & C_sDictHeaderFormula) > 0) Or _
+                (bUpdateDictMessage And InStr(1, sValue, "Dict" & C_sDictHeaderMessage) > 0) Or _
+                (bUpdateChoiLabelShort And InStr(1, sValue, "Choi" & C_sChoHeaderLabelShort) > 0) Or _
+                (bUpdateChoiLabel And InStr(1, sValue, "Choi" & C_sChoHeaderLabel) > 0) Or _
+                (bUpdateExp And InStr(1, sValue, "Exp" & C_sExportHeaderLabelButton) > 0) Or _
+                (bUpdateAnaGS_SL And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSL) > 0) Or _
+                (bUpdateAnaGS_SF And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSF) > 0) Or _
+                (bUpdateAnaUA_SC And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSC) > 0) Or _
+                (bUpdateAnaUA_SL And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSL) > 0) Or _
+                (bUpdateAnaUA_SF And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSF) > 0) Or _
+                (bUpdateAnaBA_SC And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSC) > 0) Or _
+                (bUpdateAnaBA_SL And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSL) > 0) Or _
+                (bUpdateAnaBA_SF And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSF) > 0) Or _
+                (bUpdateAnaTA_SC And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSC) > 0) Or _
+                (bUpdateAnaTA_SL And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSL) > 0) Or _
+                (bUpdateAnaTA_SF And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSF) > 0) Or _
+                sValue = vbNullString
+        End If
+        
+        
+        If DeleteRow Then
+            On Error Resume Next
+                sheetTranslation.Rows(i + 1).EntireRow.Delete
+            On Error GoTo 0
+            iLast = iLast - 1
+        End If
+
+       If Not DeleteRow Then i = i + 1
+    Loop
+End Sub
+
+
+
 Sub UpdateTranslation()
     Call AddLabelsToTranslationTable
 End Sub
+

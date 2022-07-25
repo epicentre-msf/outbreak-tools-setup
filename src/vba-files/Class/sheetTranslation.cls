@@ -8,11 +8,3 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 
-Private Sub Worksheet_Change(ByVal Target As Range)
-
-    If bUpdate Then Exit Sub
-
-    bUpdate = True
-    
-End Sub
-
