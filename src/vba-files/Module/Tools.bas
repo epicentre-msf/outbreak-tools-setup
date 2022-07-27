@@ -349,3 +349,33 @@ Sub SetAllUpdates(Optional toValue As Boolean = True)
 
 End Sub
 
+
+'Test if there is no update
+
+Function NoUpdate() As Boolean
+    NoUpdate = Not ( _
+     bUpdateDictVarName Or _
+     bUpdateDictMainLabel Or _
+     bUpdateDictSubLabel Or _
+     bUpdateDictNote Or _
+     bUpdateDictSheetName Or _
+     bUpdateDictMainSection Or _
+     bUpdateDictSubSection Or _
+     bUpdateDictFormula Or _
+     bUpdateDictMessage Or _
+     bUpdateChoiLabelShort Or _
+     bUpdateChoiLabel Or _
+     bUpdateExp Or _
+     bUpdateAnaGS_SL Or _
+     bUpdateAnaGS_SF Or _
+     bUpdateAnaUA_SC Or _
+     bUpdateAnaUA_SL Or _
+     bUpdateAnaUA_SF Or _
+     bUpdateAnaBA_SC Or _
+     bUpdateAnaBA_SL Or _
+     bUpdateAnaBA_SF Or _
+     bUpdateAnaTA_SC Or _
+     bUpdateAnaTA_SL Or _
+     bUpdateAnaTA_SF)
+End Function
+

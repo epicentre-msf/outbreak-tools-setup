@@ -13,13 +13,13 @@ Sub WriteTranslate(sLabel As String, sIndicator As String, Optional iColStart As
     Dim iLineWrite As Long
 
     Set Rng = sheetTranslation.ListObjects(C_sTabTranslations).ListColumns(1).Range
-    
+
     If Application.WorksheetFunction.CountBlank(Rng) = Rng.Rows.Count - 1 Then
         iLineWrite = Rng.Row + 1
     Else
         iLineWrite = Rng.Rows.Count + Rng.Row
     End If
-    
+
     sLab = Application.WorksheetFunction.Trim(sLabel)
     If Not Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
         iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
@@ -103,7 +103,7 @@ Sub WriteDictionary()
     Dim DictLo As ListObject
     Dim sIndicator As String
     Set DictLo = sheetDictionary.ListObjects(C_sTabDictionary)
-    sIndicator = "Dict "
+    sIndicator = "Dict"
 
     'Main Label
     If bUpdateDictMainLabel Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainLabel, sIndicator:=sIndicator & C_sDictHeaderMainLabel
@@ -212,8 +212,6 @@ End Sub
 
 
 'Write values for the Analysis sheet
-
-
 Sub AddLabelsToTranslationTable(Optional sType As String)
 
     Dim iRow As Long 'where the translation table starts
@@ -230,14 +228,14 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     Dim RngSort As Range
 
     On Error GoTo errHand
-    
+
     BeginWork
     Application.Cursor = xlWait
     sheetTranslation.Unprotect C_sPassword
 
     Set TransLo = sheetTranslation.ListObjects(C_sTabTranslations)
 
-    
+
     iRow = TransLo.Range.Row + 1
     iLastRow = TransLo.Range.Rows.Count + iRow
 
@@ -282,25 +280,27 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
 
     'sort the first column
     sheetTranslation.Sort.SortFields.Clear
-    
+
     'Unlist to sort using update values
     TransLo.Unlist
-    
+
     With sheetTranslation
         .Cells(iRow - 1, iColStart - 1).Value = "TestValues"
         Set Rng = Range(.Cells(iRow - 1, iColStart - 1), .Cells(iLastRow, iLastColumn))
         Set RngSort = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iColStart))
     End With
-    
+
     Rng.Sort key1:=RngSort, Header:=xlYes, Orientation:=xlTopToBottom
-    
+
     With sheetTranslation
         iLastRow = .Cells(.Rows.Count, iColStart).End(xlUp).Row
         Set Rng = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn))
         .ListObjects.Add(xlSrcRange, Rng, , xlYes, , "TableStyleLight8").Name = C_sTabTranslations
         Set TransLo = .ListObjects(C_sTabTranslations)
+
+         Range(.Cells(iRow - 1, iColStart + 1), .Cells(iLastRow, iLastColumn)).Locked = False
     End With
-    
+
     sMessage = vbNullString
 
     'Count blank labels
@@ -328,14 +328,14 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     'Lock the first Column and protect the sheet
     Call LockFirstColumn
     Call ProtectTranslationSheet
-    
+
     Set Rng = Nothing
     Set RngSort = Nothing
     Application.Cursor = xlDefault
     EndWork
-    
+
     Exit Sub
-    
+
 errHand:
     MsgBox "Unexpected error" & vbNewLine & Err.Description, vbCritical
     Call LockFirstColumn
@@ -416,8 +416,8 @@ Sub DeleteUnfoundLabels(iColStart As Integer, iStartRow, iLastRow As Long)
                 (bUpdateAnaTA_SF And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSF) > 0) Or _
                 sValue = vbNullString
         End If
-        
-        
+
+
         If DeleteRow Then
             On Error Resume Next
                 sheetTranslation.Rows(i + 1).EntireRow.Delete
@@ -432,6 +432,17 @@ End Sub
 
 
 Sub UpdateTranslation()
+    Dim Test As Byte
+
+    If NoUpdate() Then
+
+        Test = MsgBox("You haven't done any update, but you want to re-import translation labels. Do you really want to re-import all values ?", vbYesNo)
+
+        If Test = vbYes Then
+            SetAllUpdates (True)
+        End If
+    End If
+
     Call AddLabelsToTranslationTable
 End Sub
 
