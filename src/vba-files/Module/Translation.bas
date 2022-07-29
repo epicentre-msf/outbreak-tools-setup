@@ -436,14 +436,14 @@ End Sub
 Sub UpdateTranslation()
     Dim Test As Byte
 
-    If NoUpdate() Then
+    ' If NoUpdate() Then
 
-        Test = MsgBox("You haven't done any update, but you want to re-import translation labels. Do you really want to re-import all values ?", vbYesNo)
+    '     Test = MsgBox("You haven't done any update, but you want to re-import translation labels. Do you really want to re-import all values ?", vbYesNo)
 
-        If Test = vbYes Then
-            SetAllUpdates (True)
-        End If
-    End If
+    '     If Test = vbYes Then
+    '         SetAllUpdates (True)
+    '     End If
+    ' End If
 
     Call AddLabelsToTranslationTable
 End Sub
