@@ -320,6 +320,8 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
         Else
             MsgBox sMessage, vbCritical, "verification of translations"
         End If
+    Else
+        MsgBox "All labels are translated, there is no missing label left", vbInformation + vbOkOnly, "DONE!"
     End If
 
     Call SetAllUpdates(toValue:=False)
