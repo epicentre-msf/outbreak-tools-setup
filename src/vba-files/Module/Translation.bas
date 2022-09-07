@@ -144,9 +144,6 @@ Sub WriteChoice()
     Set ChoLo = SheetChoice.ListObjects(C_sTabChoices)
     sIndicator = "Choi"
 
-    'Label short
-    If bUpdateChoiLabelShort Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabelShort, sColName:=C_sChoHeaderLabelShort
-
     'Label
     If bUpdateChoiLabel Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabel, sColName:=C_sChoHeaderLabel
 
@@ -402,7 +399,6 @@ Sub DeleteUnfoundLabels(iColStart As Integer, iStartRow, iLastRow As Long)
                 (bUpdateDictSubSection And InStr(1, sValue, "Dict" & C_sDictHeaderSubSection) > 0) Or _
                 (bUpdateDictFormula And InStr(1, sValue, "Dict" & C_sDictHeaderFormula) > 0) Or _
                 (bUpdateDictMessage And InStr(1, sValue, "Dict" & C_sDictHeaderMessage) > 0) Or _
-                (bUpdateChoiLabelShort And InStr(1, sValue, "Choi" & C_sChoHeaderLabelShort) > 0) Or _
                 (bUpdateChoiLabel And InStr(1, sValue, "Choi" & C_sChoHeaderLabel) > 0) Or _
                 (bUpdateExp And InStr(1, sValue, "Exp" & C_sExportHeaderLabelButton) > 0) Or _
                 (bUpdateAnaGS_SL And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSL) > 0) Or _

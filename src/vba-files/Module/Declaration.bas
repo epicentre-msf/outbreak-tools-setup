@@ -20,7 +20,6 @@ Public bUpdateDictFormula       As Boolean
 Public bUpdateDictMessage       As Boolean
 
 'Record updates for choices
-Public bUpdateChoiLabelShort    As Boolean
 Public bUpdateChoiLabel         As Boolean
 
 'Record updates for Exports

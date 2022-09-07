@@ -324,7 +324,6 @@ Sub SetAllUpdates(Optional toValue As Boolean = True)
 
 
     'Record updates for choices
-     bUpdateChoiLabelShort = toValue
      bUpdateChoiLabel = toValue
 
     'Record updates for Exports
@@ -363,7 +362,6 @@ Function NoUpdate() As Boolean
      bUpdateDictSubSection Or _
      bUpdateDictFormula Or _
      bUpdateDictMessage Or _
-     bUpdateChoiLabelShort Or _
      bUpdateChoiLabel Or _
      bUpdateExp Or _
      bUpdateAnaGS_SL Or _
