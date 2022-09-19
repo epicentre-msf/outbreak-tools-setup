@@ -61,6 +61,7 @@ Public Const C_sTabTimeVar                  As String = "dates_var_table"
 Public Const C_sTabTranslations             As String = "Tab_Translations"
 Public Const C_sTabTA                       As String = "Tab_TimeSeries_Analysis"
 Public Const C_sTabSA                       As String = "Tab_Spatial_Analysis"
+Public Const C_sTabGTS                      As String = "Tab_Graph_TimeSeries"
 
 'Analysis dropdowns
 Public Const C_sModifyGS                    As String = "Add or remove rows of Global Summary"
@@ -68,6 +69,7 @@ Public Const C_sModifyUA                    As String = "Add or remove rows of U
 Public Const C_sModifyBA                    As String = "Add or remove rows of Bivariate Analysis"
 Public Const C_sModifySA                    As String = "Add or remove rows of Spatial Analysis"
 Public Const C_sModifyTA                    As String = "Add or remove rows of Time Series Analysis"
+Public Const C_sModifyGTS                   As String = "Add or remove rows to Graph on Time Series"
 
 
 'Different types of controls

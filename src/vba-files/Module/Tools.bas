@@ -18,7 +18,7 @@ Sub EndWork()
 
 End Sub
 
-Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True)
+Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True, Optional iColStart As Integer = -1)
 
     'Begining of the tables
     Dim iRowHeader As Long
@@ -46,7 +46,12 @@ Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True)
         ActiveSheet.Rows(iRowsEnd + 1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
 
         'First Column Row is the last row of the first column of the listobject
-        iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColHeader).End(xlDown).Row
+        'Or the column given by the user.
+        If iColStart > 0 Then
+            iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColStart).End(xlDown).Row
+        Else
+            iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColHeader).End(xlDown).Row
+        End If
 
         'If the listobject is empty, change the row end and start to resize to
         'only the first row
@@ -88,9 +93,30 @@ Sub ProtectSheet()
 
 End Sub
 
+'Add id to a range
+
+Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
+
+    'Increment a counter and write the values in each cells (ID_1, ID_2, etc.)
+    Dim Counter As Long
+    Dim c As Range
+    Counter = 1
+    
+    ActiveSheet.Unprotect C_sPassword
+    
+    For Each c In Rng
+        c.Value = sChar & " " & Counter
+        Counter = Counter + 1
+    Next
+    
+    Call ProtectSheet
+
+End Sub
+
+
 'Resize the dictionary table object
 Public Sub AddRowsDict()
-    Call ResizeLo(sheetDictionary.ListObjects(C_sTabDictionary))
+     ResizeLo Lo:=sheetDictionary.ListObjects(C_sTabDictionary)
 End Sub
 
 'Resize the choices table object
@@ -111,11 +137,26 @@ Public Sub AddRowsBA()
 End Sub
 
 Public Sub AddRowsTA()
-    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabTA))
+
+    Dim IdRange As Range
+
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), iColStart:=3
+    
+    Set IdRange = sheetAnalysis.ListObjects(C_sTabTA).ListColumns(1).DataBodyRange
+
+    'Add the IDs using the Series
+    AddID IdRange, sChar:="Series"
 End Sub
 
 Public Sub AddRowsSA()
-    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabSA))
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabSA)
+End Sub
+
+'Add row to graphs on time series
+Public Sub AddRowsGTS()
+
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTS)
+
 End Sub
 
 'resize the tables (delete empty rows at the bottom)----------------------------
@@ -124,7 +165,7 @@ End Sub
 Public Sub RemoveRowsDict()
     BeginWork
 
-    Call ResizeLo(sheetDictionary.ListObjects(C_sTabDictionary), AddRows:=False)
+        ResizeLo Lo:=sheetDictionary.ListObjects(C_sTabDictionary), AddRows:=False
 
     EndWork
 End Sub
@@ -133,13 +174,13 @@ End Sub
 Public Sub RemoveRowsChoices()
     BeginWork
 
-    Call ResizeLo(SheetChoice.ListObjects(C_sTabChoices), AddRows:=False)
+        ResizeLo Lo:=SheetChoice.ListObjects(C_sTabChoices), AddRows:=False
 
     EndWork
 End Sub
 
 Public Sub RemoveRowsGS()
-    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabGS), AddRows:=False)
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGS), AddRows:=False
 End Sub
 
 Public Sub RemoveRowsUA()
@@ -155,7 +196,11 @@ Public Sub RemoveRowsSA()
 End Sub
 
 Public Sub RemoveRowsTA()
-    Call ResizeLo(sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False)
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False, iColStart:=3
+End Sub
+
+Public Sub RemoveRowsGTS()
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTS), AddRows:=False
 End Sub
 
 Public Sub AddRowsAna()
@@ -184,12 +229,17 @@ Public Sub AddRowsAna()
 
         Call AddRowsTA
 
+    Case C_sModifyGTS
+
+        Call AddRowsGTS
+
     Case Else
 
         AddRowsGS
         AddRowsUA
         AddRowsBA
         AddRowsTA
+        AddRowsGTS
         AddRowsSA
 
     End Select
@@ -204,32 +254,42 @@ Public Sub RemoveRowsAna()
 
     Select Case Application.WorksheetFunction.Trim(sheetAnalysis.Range("RNG_table_modify").Value)
 
+    'Global Summary
     Case C_sModifyGS
 
         Call RemoveRowsGS
 
+    'Univariate Analysis
     Case C_sModifyUA
 
         Call RemoveRowsUA
 
+    'Bivariate Analysis
     Case C_sModifyBA
 
         Call RemoveRowsBA
 
-     Case C_sModifySA
-
-        Call RemoveRowsSA
-
+    'Time Series analysis
     Case C_sModifyTA
 
         Call RemoveRowsTA
 
+    'Graph on time series
+    Case C_sModifyGTS
+
+        Call RemoveRowsGTS
+
+    'Spatial Analysis
+    Case C_sModifySA
+
+        Call RemoveRowsSA
     Case Else
 
         RemoveRowsGS
         RemoveRowsUA
         RemoveRowsBA
         RemoveRowsTA
+        RemoveRowsGTS
         RemoveRowsSA
 
     End Select

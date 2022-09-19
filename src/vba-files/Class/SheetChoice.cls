@@ -17,3 +17,6 @@ End Sub
 
 
 
+Private Sub Worksheet_Deactivate()
+    'Sort the choices table when the worksheet deactivates
+End Sub
