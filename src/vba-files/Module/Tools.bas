@@ -101,14 +101,14 @@ Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
     Dim Counter As Long
     Dim c As Range
     Counter = 1
-    
+
     ActiveSheet.Unprotect C_sPassword
-    
+
     For Each c In Rng
         c.Value = sChar & " " & Counter
         Counter = Counter + 1
     Next
-    
+
     ProtectSheet
 
 End Sub
@@ -141,7 +141,7 @@ Public Sub AddRowsTA()
     Dim IdRange As Range
 
     ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), iColStart:=3
-    
+
     Set IdRange = sheetAnalysis.ListObjects(C_sTabTA).ListColumns(1).DataBodyRange
 
     'Add the IDs using the Series
@@ -452,12 +452,12 @@ Public Sub AddGraphOptions(Rng As Range)
     Dim tsGroupBy As String
     Dim tsAddPerc As String
     Dim tsAddTotal As String
-    
+
     'Constants for columns on time series table
     Const tsGroupByColumn As Byte = 5
     Const tsAddPercColumn As Byte = 9
     Const tsAddTotalColumn As Byte = 10
-    
+
     'Contants for columns on graph table
     Const graphPercColumn As Byte = 5
     Const graphChoicesColumn As Byte = 4
@@ -465,29 +465,29 @@ Public Sub AddGraphOptions(Rng As Range)
     graphRow = Rng.Row
     graphCol = sheetAnalysis.ListObjects(C_sTabGTS).Range.Column
     graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
-    
-    
+
+
     If graphSerie = vbNullString Then Exit Sub
-    
-    
+
+
     On Error GoTo errHand
     ActiveSheet.Unprotect C_sPassword
 
     BeginWork
     Application.Cursor = xlIBeam
-    
+
     With sheetAnalysis
         'remove previous data validation
         .Cells(graphRow, graphPercColumn).Validation.Delete
         .Cells(graphRow, graphChoicesColumn).Validation.Delete
         .Cells(graphRow, graphPercColumn).Value = ""
         .Cells(graphRow, graphChoicesColumn).Value = ""
-        
+
         'Corresponding row in the time series table
-        
+
         tsRow = CInt(Application.WorksheetFunction.Trim(Replace(graphSerie, C_sSeries, ""))) + _
                 .ListObjects(C_sTabTA).Range.Row
-                
+
         tsGroupBy = .Cells(tsRow, tsGroupByColumn).Value
         tsAddPerc = .Cells(tsRow, tsAddPercColumn).Value
         tsAddTotal = .Cells(tsRow, tsAddTotalColumn).Value
@@ -507,22 +507,22 @@ Public Sub AddGraphOptions(Rng As Range)
             .Locked = True
         End If
     End With
-    
+
     'Add the choices
     AddChoices tsGroupBy, graphRow, tsAddTotal
     ProtectSheet
-    
+
     Application.Cursor = xlDefault
     EndWork
-    
+
     Exit Sub
-    
+
 errHand:
     MsgBox Err.Description
     ProtectSheet
-    
+
     Application.Cursor = xlDefault
     EndWork
     Exit Sub
-    
+
 End Sub
