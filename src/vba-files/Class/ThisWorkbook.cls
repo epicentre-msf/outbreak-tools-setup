@@ -13,7 +13,7 @@ Private Sub Workbook_Open()
   Call SetAllUpdates(toValue:=True)
   nbTimesTrans = 0
   
-  sheetChoicesList.Cells.Clear
+  sheetChoicesLists.Cells.Clear
 End Sub
 
 
