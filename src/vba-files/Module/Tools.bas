@@ -109,7 +109,7 @@ Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
         Counter = Counter + 1
     Next
     
-    Call ProtectSheet
+    ProtectSheet
 
 End Sub
 
@@ -145,7 +145,7 @@ Public Sub AddRowsTA()
     Set IdRange = sheetAnalysis.ListObjects(C_sTabTA).ListColumns(1).DataBodyRange
 
     'Add the IDs using the Series
-    AddID IdRange, sChar:="Series"
+    AddID IdRange, sChar:=C_sSeries
 End Sub
 
 Public Sub AddRowsSA()
@@ -437,3 +437,92 @@ Function NoUpdate() As Boolean
      bUpdateAnaTA_SF)
 End Function
 
+
+'Add options for the graphs (Choices, Percentages, etc.)
+'depending on choices on series
+Public Sub AddGraphOptions(Rng As Range)
+
+    'Values of row, column and serie for the graph Table
+    Dim graphRow As Long
+    Dim graphCol As Integer
+    Dim graphSerie As String
+
+    'Values of row, column and serie for the Time series table
+    Dim tsRow As Long
+    Dim tsGroupBy As String
+    Dim tsAddPerc As String
+    Dim tsAddTotal As String
+    
+    'Constants for columns on time series table
+    Const tsGroupByColumn As Byte = 5
+    Const tsAddPercColumn As Byte = 9
+    Const tsAddTotalColumn As Byte = 10
+    
+    'Contants for columns on graph table
+    Const graphPercColumn As Byte = 5
+    Const graphChoicesColumn As Byte = 4
+
+    graphRow = Rng.Row
+    graphCol = sheetAnalysis.ListObjects(C_sTabGTS).Range.Column
+    graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
+    
+    
+    If graphSerie = vbNullString Then Exit Sub
+    
+    
+    On Error GoTo errHand
+    ActiveSheet.Unprotect C_sPassword
+
+    BeginWork
+    Application.Cursor = xlIBeam
+    
+    With sheetAnalysis
+        'remove previous data validation
+        .Cells(graphRow, graphPercColumn).Validation.Delete
+        .Cells(graphRow, graphChoicesColumn).Validation.Delete
+        .Cells(graphRow, graphPercColumn).Value = ""
+        .Cells(graphRow, graphChoicesColumn).Value = ""
+        
+        'Corresponding row in the time series table
+        
+        tsRow = CInt(Application.WorksheetFunction.Trim(Replace(graphSerie, C_sSeries, ""))) + _
+                .ListObjects(C_sTabTA).Range.Row
+                
+        tsGroupBy = .Cells(tsRow, tsGroupByColumn).Value
+        tsAddPerc = .Cells(tsRow, tsAddPercColumn).Value
+        tsAddTotal = .Cells(tsRow, tsAddTotalColumn).Value
+    End With
+
+    'Set validation on percentage
+    With sheetAnalysis.Cells(graphRow, graphPercColumn)
+        If tsAddPerc <> C_sNo Then
+            .Locked = False
+            .Font.Color = vbBlack
+            .Font.Italic = False
+            SetValidation sheetAnalysis.Cells(graphRow, graphPercColumn), sValidList:="=" & "perc_values", sAlertType:=1
+        Else
+            .Value = "values"
+            .Font.Color = RGB(127, 127, 127)
+            .Font.Italic = True
+            .Locked = True
+        End If
+    End With
+    
+    'Add the choices
+    AddChoices tsGroupBy, graphRow, tsAddTotal
+    ProtectSheet
+    
+    Application.Cursor = xlDefault
+    EndWork
+    
+    Exit Sub
+    
+errHand:
+    MsgBox Err.Description
+    ProtectSheet
+    
+    Application.Cursor = xlDefault
+    EndWork
+    Exit Sub
+    
+End Sub

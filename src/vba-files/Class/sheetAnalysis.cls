@@ -31,7 +31,11 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   If Not bUpdateAnaTA_SF Then bUpdateAnaTA_SF = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing)
   If Not bUpdateAnaTA_SL Then bUpdateAnaTA_SL = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing)
   If Not bUpdateAnaTA_SC Then bUpdateAnaTA_SC = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing)
-
+  
+  'Update the choices and percentage on graph table
+  If Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTS).ListColumns(1).DataBodyRange) Is Nothing) Then
+      AddGraphOptions Target
+  End If
 End Sub
 
 

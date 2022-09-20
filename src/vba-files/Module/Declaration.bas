@@ -62,6 +62,9 @@ Public Const C_sTabTranslations             As String = "Tab_Translations"
 Public Const C_sTabTA                       As String = "Tab_TimeSeries_Analysis"
 Public Const C_sTabSA                       As String = "Tab_Spatial_Analysis"
 Public Const C_sTabGTS                      As String = "Tab_Graph_TimeSeries"
+Public Const C_sSeries                      As String = "Series"
+Public Const C_sNo                          As String = "no"
+Public Const C_sTotal                       As String = "Total"
 
 'Analysis dropdowns
 Public Const C_sModifyGS                    As String = "Add or remove rows of Global Summary"

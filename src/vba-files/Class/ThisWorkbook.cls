@@ -12,6 +12,8 @@ Option Explicit
 Private Sub Workbook_Open()
   Call SetAllUpdates(toValue:=True)
   nbTimesTrans = 0
+  
+  sheetChoicesList.Cells.Clear
 End Sub
 
 

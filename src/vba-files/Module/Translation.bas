@@ -430,7 +430,7 @@ End Sub
 
 
 Sub UpdateTranslation()
-    Dim Test As Byte
+    Dim test As Byte
 
     ' If NoUpdate() Then
 
