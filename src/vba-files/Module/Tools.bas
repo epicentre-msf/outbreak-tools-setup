@@ -18,70 +18,57 @@ Sub EndWork()
 
 End Sub
 
-Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True, Optional iColStart As Integer = -1)
+Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True, Optional totalRowCount As Long = 0)
 
     'Begining of the tables
-    Dim iRowHeader As Long
-    Dim iColHeader  As Long
-    Dim i As Long
-    Dim iFirstColumnRow As Long
+    Dim loRowHeader As Long
+    Dim loColHeader  As Long
+    Dim rowCounter As Long
 
     'End of the listobject table
-    Dim iRowsEnd As Long
-    Dim iColsEnd As Long
+    Dim loRowsEnd As Long
+    Dim loColsEnd As Long
+    Dim Wksh As Worksheet
 
+    Set Wksh = ActiveSheet
 
+    With Wksh
+        .Unprotect C_sPassword
 
-    ActiveSheet.Unprotect C_sPassword
+        'Rows and columns at the begining of the table to resize
+        loRowHeader = Lo.Range.Row
+        loColHeader = Lo.Range.Column
 
-    'Rows and columns at the begining of the table to resize
-    iRowHeader = Lo.Range.Row
-    iColHeader = Lo.Range.Column
+        'Rows and Columns at the end of the Table to resize
+        loRowsEnd = loRowHeader + Lo.Range.Rows.Count - 1
+        loColsEnd = loColHeader + Lo.Range.Columns.Count - 1
 
-    'Rows and Columns at the end of the Table to resize
-    iRowsEnd = iRowHeader + Lo.Range.Rows.Count
-    iColsEnd = Lo.Range.Columns.Count
+        If Not AddRows Then 'Remove rows
+            rowCounter = loRowsEnd
+            Do While (rowCounter > loRowHeader + 1)
+                If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
 
-    If Not AddRows Then 'Remove rows
-        ActiveSheet.Rows(iRowsEnd + 1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+                    .Rows(rowCounter).EntireRow.Delete
 
-        'First Column Row is the last row of the first column of the listobject
-        'Or the column given by the user.
-        If iColStart > 0 Then
-            iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColStart).End(xlDown).Row
-        Else
-            iFirstColumnRow = ActiveSheet.Cells(iRowHeader, iColHeader).End(xlDown).Row
-        End If
+                    'update the end rows
+                    loRowsEnd = loRowsEnd - 1
+                End If
 
-        'If the listobject is empty, change the row end and start to resize to
-        'only the first row
+                rowCounter = rowCounter - 1
+            Loop
+        Else 'Add rows
+            loRowsEnd = loRowsEnd + 1 'Start at the bottom of the table
 
-        If Not Lo.DataBodyRange Is Nothing Then
-            If Application.WorksheetFunction.CountA(Lo.DataBodyRange) = 0 Then
-                iFirstColumnRow = iRowHeader + 1
-            End If
-        End If
-
-
-        If iFirstColumnRow < iRowsEnd Then
-            For i = iRowsEnd To iFirstColumnRow + 1 Step -1
-                ActiveSheet.Rows(i).EntireRow.Delete
+            For rowCounter = 1 To C_iNbLinesLLData + 1
+                .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
             Next
-
-            iRowsEnd = iFirstColumnRow
+            loRowsEnd = loRowsEnd + C_iNbLinesLLData
         End If
-    Else 'Add rows
-        For i = 1 To C_iNbLinesLLData + 1
-            ActiveSheet.Rows(iRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
-        Next
-        iRowsEnd = iRowsEnd + C_iNbLinesLLData
-    End If
 
-    Lo.Resize Range(Cells(iRowHeader, iColHeader), Cells(iRowsEnd, iColHeader + iColsEnd - 1))
-
+            Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
+    End With
 
     Call ProtectSheet
-
 End Sub
 
 Sub ProtectSheet()
@@ -140,8 +127,7 @@ Public Sub AddRowsTA()
 
     Dim IdRange As Range
 
-    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), iColStart:=3
-
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA)
     Set IdRange = sheetAnalysis.ListObjects(C_sTabTA).ListColumns(1).DataBodyRange
 
     'Add the IDs using the Series
@@ -196,7 +182,8 @@ Public Sub RemoveRowsSA()
 End Sub
 
 Public Sub RemoveRowsTA()
-    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False, iColStart:=3
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False, totalRowCount:=1
+
 End Sub
 
 Public Sub RemoveRowsGTS()
