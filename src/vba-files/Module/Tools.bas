@@ -450,9 +450,8 @@ Public Sub AddGraphOptions(Rng As Range)
     Const graphChoicesColumn As Byte = 4
 
     graphRow = Rng.Row
-    graphCol = sheetAnalysis.ListObjects(C_sTabGTS).Range.Column
+    graphCol = Rng.Column
     graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
-
 
     If graphSerie = vbNullString Then Exit Sub
 
