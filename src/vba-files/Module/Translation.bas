@@ -295,7 +295,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
         .ListObjects.Add(xlSrcRange, Rng, , xlYes, , "TableStyleLight8").Name = C_sTabTranslations
         Set TransLo = .ListObjects(C_sTabTranslations)
 
-         Range(.Cells(iRow - 1, iColStart + 1), .Cells(iLastRow, iLastColumn)).Locked = False
+        Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn)).Locked = False
     End With
 
     sMessage = vbNullString
