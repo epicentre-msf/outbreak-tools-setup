@@ -75,14 +75,16 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
     Dim LoRng As Range
     Dim choiRng As Range
     Dim varRng As Range
+    Dim listRng As Range
+    Dim namesCol As Long
+    Dim namesRow As Long
 
-    Const choicesColumn As Byte = 14
-    Const choicesAnalysisCol As Byte = 4
-    
-    '
+    Const choicesColumn As Byte = 13
+    Const choicesAnalysisCol As Byte = 5
 
     'Range of the variable name column
     Set varRng = sheetDictionary.ListObjects(C_sTabDictionary).ListColumns(1).DataBodyRange
+    
     'Range of the choice column
     Set choiRng = SheetChoice.ListObjects(C_sTabChoices).ListColumns(1).DataBodyRange
 
@@ -130,6 +132,16 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
 
         ThisWorkbook.Names.Add Name:=sChoice, RefersToR1C1:="=" & sListObjectName & "[" & sChoice & "]"
         'The listobject already exists, we will only focus on updating the choice
+        With sheetLists
+            Set listRng = .ListObjects(C_sTabListOfChoicesNames).Range
+            namesCol = listRng.Column
+            
+             If listRng.Find(What:=sChoice, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+                namesRow = IIf(IsEmpty(.Cells(listRng.Rows.Count, namesCol)), listRng.Rows.Count, listRng.Rows.Count + 1)
+                .Cells(namesRow, namesCol).Value = sChoice
+            End If
+        
+        End With
     End With
 
     'Add the validation to the choice
@@ -137,5 +149,17 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
 
 End Sub
 
+
+Public Function Updated(ByVal rngName As String) As Boolean
+    Updated = (sheetLists.Range(rngName).Value = "Updated")
+End Function
+
+Public Sub UpdateValue(ByVal Condition As Boolean, ByVal rngName As String)
+    If Condition Then
+        sheetLists.Range(rngName).Value = "Updated"
+    Else
+        sheetLists.Range(rngName).Value = "Not Updated"
+    End If
+End Sub
 
 

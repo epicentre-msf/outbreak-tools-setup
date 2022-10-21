@@ -85,15 +85,15 @@ End Sub
 Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
 
     'Increment a counter and write the values in each cells (ID_1, ID_2, etc.)
-    Dim Counter As Long
+    Dim counter As Long
     Dim c As Range
-    Counter = 1
+    counter = 1
 
     ActiveSheet.Unprotect C_sPassword
 
     For Each c In Rng
-        c.Value = sChar & " " & Counter
-        Counter = Counter + 1
+        c.Value = sChar & " " & counter
+        counter = counter + 1
     Next
 
     ProtectSheet
@@ -297,9 +297,11 @@ Sub UpdateVariablesList()
     Dim i As Long 'counters for the variables and for the list
     Dim j As Long
     Dim k As Long
+    Dim l As Long
     Dim iVarColumn As Integer
     Dim iListVarColumn As Integer
     Dim iTimeVarColumn As Integer
+    Dim geoColumn As Long
     Dim Rng As Range
 
 
@@ -321,11 +323,22 @@ Sub UpdateVariablesList()
         iDictLength = .Cells(.Rows.Count, iVarColumn).End(xlUp).Row
     End With
 
+    'Delte the ranges of variables and time series
+    On Error Resume Next
+
+        sheetLists.ListObjects(C_sTabVarList).DataBodyRange.Delete
+        sheetLists.ListObjects(C_sTabTimeVar).DataBodyRange.Delete
+         sheetLists.ListObjects(C_sTabGeoVar).DataBodyRange.Delete
+         
+    On Error GoTo errHand
+
     iListVarColumn = sheetLists.ListObjects(C_sTabVarList).Range.Column
     iTimeVarColumn = sheetLists.ListObjects(C_sTabTimeVar).Range.Column
+    geoColumn = sheetLists.ListObjects(C_sTabGeoVar).Range.Column
 
     j = 1
     k = 1
+    l = 1
     With sheetDictionary
         For i = Rng.Row + 1 To iDictLength
 
@@ -340,6 +353,13 @@ Sub UpdateVariablesList()
                 k = k + 1
                 sheetLists.Cells(k, iTimeVarColumn).Value = .Cells(i, iVarColumn).Value
             End If
+
+            'Add Geo vars
+             If .Cells(i, iControlColumn).Value = C_sDictControlGeo Or .Cells(i, iControlColumn).Value = C_sDictControlHf Then
+                l = l + 1
+                sheetLists.Cells(l, geoColumn).Value = .Cells(i, iVarColumn).Value
+            End If
+
         Next
     End With
 
@@ -359,38 +379,37 @@ End Sub
 Sub SetAllUpdates(Optional toValue As Boolean = True)
 
     'Record updates for dictionary
-     bUpdateDictVarName = toValue
-     bUpdateDictMainLabel = toValue
-     bUpdateDictSubLabel = toValue
-     bUpdateDictNote = toValue
-     bUpdateDictSheetName = toValue
-     bUpdateDictMainSection = toValue
-     bUpdateDictSubSection = toValue
-     bUpdateDictFormula = toValue
-     bUpdateDictMessage = toValue
+     UpdateValue toValue, "DictMainLabel"
+     UpdateValue toValue, "DictSubLabel"
+     UpdateValue toValue, "DictNote"
+     UpdateValue toValue, "DictSheetName"
+     UpdateValue toValue, "DictMainSection"
+     UpdateValue toValue, "DictSubSection"
+     UpdateValue toValue, "DictFormula"
+     UpdateValue toValue, "DictMessage"
 
 
     'Record updates for choices
-     bUpdateChoiLabel = toValue
+     UpdateValue toValue, "ChoiLabel"
 
-    'Record updates for Exports
-     bUpdateExp = toValue
+    'Record updateValues for Exports
+     UpdateValue toValue, "Exp"
 
-    'Record updates for Analysis
-     bUpdateAnaGS_SL = toValue
-     bUpdateAnaGS_SF = toValue
+    'Record updateValues for Analysis
+     UpdateValue toValue, "AnaGS_SL"
+     UpdateValue toValue, "AnaGS_SF"
 
-     bUpdateAnaUA_SC = toValue
-     bUpdateAnaUA_SL = toValue
-     bUpdateAnaUA_SF = toValue
+     UpdateValue toValue, "AnaUA_SC"
+     UpdateValue toValue, "AnaUA_SL"
+     UpdateValue toValue, "AnaUA_SF"
 
-     bUpdateAnaBA_SC = toValue
-     bUpdateAnaBA_SL = toValue
-     bUpdateAnaBA_SF = toValue
+     UpdateValue toValue, "AnaBA_SC"
+     UpdateValue toValue, "AnaBA_SL"
+     UpdateValue toValue, "AnaBA_SF"
 
-     bUpdateAnaTA_SC = toValue
-     bUpdateAnaTA_SL = toValue
-     bUpdateAnaTA_SF = toValue
+     UpdateValue toValue, "AnaTA_SC"
+     UpdateValue toValue, "AnaTA_SL"
+     UpdateValue toValue, "AnaTA_SF"
 
 
 End Sub
@@ -400,28 +419,27 @@ End Sub
 
 Function NoUpdate() As Boolean
     NoUpdate = Not ( _
-     bUpdateDictVarName Or _
-     bUpdateDictMainLabel Or _
-     bUpdateDictSubLabel Or _
-     bUpdateDictNote Or _
-     bUpdateDictSheetName Or _
-     bUpdateDictMainSection Or _
-     bUpdateDictSubSection Or _
-     bUpdateDictFormula Or _
-     bUpdateDictMessage Or _
-     bUpdateChoiLabel Or _
-     bUpdateExp Or _
-     bUpdateAnaGS_SL Or _
-     bUpdateAnaGS_SF Or _
-     bUpdateAnaUA_SC Or _
-     bUpdateAnaUA_SL Or _
-     bUpdateAnaUA_SF Or _
-     bUpdateAnaBA_SC Or _
-     bUpdateAnaBA_SL Or _
-     bUpdateAnaBA_SF Or _
-     bUpdateAnaTA_SC Or _
-     bUpdateAnaTA_SL Or _
-     bUpdateAnaTA_SF)
+     Updated("DictMainLabel") Or _
+     Updated("DictSubLabel") Or _
+     Updated("DictNote") Or _
+     Updated("DictSheetName") Or _
+     Updated("DictMainSection") Or _
+     Updated("DictSubSection") Or _
+     Updated("DictFormula") Or _
+     Updated("DictMessage") Or _
+     Updated("ChoiLabel") Or _
+     Updated("Exp") Or _
+     Updated("AnaGS_SL") Or _
+     Updated("AnaGS_SF") Or _
+     Updated("AnaUA_SC") Or _
+     Updated("AnaUA_SL") Or _
+     Updated("AnaUA_SF") Or _
+     Updated("AnaBA_SC") Or _
+     Updated("AnaBA_SL") Or _
+     Updated("AnaBA_SF") Or _
+     Updated("AnaTA_SC") Or _
+     Updated("AnaTA_SL") Or _
+     Updated("AnaTA_SF"))
 End Function
 
 
@@ -446,8 +464,8 @@ Public Sub AddGraphOptions(Rng As Range)
     Const tsAddTotalColumn As Byte = 10
 
     'Contants for columns on graph table
-    Const graphPercColumn As Byte = 5
-    Const graphChoicesColumn As Byte = 4
+    Const graphPercColumn As Byte = 6
+    Const graphChoicesColumn As Byte = 5
 
     graphRow = Rng.Row
     graphCol = Rng.Column

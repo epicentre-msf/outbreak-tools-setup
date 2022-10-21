@@ -23,10 +23,10 @@ Sub WriteTranslate(sLabel As String, sIndicator As String, Optional iColStart As
     sLab = Application.WorksheetFunction.Trim(sLabel)
     If Not Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
         iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
-        sheetTranslation.Cells(iRow, iColStart - 1).Value = sIndicator & "_" & nbTimesTrans
+        sheetTranslation.Cells(iRow, iColStart - 1).Value = sIndicator & "_" & sheetLists.Range("nbtimes").Value
     Else
         sheetTranslation.Cells(iLineWrite, iColStart).Value = sLab
-        sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = sIndicator & "_" & nbTimesTrans
+        sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = sIndicator & "_" & sheetLists.Range("nbtimes").Value
     End If
 
     Set Rng = Nothing
@@ -104,31 +104,31 @@ Sub WriteDictionary()
     Dim sIndicator As String
     Set DictLo = sheetDictionary.ListObjects(C_sTabDictionary)
     sIndicator = "Dict"
-
+    
     'Main Label
-    If bUpdateDictMainLabel Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainLabel, sIndicator:=sIndicator & C_sDictHeaderMainLabel
+    If Updated("DictMainLabel") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainLabel, sIndicator:=sIndicator & C_sDictHeaderMainLabel
 
     'Sub Label
-    If bUpdateDictSubLabel Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubLabel, sIndicator:=sIndicator & C_sDictHeaderSubLabel
+    If Updated("DictSubLabel") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubLabel, sIndicator:=sIndicator & C_sDictHeaderSubLabel
 
     'Note
-    If bUpdateDictNote Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderNote, sIndicator:=sIndicator & C_sDictHeaderNote
+    If Updated("DictNote") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderNote, sIndicator:=sIndicator & C_sDictHeaderNote
 
     'Sheet Name
-    If bUpdateDictSheetName Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSheetName, sIndicator:=sIndicator & C_sDictHeaderSheetName
+    If Updated("DictSheetName") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSheetName, sIndicator:=sIndicator & C_sDictHeaderSheetName
 
     'Main section
-    If bUpdateDictMainSection Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainSection, sIndicator:=sIndicator & C_sDictHeaderMainSection
+    If Updated("DictMainSection") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMainSection, sIndicator:=sIndicator & C_sDictHeaderMainSection
 
     'Sub-section
-    If bUpdateDictSubSection Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubSection, sIndicator:=sIndicator & C_sDictHeaderSubSection
+    If Updated("DictSubSection") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderSubSection, sIndicator:=sIndicator & C_sDictHeaderSubSection
 
     'Formula
 
-    If bUpdateDictFormula Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderFormula, sIndicator:=sIndicator & C_sDictHeaderFormula, ContainsFormula:=True
+    If Updated("DictFormula") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderFormula, sIndicator:=sIndicator & C_sDictHeaderFormula, ContainsFormula:=True
 
     'Message
-    If bUpdateDictMessage Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMessage, sIndicator:=sIndicator & C_sDictHeaderMessage
+    If Updated("DictMessage") Then WriteSheetColumn Lo:=DictLo, sColName:=C_sDictHeaderMessage, sIndicator:=sIndicator & C_sDictHeaderMessage
 
     Set DictLo = Nothing
 
@@ -145,7 +145,7 @@ Sub WriteChoice()
     sIndicator = "Choi"
 
     'Label
-    If bUpdateChoiLabel Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabel, sColName:=C_sChoHeaderLabel
+    If Updated("ChoiLabel") Then WriteSheetColumn Lo:=ChoLo, sIndicator:=sIndicator & C_sChoHeaderLabel, sColName:=C_sChoHeaderLabel
 
     Set ChoLo = Nothing
 End Sub
@@ -162,7 +162,7 @@ Sub WriteExport()
 
     Set ExpLo = sheetExport.ListObjects(C_sTabExports)
     'Label short
-    If bUpdateExp Then WriteSheetColumn Lo:=ExpLo, sIndicator:=sIndicator & C_sExportHeaderLabelButton, sColName:=C_sExportHeaderLabelButton
+    If Updated("Exp") Then WriteSheetColumn Lo:=ExpLo, sIndicator:=sIndicator & C_sExportHeaderLabelButton, sColName:=C_sExportHeaderLabelButton
 
     Set ExpLo = Nothing
 End Sub
@@ -179,29 +179,29 @@ Sub WriteAnalysis()
     'Global summary, First column
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabGS)
     sIndicator = "AnaGS"
-    If bUpdateAnaGS_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
-    If bUpdateAnaGS_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    If Updated("AnaGS_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If Updated("AnaGS_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     'Univariate analysis column
     sIndicator = "AnaUA"
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabUA)
-    If bUpdateAnaUA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
-    If bUpdateAnaUA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
-    If bUpdateAnaUA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    If Updated("AnaUA_SC") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If Updated("AnaUA_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If Updated("AnaUA_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     'Bivariate analysis column
     sIndicator = "AnaBA"
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabBA)
-    If bUpdateAnaBA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
-    If bUpdateAnaBA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
-    If bUpdateAnaBA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If Updated("AnaBA_SC") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If Updated("AnaBA_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    If Updated("AnaBA_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
 
      'Time Series Analysis column
     Set AnaLo = sheetAnalysis.ListObjects(C_sTabTA)
     sIndicator = "AnaTA"
-    If bUpdateAnaTA_SC Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
-    If bUpdateAnaTA_SL Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
-    If bUpdateAnaTA_SF Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    If Updated("AnaTA_SC") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
+    If Updated("AnaTA_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
+    If Updated("AnaTA_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
     Set AnaLo = Nothing
 
@@ -253,8 +253,8 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     End With
 
 
-    If nbTimesTrans = 0 Then sheetTranslation.Columns(iColStart - 1).ClearContents
-    nbTimesTrans = nbTimesTrans + 1
+    If sheetLists.Range("nbtimes").Value = 0 Then sheetTranslation.Columns(iColStart - 1).ClearContents
+    sheetLists.Range("nbtimes").Value = sheetLists.Range("nbtimes").Value + 1
 
     'Write label for each of the sheets
     Call WriteDictionary
@@ -387,31 +387,30 @@ Sub DeleteUnfoundLabels(iColStart As Integer, iStartRow, iLastRow As Long)
 
         If sValueFirstcol = vbNullString Then DeleteRow = True
 
-        If Not DeleteRow And Not (InStr(1, sValue, CStr(nbTimesTrans)) > 0) Then
+        If Not DeleteRow And Not (InStr(1, sValue, CStr(sheetLists.Range("nbtimes").Value)) > 0) Then
            'The update have been done previously
             DeleteRow = _
-                (bUpdateDictVarName And InStr(1, sValue, "Dict" & C_sDictHeaderVarName) > 0) Or _
-                (bUpdateDictMainLabel And InStr(1, sValue, "Dict" & C_sDictHeaderMainLabel) > 0) Or _
-                (bUpdateDictSubLabel And InStr(1, sValue, "Dict" & C_sDictHeaderSubLabel) > 0) Or _
-                (bUpdateDictNote And InStr(1, sValue, "Dict" & C_sDictHeaderNote) > 0) Or _
-                (bUpdateDictSheetName And InStr(1, sValue, "Dict" & C_sDictHeaderSheetName) > 0) Or _
-                (bUpdateDictMainSection And InStr(1, sValue, "Dict" & C_sDictHeaderMainSection) > 0) Or _
-                (bUpdateDictSubSection And InStr(1, sValue, "Dict" & C_sDictHeaderSubSection) > 0) Or _
-                (bUpdateDictFormula And InStr(1, sValue, "Dict" & C_sDictHeaderFormula) > 0) Or _
-                (bUpdateDictMessage And InStr(1, sValue, "Dict" & C_sDictHeaderMessage) > 0) Or _
-                (bUpdateChoiLabel And InStr(1, sValue, "Choi" & C_sChoHeaderLabel) > 0) Or _
-                (bUpdateExp And InStr(1, sValue, "Exp" & C_sExportHeaderLabelButton) > 0) Or _
-                (bUpdateAnaGS_SL And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSL) > 0) Or _
-                (bUpdateAnaGS_SF And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSF) > 0) Or _
-                (bUpdateAnaUA_SC And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSC) > 0) Or _
-                (bUpdateAnaUA_SL And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSL) > 0) Or _
-                (bUpdateAnaUA_SF And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSF) > 0) Or _
-                (bUpdateAnaBA_SC And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSC) > 0) Or _
-                (bUpdateAnaBA_SL And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSL) > 0) Or _
-                (bUpdateAnaBA_SF And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSF) > 0) Or _
-                (bUpdateAnaTA_SC And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSC) > 0) Or _
-                (bUpdateAnaTA_SL And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSL) > 0) Or _
-                (bUpdateAnaTA_SF And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSF) > 0) Or _
+                (Updated("DictMainLabel") And InStr(1, sValue, "Dict" & C_sDictHeaderMainLabel) > 0) Or _
+                (Updated("DictSubLabel") And InStr(1, sValue, "Dict" & C_sDictHeaderSubLabel) > 0) Or _
+                (Updated("DictNote") And InStr(1, sValue, "Dict" & C_sDictHeaderNote) > 0) Or _
+                (Updated("DictSheetName") And InStr(1, sValue, "Dict" & C_sDictHeaderSheetName) > 0) Or _
+                (Updated("DictMainSection") And InStr(1, sValue, "Dict" & C_sDictHeaderMainSection) > 0) Or _
+                (Updated("DictSubSection") And InStr(1, sValue, "Dict" & C_sDictHeaderSubSection) > 0) Or _
+                (Updated("DictFormula") And InStr(1, sValue, "Dict" & C_sDictHeaderFormula) > 0) Or _
+                (Updated("DictMessage") And InStr(1, sValue, "Dict" & C_sDictHeaderMessage) > 0) Or _
+                (Updated("ChoiLabel") And InStr(1, sValue, "Choi" & C_sChoHeaderLabel) > 0) Or _
+                (Updated("Exp") And InStr(1, sValue, "Exp" & C_sExportHeaderLabelButton) > 0) Or _
+                (Updated("AnaGS_SL") And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSL) > 0) Or _
+                (Updated("AnaGS_SF") And InStr(1, sValue, "AnaGS" & C_sAnaHeaderSF) > 0) Or _
+                (Updated("AnaUA_SC") And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSC) > 0) Or _
+                (Updated("AnaUA_SL") And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSL) > 0) Or _
+                (Updated("AnaUA_SF") And InStr(1, sValue, "AnaUA" & C_sAnaHeaderSF) > 0) Or _
+                (Updated("AnaBA_SC") And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSC) > 0) Or _
+                (Updated("AnaBA_SL") And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSL) > 0) Or _
+                (Updated("AnaBA_SF") And InStr(1, sValue, "AnaBA" & C_sAnaHeaderSF) > 0) Or _
+                (Updated("AnaTA_SC") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSC) > 0) Or _
+                (Updated("AnaTA_SL") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSL) > 0) Or _
+                (Updated("AnaTA_SF") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSF) > 0) Or _
                 sValue = vbNullString
         End If
 

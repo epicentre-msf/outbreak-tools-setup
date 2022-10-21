@@ -10,32 +10,41 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Sub Worksheet_Activate()
-    Call UpdateVariablesList
+     If Updated("DictType") Or Updated("DictVarName") Or Updated("DictControl") Then
+        UpdateVariablesList
+        UpdateValue False, "DictType"
+        UpdateValue False, "DictVarName"
+        UpdateValue False, "DictControl"
+     End If
 End Sub
 
 
 Private Sub Worksheet_Change(ByVal Target As Range)
 
-  If Not bUpdateAnaGS_SL Then bUpdateAnaGS_SL = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSL).Range) Is Nothing)
-  If Not bUpdateAnaGS_SF Then bUpdateAnaGS_SF = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSF).Range) Is Nothing)
+  If Not Updated("AnaGS_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaGS_SL"
+  If Not Updated("AnaGS_SF") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSF).Range) Is Nothing), "AnaGS_SF"
 
-  If Not bUpdateAnaUA_SC Then bUpdateAnaUA_SC = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing)
-  If Not bUpdateAnaUA_SL Then bUpdateAnaUA_SL = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing)
-  If Not bUpdateAnaUA_SF Then bUpdateAnaUA_SF = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing)
+  If Not Updated("AnaUA_SC") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing), "AnaUA_SC"
+  If Not Updated("AnaUA_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaUA_SL"
+  If Not Updated("AnaUA_SF") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabUA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing), "AnaUA_SF"
 
 
-  If Not bUpdateAnaBA_SC Then bUpdateAnaBA_SC = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing)
-  If Not bUpdateAnaBA_SL Then bUpdateAnaBA_SL = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing)
-  If Not bUpdateAnaBA_SF Then bUpdateAnaBA_SF = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing)
+  If Not Updated("AnaBA_SC") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing), "AnaBA_SC"
+  If Not Updated("AnaBA_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaBA_SL"
+  If Not Updated("AnaBA_SF") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabBA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing), "AnaBA_SF"
 
-  If Not bUpdateAnaTA_SF Then bUpdateAnaTA_SF = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing)
-  If Not bUpdateAnaTA_SL Then bUpdateAnaTA_SL = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing)
-  If Not bUpdateAnaTA_SC Then bUpdateAnaTA_SC = Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing)
-  
+  If Not Updated("AnaTA_SF") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSF).Range) Is Nothing), "AnaTA_SF"
+  If Not Updated("AnaTA_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaTA_SL"
+  If Not Updated("AnaTA_SC") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing), "AnaTA_SC"
+
   'Update the choices and percentage on graph table
   If Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTS).ListColumns(2).DataBodyRange) Is Nothing) Then
       AddGraphOptions Target
   End If
+End Sub
+
+Private Sub Worksheet_Deactivate()
+    sheetLists.Range("LastWorkSheet").Value = Me.Name
 End Sub
 
 

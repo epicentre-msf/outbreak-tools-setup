@@ -11,8 +11,11 @@ Option Explicit
 
 
 Private Sub Worksheet_Change(ByVal Target As Range)
-    If Not bUpdateExp Then bUpdateExp = Not (Intersect(Target, sheetExport.ListObjects(C_sTabExports).ListColumns(C_sExportHeaderLabelButton).Range) Is Nothing)
+    If Not Updated("Exp") Then UpdateValue Not (Intersect(Target, sheetExport.ListObjects(C_sTabExports).ListColumns(C_sExportHeaderLabelButton).Range) Is Nothing), "Exp"
 End Sub
 
 
 
+Private Sub Worksheet_Deactivate()
+    sheetLists.Range("LastWorkSheet").Value = Me.Name
+End Sub

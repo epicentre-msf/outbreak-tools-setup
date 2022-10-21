@@ -9,43 +9,8 @@ Public Const C_iStartLinesTrans As Integer = 5
 ' at every sheet level, on a worksheet_event call
 
 'Record updates for dictionary
-Public bUpdateDictVarName       As Boolean
-Public bUpdateDictMainLabel     As Boolean
-Public bUpdateDictSubLabel      As Boolean
-Public bUpdateDictNote          As Boolean
-Public bUpdateDictSheetName     As Boolean
-Public bUpdateDictMainSection   As Boolean
-Public bUpdateDictSubSection    As Boolean
-Public bUpdateDictFormula       As Boolean
-Public bUpdateDictMessage       As Boolean
-
-'Record updates for choices
-Public bUpdateChoiLabel         As Boolean
-
-'Record updates for Exports
-Public bUpdateExp               As Boolean
-
-'Record updates for Analysis
-Public bUpdateAnaGS_SL          As Boolean
-Public bUpdateAnaGS_SF          As Boolean
-
-Public bUpdateAnaUA_SC          As Boolean
-Public bUpdateAnaUA_SL          As Boolean
-Public bUpdateAnaUA_SF          As Boolean
-
-Public bUpdateAnaBA_SC          As Boolean
-Public bUpdateAnaBA_SL          As Boolean
-Public bUpdateAnaBA_SF          As Boolean
-
-Public bUpdateAnaTA_SC          As Boolean
-Public bUpdateAnaTA_SL          As Boolean
-Public bUpdateAnaTA_SF          As Boolean
-
-'Update for translation
-Public bUpdateTrans             As Boolean
 
 'Number of times we have run translations
-Public nbTimesTrans             As Long
 
 
 'Different string constants
@@ -65,6 +30,8 @@ Public Const C_sTabGTS                      As String = "Tab_Graph_TimeSeries"
 Public Const C_sSeries                      As String = "Series"
 Public Const C_sNo                          As String = "no"
 Public Const C_sTotal                       As String = "Total"
+Public Const C_sTabListOfChoicesNames       As String = "list_of_choices_names"
+Public Const C_sTabGeoVar                   As String = "geo_var_table"
 
 'Analysis dropdowns
 Public Const C_sModifyGS                    As String = "Add or remove rows of Global Summary"
@@ -78,6 +45,8 @@ Public Const C_sModifyGTS                   As String = "Add or remove rows to G
 'Different types of controls
 Public Const C_sDictControlChoice           As String = "choices"
 Public Const C_sDictControlCaseWhen         As String = "case_when"
+Public Const C_sDictControlGeo              As String = "geo"
+Public Const C_sDictControlHf               As String = "hf"
 
 'some types
 Public Const C_sDictTypeDate                As String = "date"
@@ -91,7 +60,7 @@ Public Const C_sDictHeaderNote              As String = "Note"
 Public Const C_sDictHeaderSheetName         As String = "Sheet Name"
 Public Const C_sDictHeaderMainSection       As String = "Main Section"
 Public Const C_sDictHeaderSubSection        As String = "Sub Section"
-Public Const C_sDictHeaderFormula           As String = "Formula"
+Public Const C_sDictHeaderFormula           As String = "Control Details"
 Public Const C_sDictHeaderMessage           As String = "Message"
 Public Const C_sDictHeaderType              As String = "Type"
 
