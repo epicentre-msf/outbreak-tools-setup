@@ -79,8 +79,8 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
     Dim namesCol As Long
     Dim namesRow As Long
 
-    Const choicesColumn As Byte = 13
-    Const choicesAnalysisCol As Byte = 5
+    Const choicesColumn As Byte = 14 'choice column in the dictionary
+    Const choicesAnalysisCol As Byte = 6
 
     'Range of the variable name column
     Set varRng = sheetDictionary.ListObjects(C_sTabDictionary).ListColumns(1).DataBodyRange

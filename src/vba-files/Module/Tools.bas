@@ -145,6 +145,12 @@ Public Sub AddRowsGTS()
 
 End Sub
 
+Public Sub AddRowsGTSLab()
+
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTSLab)
+
+End Sub
+
 'resize the tables (delete empty rows at the bottom)----------------------------
 
 'Resize the dictionary table object
@@ -190,6 +196,10 @@ Public Sub RemoveRowsGTS()
     ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTS), AddRows:=False
 End Sub
 
+Public Sub RemoveRowsGTSLab()
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTSLab), AddRows:=False
+End Sub
+
 Public Sub AddRowsAna()
 
     BeginWork
@@ -219,6 +229,10 @@ Public Sub AddRowsAna()
     Case C_sModifyGTS
 
         Call AddRowsGTS
+    
+    Case C_sModifyGTSLab
+    
+        AddRowsGTSLab
 
     Case Else
 
@@ -227,6 +241,7 @@ Public Sub AddRowsAna()
         AddRowsBA
         AddRowsTA
         AddRowsGTS
+        AddRowsGTSLab
         AddRowsSA
 
     End Select
@@ -265,6 +280,10 @@ Public Sub RemoveRowsAna()
     Case C_sModifyGTS
 
         Call RemoveRowsGTS
+        
+    Case C_sModifyGTSLab
+        
+        Call RemoveRowsGTSLab
 
     'Spatial Analysis
     Case C_sModifySA
@@ -277,6 +296,7 @@ Public Sub RemoveRowsAna()
         RemoveRowsBA
         RemoveRowsTA
         RemoveRowsGTS
+        RemoveRowsGTSLab
         RemoveRowsSA
 
     End Select
@@ -457,15 +477,17 @@ Public Sub AddGraphOptions(Rng As Range)
     Dim tsGroupBy As String
     Dim tsAddPerc As String
     Dim tsAddTotal As String
+    Dim tsTimeVar As String
 
     'Constants for columns on time series table
     Const tsGroupByColumn As Byte = 5
     Const tsAddPercColumn As Byte = 9
     Const tsAddTotalColumn As Byte = 10
+    Const tsTimeVarColumn As Byte = 4
 
     'Contants for columns on graph table
-    Const graphPercColumn As Byte = 6
-    Const graphChoicesColumn As Byte = 5
+    Const graphPercColumn As Byte = 8
+    Const graphChoicesColumn As Byte = 6
 
     graphRow = Rng.Row
     graphCol = Rng.Column
@@ -495,6 +517,19 @@ Public Sub AddGraphOptions(Rng As Range)
         tsGroupBy = .Cells(tsRow, tsGroupByColumn).Value
         tsAddPerc = .Cells(tsRow, tsAddPercColumn).Value
         tsAddTotal = .Cells(tsRow, tsAddTotalColumn).Value
+        tsTimeVar = .Cells(tsRow, tsTimeVarColumn).Value
+        
+        
+        'Add the time variable and the group by variable
+        With .Cells(graphRow, graphCol)
+            .Offset(, 1).Value = tsTimeVar
+            .Offset(, 2).Value = tsGroupBy
+            .Offset(, 1).Font.Color = RGB(127, 127, 127)
+            .Offset(, 2).Font.Color = RGB(127, 127, 127)
+            .Offset(, 1).Font.Italic = True
+            .Offset(, 2).Font.Italic = True
+        End With
+        
     End With
 
     'Set validation on percentage
@@ -511,6 +546,7 @@ Public Sub AddGraphOptions(Rng As Range)
             .Locked = True
         End If
     End With
+
 
     'Add the choices
     AddChoices tsGroupBy, graphRow, tsAddTotal
@@ -529,4 +565,33 @@ errHand:
     EndWork
     Exit Sub
 
+End Sub
+
+'Clear names on graph on time series related to dropdowns
+
+Public Sub ClearDropdowns()
+    
+    Dim counter As Long
+    Dim listChoices As String
+    Dim listChoiceLo As ListObject
+    
+    
+    'remove the names related to all the choices in the workbook, for future uses.
+    
+    Set listChoiceLo = sheetLists.ListObjects(C_sTabListOfChoicesNames)
+    If listChoiceLo.DataBodyRange Is Nothing Then Exit Sub
+    
+    For counter = 1 To listChoiceLo.DataBodyRange.Rows.Count
+        
+        listChoices = sheetLists.Cells(counter + 1, listChoiceLo.DataBodyRange.Column).Value
+        
+        On Error Resume Next
+            ThisWorkbook.Names(listChoices).Delete
+        On Error GoTo 0
+        
+    Next
+    
+    sheetChoicesLists.Cells.Clear
+    
+    MsgBox "Done!"
 End Sub

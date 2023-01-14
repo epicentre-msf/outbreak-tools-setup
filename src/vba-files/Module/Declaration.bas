@@ -21,6 +21,7 @@ Public Const C_sTabExports                  As String = "Tab_Export"
 Public Const C_sTabGS                       As String = "Tab_Global_Summary"
 Public Const C_sTabUA                       As String = "Tab_Univariate_Analysis"
 Public Const C_sTabBA                       As String = "Tab_Bivariate_Analysis"
+Public Const C_sTabGTSLab                   As String = "Tab_Label_TSGraph"
 Public Const C_sTabVarList                  As String = "var_list_table"
 Public Const C_sTabTimeVar                  As String = "dates_var_table"
 Public Const C_sTabTranslations             As String = "Tab_Translations"
@@ -40,6 +41,7 @@ Public Const C_sModifyBA                    As String = "Add or remove rows of B
 Public Const C_sModifySA                    As String = "Add or remove rows of Spatial Analysis"
 Public Const C_sModifyTA                    As String = "Add or remove rows of Time Series Analysis"
 Public Const C_sModifyGTS                   As String = "Add or remove rows to Graph on Time Series"
+Public Const C_sModifyGTSLab                As String = "Add or remove rows to Graph on Time Series Labels"
 
 
 'Different types of controls
