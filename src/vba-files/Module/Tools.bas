@@ -188,7 +188,7 @@ Public Sub RemoveRowsSA()
 End Sub
 
 Public Sub RemoveRowsTA()
-    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False, totalRowCount:=1
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabTA), AddRows:=False, totalRowCount:=2
 
 End Sub
 
@@ -363,7 +363,7 @@ Sub UpdateVariablesList()
         For i = Rng.Row + 1 To iDictLength
 
             If .Cells(i, iControlColumn).Value = C_sDictControlChoice Or _
-                .Cells(i, iControlColumn).Value = C_sDictControlCaseWhen Then
+                .Cells(i, iControlColumn).Value = C_sDictControlChoiceForm Then
                 j = j + 1
                 sheetLists.Cells(j, iListVarColumn).Value = .Cells(i, iVarColumn).Value
             End If
@@ -469,6 +469,7 @@ Public Sub AddGraphOptions(Rng As Range)
 
     'Values of row, column and serie for the graph Table
     Dim graphRow As Long
+    Dim loRow As Long
     Dim graphCol As Integer
     Dim graphSerie As String
 
@@ -493,14 +494,27 @@ Public Sub AddGraphOptions(Rng As Range)
     graphCol = Rng.Column
     graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
 
-    If graphSerie = vbNullString Then Exit Sub
-
 
     On Error GoTo errHand
     ActiveSheet.Unprotect C_sPassword
-
+    
+    'Events are stoped in the BeginWork process
+    
     BeginWork
     Application.Cursor = xlIBeam
+    
+    If graphSerie = vbNullString Then
+        
+        With ActiveSheet.ListObjects(C_sTabGTS)
+            loRow = graphRow - .HeaderRowRange.Row
+            .ListRows(loRow).Range.Offset(, 1).Value = ""
+        End With
+        
+        ProtectSheet
+        Application.Cursor = xlDefault
+        EndWork
+        Exit Sub
+    End If
 
     With sheetAnalysis
         'remove previous data validation

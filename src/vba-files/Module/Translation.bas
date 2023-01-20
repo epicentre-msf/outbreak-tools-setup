@@ -188,6 +188,7 @@ Sub WriteAnalysis()
     If Updated("AnaUA_SC") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSC, sColName:=C_sAnaHeaderSC
     If Updated("AnaUA_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
     If Updated("AnaUA_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
+    
 
     'Bivariate analysis column
     sIndicator = "AnaBA"

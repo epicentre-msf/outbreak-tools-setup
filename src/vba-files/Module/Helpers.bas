@@ -75,11 +75,12 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
     Dim LoRng As Range
     Dim choiRng As Range
     Dim varRng As Range
+    Dim varRow As Long
     Dim listRng As Range
     Dim namesCol As Long
     Dim namesRow As Long
 
-    Const choicesColumn As Byte = 14 'choice column in the dictionary
+    Const choicesColumn As Byte = 14 'choice column in the dictionary (control details)
     Const choicesAnalysisCol As Byte = 6
 
     'Range of the variable name column
@@ -90,9 +91,15 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
 
     'If you can't find the variable name, just exist
     If varRng.Find(What:=sVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
+    varRow = varRng.Find(What:=sVarName, lookAt:=xlWhole, MatchCase:=True).Row
 
     'Get the choice corresponding to the variable
-    sChoice = sheetDictionary.Cells(varRng.Find(What:=sVarName, lookAt:=xlWhole, MatchCase:=True).Row, choicesColumn)
+    sChoice = sheetDictionary.Cells(varRow, choicesColumn)
+    
+    'If the choice is a choice_formula, I need to extract the choice name from the formula
+    If sheetDictionary.Cells(varRow, choicesColumn - 1).Value = "choice_formula" Then
+        sChoice = Replace(Split(sChoice, ",")(0), "CHOICE_FORMULA(", "")
+    End If
 
     'If you can't find the corresponding choice in the choice sheet, do nothing and just exit
     If choiRng.Find(What:=sChoice, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
@@ -161,5 +168,11 @@ Public Sub UpdateValue(ByVal Condition As Boolean, ByVal rngName As String)
         sheetLists.Range(rngName).Value = "Not Updated"
     End If
 End Sub
+
+
+'Time Series Header
+Public Function TSHeader(ByVal timeVar As String, ByVal colVar As String, ByVal labelValue As String) As String
+
+End Function
 
 

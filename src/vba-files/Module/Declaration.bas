@@ -45,7 +45,8 @@ Public Const C_sModifyGTSLab                As String = "Add or remove rows to G
 
 
 'Different types of controls
-Public Const C_sDictControlChoice           As String = "choices"
+Public Const C_sDictControlChoice           As String = "choice_manual"
+Public Const C_sDictControlChoiceForm       As String = "choice_formula"
 Public Const C_sDictControlCaseWhen         As String = "case_when"
 Public Const C_sDictControlGeo              As String = "geo"
 Public Const C_sDictControlHf               As String = "hf"
