@@ -80,6 +80,9 @@ Public Const C_sExportHeaderLabelButton     As String = "Label Button"
 Public Const C_sAnaHeaderSF                 As String = "Summary Function"
 Public Const C_sAnaHeaderSL                 As String = "Summary Label"
 Public Const C_sAnaHeaderSC                 As String = "Section"
+Public Const C_sAnaHeaderGL                 As String = "Label"
+Public Const C_sAnaHeaderGT                 As String = "Graph Title"
+
 
 
 

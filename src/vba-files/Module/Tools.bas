@@ -146,8 +146,11 @@ Public Sub AddRowsGTS()
 End Sub
 
 Public Sub AddRowsGTSLab()
+    Dim IdRange As Range
 
     ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTSLab)
+    Set IdRange = sheetAnalysis.ListObjects(C_sTabGTSLab).ListColumns(1).DataBodyRange
+    AddID IdRange, sChar:="Graph"
 
 End Sub
 
@@ -197,7 +200,7 @@ Public Sub RemoveRowsGTS()
 End Sub
 
 Public Sub RemoveRowsGTSLab()
-    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTSLab), AddRows:=False
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTSLab), AddRows:=False, totalRowCount:=1
 End Sub
 
 Public Sub AddRowsAna()
@@ -432,6 +435,10 @@ Sub SetAllUpdates(Optional toValue As Boolean = True)
      UpdateValue toValue, "AnaTA_SF"
 
 
+     UpdateValue toValue, "AnaGTS_GL"
+     UpdateValue toValue, "AnaGTS_GT"
+
+
 End Sub
 
 
@@ -470,7 +477,6 @@ Public Sub AddGraphOptions(Rng As Range)
     'Values of row, column and serie for the graph Table
     Dim graphRow As Long
     Dim loRow As Long
-    Dim graphCol As Integer
     Dim graphSerie As String
 
     'Values of row, column and serie for the Time series table
@@ -482,16 +488,16 @@ Public Sub AddGraphOptions(Rng As Range)
 
     'Constants for columns on time series table
     Const tsGroupByColumn As Byte = 5
-    Const tsAddPercColumn As Byte = 9
-    Const tsAddTotalColumn As Byte = 10
+    Const tsAddPercColumn As Byte = 10
+    Const tsAddTotalColumn As Byte = 11
     Const tsTimeVarColumn As Byte = 4
 
     'Contants for columns on graph table
-    Const graphPercColumn As Byte = 8
-    Const graphChoicesColumn As Byte = 6
+    Const graphPercColumn As Byte = 10
+    Const graphChoicesColumn As Byte = 8
+    Const graphCol As Byte = 3
 
     graphRow = Rng.Row
-    graphCol = Rng.Column
     graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
 
 
@@ -524,7 +530,7 @@ Public Sub AddGraphOptions(Rng As Range)
         .Cells(graphRow, graphChoicesColumn).Value = ""
 
         'Corresponding row in the time series table
-
+        Debug.Print graphSerie
         tsRow = CInt(Application.WorksheetFunction.Trim(Replace(graphSerie, C_sSeries, ""))) + _
                 .ListObjects(C_sTabTA).Range.Row
 
@@ -532,17 +538,6 @@ Public Sub AddGraphOptions(Rng As Range)
         tsAddPerc = .Cells(tsRow, tsAddPercColumn).Value
         tsAddTotal = .Cells(tsRow, tsAddTotalColumn).Value
         tsTimeVar = .Cells(tsRow, tsTimeVarColumn).Value
-        
-        
-        'Add the time variable and the group by variable
-        With .Cells(graphRow, graphCol)
-            .Offset(, 1).Value = tsTimeVar
-            .Offset(, 2).Value = tsGroupBy
-            .Offset(, 1).Font.Color = RGB(127, 127, 127)
-            .Offset(, 2).Font.Color = RGB(127, 127, 127)
-            .Offset(, 1).Font.Italic = True
-            .Offset(, 2).Font.Italic = True
-        End With
         
     End With
 

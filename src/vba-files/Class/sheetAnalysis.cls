@@ -37,8 +37,14 @@ Private Sub Worksheet_Change(ByVal Target As Range)
   If Not Updated("AnaTA_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaTA_SL"
   If Not Updated("AnaTA_SC") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabTA).ListColumns(C_sAnaHeaderSC).Range) Is Nothing), "AnaTA_SC"
 
+
+  'Graph on time series labels and title
+  If Not Updated("AnaGTS_GL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTS).ListColumns(C_sAnaHeaderGL).Range) Is Nothing), "AnaGTS_GL"
+  If Not Updated("AnaGTS_GT") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTSLab).ListColumns(C_sAnaHeaderGT).Range) Is Nothing), "AnaGTS_GT"
+
+
   'Update the choices and percentage on graph table
-  If Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTS).ListColumns(2).DataBodyRange) Is Nothing) Then
+  If Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGTS).ListColumns(4).DataBodyRange) Is Nothing) Then
       AddGraphOptions Target
   End If
 End Sub

@@ -33,7 +33,7 @@ Sub SetValidation(oRange As Range, sValidList As String, sAlertType As Byte, Opt
         .InputTitle = ""
         .errorTitle = ""
         .InputMessage = ""
-        .ErrorMessage = sMessage
+        .errorMessage = sMessage
         .ShowInput = True
         .ShowError = True
     End With
@@ -81,7 +81,7 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
     Dim namesRow As Long
 
     Const choicesColumn As Byte = 14 'choice column in the dictionary (control details)
-    Const choicesAnalysisCol As Byte = 6
+    Const choicesAnalysisCol As Byte = 8 'choice column in the analysis table
 
     'Range of the variable name column
     Set varRng = sheetDictionary.ListObjects(C_sTabDictionary).ListColumns(1).DataBodyRange
@@ -171,8 +171,34 @@ End Sub
 
 
 'Time Series Header
-Public Function TSHeader(ByVal timeVar As String, ByVal colVar As String, ByVal labelValue As String) As String
+Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal colVar As String, ByVal labelValue As String) As String
 
+    Application.Volatile
+    
+    Dim dict As ILLdictionary
+    Dim vars As ILLVariables
+    Dim timeVarLabel As String
+    Dim colVarLabel As String
+    Dim headerLabel As String
+    
+    On Error GoTo Err
+    
+    'Get the label of the time variable in the dictionary
+    Set dict = LLdictionary.Create(sheetDictionary, 4, 1)
+    Set vars = LLVariables.Create(dict)
+    timeVarLabel = vars.Value(varName:=timeVar, colName:="Main Label")
+    colVarLabel = vars.Value(varName:=colVar, colName:="Main Label")
+    
+    If timeVarLabel <> vbNullString Then
+        If colVar = vbNullString Then
+            headerLabel = labelValue & " v.s " & timeVarLabel
+        Else
+            headerLabel = colVarLabel & " v.s " & timeVarLabel & " (" & labelValue & ")"
+        End If
+    End If
+    
+Err:
+    TimeSeriesHeader = headerLabel
 End Function
 
 

@@ -204,7 +204,15 @@ Sub WriteAnalysis()
     If Updated("AnaTA_SL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSL, sColName:=C_sAnaHeaderSL
     If Updated("AnaTA_SF") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderSF, sColName:=C_sAnaHeaderSF, ContainsFormula:=True
 
-    Set AnaLo = Nothing
+    'Graph on Time series label column
+    Set AnaLo = sheetAnalysis.ListObjects(C_sTabGTS)
+    sIndicator = "AnaGTS"
+    If Updated("AnaGTS_GL") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderGL, sColName:=C_sAnaHeaderGL
+
+    'Label for graph on time series analysis
+    Set AnaLo = sheetAnalysis.ListObjects(C_sTabGTSLab)
+    If Updated("AnaGTS_GT") Then WriteSheetColumn Lo:=AnaLo, sIndicator:=sIndicator & C_sAnaHeaderGT, sColName:=C_sAnaHeaderGT
+
 
 End Sub
 
@@ -412,6 +420,8 @@ Sub DeleteUnfoundLabels(iColStart As Integer, iStartRow, iLastRow As Long)
                 (Updated("AnaTA_SC") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSC) > 0) Or _
                 (Updated("AnaTA_SL") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSL) > 0) Or _
                 (Updated("AnaTA_SF") And InStr(1, sValue, "AnaTA" & C_sAnaHeaderSF) > 0) Or _
+                (Updated("AnaGTS_GL") And InStr(1, sValue, "AnaGTS" & C_sAnaHeaderGL) > 0) Or _
+                (Updated("AnaGTS_GT") And InStr(1, sValue, "AnaGTS" & C_sAnaHeaderGT) > 0) Or _
                 sValue = vbNullString
         End If
 
@@ -431,16 +441,6 @@ End Sub
 
 Sub UpdateTranslation()
     Dim test As Byte
-
-    ' If NoUpdate() Then
-
-    '     Test = MsgBox("You haven't done any update, but you want to re-import translation labels. Do you really want to re-import all values ?", vbYesNo)
-
-    '     If Test = vbYes Then
-    '         SetAllUpdates (True)
-    '     End If
-    ' End If
-
     Call AddLabelsToTranslationTable
 End Sub
 
