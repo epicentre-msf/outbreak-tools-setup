@@ -196,7 +196,7 @@ Public Sub RemoveRowsTA()
 End Sub
 
 Public Sub RemoveRowsGTS()
-    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTS), AddRows:=False
+    ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGTS), AddRows:=False, totalRowCount:=4
 End Sub
 
 Public Sub RemoveRowsGTSLab()
@@ -508,19 +508,6 @@ Public Sub AddGraphOptions(Rng As Range)
     
     BeginWork
     Application.Cursor = xlIBeam
-    
-    If graphSerie = vbNullString Then
-        
-        With ActiveSheet.ListObjects(C_sTabGTS)
-            loRow = graphRow - .HeaderRowRange.Row
-            .ListRows(loRow).Range.Offset(, 1).Value = ""
-        End With
-        
-        ProtectSheet
-        Application.Cursor = xlDefault
-        EndWork
-        Exit Sub
-    End If
 
     With sheetAnalysis
         'remove previous data validation
