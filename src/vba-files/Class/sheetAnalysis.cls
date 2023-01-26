@@ -21,6 +21,8 @@ End Sub
 
 Private Sub Worksheet_Change(ByVal Target As Range)
 
+ Me.Calculate
+
   If Not Updated("AnaGS_SL") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSL).Range) Is Nothing), "AnaGS_SL"
   If Not Updated("AnaGS_SF") Then UpdateValue Not (Intersect(Target, sheetAnalysis.ListObjects(C_sTabGS).ListColumns(C_sAnaHeaderSF).Range) Is Nothing), "AnaGS_SF"
 
