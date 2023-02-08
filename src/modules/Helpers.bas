@@ -17,7 +17,7 @@ End Function
 'Set a validation on a range
 Sub SetValidation(oRange As Range, sValidList As String, sAlertType As Byte, Optional sMessage As String = vbNullString)
 
-    With oRange.Validation
+    With oRange.validation
         .Delete
         Select Case sAlertType
         Case 1                                   '"error"
@@ -134,10 +134,10 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
         'Add dynamic name for the choice
         'First delete the name if it exists
         On Error Resume Next
-            ThisWorkbook.Names(sChoice).Delete
+            ThisWorkbook.NAMES(sChoice).Delete
         On Error GoTo 0
 
-        ThisWorkbook.Names.Add Name:=sChoice, RefersToR1C1:="=" & sListObjectName & "[" & sChoice & "]"
+        ThisWorkbook.NAMES.Add Name:=sChoice, RefersToR1C1:="=" & sListObjectName & "[" & sChoice & "]"
         'The listobject already exists, we will only focus on updating the choice
         With sheetLists
             Set listRng = .ListObjects(C_sTabListOfChoicesNames).Range

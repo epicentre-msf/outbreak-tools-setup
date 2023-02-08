@@ -82,7 +82,7 @@ End Sub
 
 'Add id to a range
 
-Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
+Public Sub AddID(rng As Range, Optional sChar As String = "ID")
 
     'Increment a counter and write the values in each cells (ID_1, ID_2, etc.)
     Dim counter As Long
@@ -91,7 +91,7 @@ Public Sub AddID(Rng As Range, Optional sChar As String = "ID")
 
     ActiveSheet.Unprotect C_sPassword
 
-    For Each c In Rng
+    For Each c In rng
         c.Value = sChar & " " & counter
         counter = counter + 1
     Next
@@ -325,21 +325,21 @@ Sub UpdateVariablesList()
     Dim iListVarColumn As Integer
     Dim iTimeVarColumn As Integer
     Dim geoColumn As Long
-    Dim Rng As Range
+    Dim rng As Range
 
 
     BeginWork
 
-    Set Rng = sheetDictionary.ListObjects(C_sTabDictionary).HeaderRowRange
+    Set rng = sheetDictionary.ListObjects(C_sTabDictionary).HeaderRowRange
 
-    If Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
-         Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
-         Rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+    If rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
+         rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
+         rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
         Exit Sub
     Else
-        iVarColumn = Rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True).Column
-        iControlColumn = Rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True).Column
-        iTypeColumn = Rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True).Column
+        iVarColumn = rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True).Column
+        iControlColumn = rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True).Column
+        iTypeColumn = rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True).Column
     End If
 
     With sheetDictionary
@@ -363,7 +363,7 @@ Sub UpdateVariablesList()
     k = 1
     l = 1
     With sheetDictionary
-        For i = Rng.Row + 1 To iDictLength
+        For i = rng.Row + 1 To iDictLength
 
             If .Cells(i, iControlColumn).Value = C_sDictControlChoice Or _
                 .Cells(i, iControlColumn).Value = C_sDictControlChoiceForm Then
@@ -472,7 +472,7 @@ End Function
 
 'Add options for the graphs (Choices, Percentages, etc.)
 'depending on choices on series
-Public Sub AddGraphOptions(Rng As Range)
+Public Sub AddGraphOptions(rng As Range)
 
     'Values of row, column and serie for the graph Table
     Dim graphRow As Long
@@ -497,7 +497,7 @@ Public Sub AddGraphOptions(Rng As Range)
     Const graphChoicesColumn As Byte = 8
     Const graphCol As Byte = 3
 
-    graphRow = Rng.Row
+    graphRow = rng.Row
     graphSerie = sheetAnalysis.Cells(graphRow, graphCol).Value
 
 
@@ -511,8 +511,8 @@ Public Sub AddGraphOptions(Rng As Range)
 
     With sheetAnalysis
         'remove previous data validation
-        .Cells(graphRow, graphPercColumn).Validation.Delete
-        .Cells(graphRow, graphChoicesColumn).Validation.Delete
+        .Cells(graphRow, graphPercColumn).validation.Delete
+        .Cells(graphRow, graphChoicesColumn).validation.Delete
         .Cells(graphRow, graphPercColumn).Value = ""
         .Cells(graphRow, graphChoicesColumn).Value = ""
 
@@ -582,7 +582,7 @@ Public Sub ClearDropdowns()
         listChoices = sheetLists.Cells(counter + 1, listChoiceLo.DataBodyRange.Column).Value
         
         On Error Resume Next
-            ThisWorkbook.Names(listChoices).Delete
+            ThisWorkbook.NAMES(listChoices).Delete
         On Error GoTo 0
         
     Next

@@ -21,7 +21,7 @@ Private Type TDictionary
     dictDataSheet As IDataSheet                  'Worksheet data of the dictionary
 End Type
 
-Private this As TDictionary
+Private This As TDictionary
 Private DICTIONARYCOLUMNS As BetterArray
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
@@ -47,11 +47,11 @@ End Property
 
 'Data sheet
 Public Property Get Data() As IDataSheet
-    Set Data = this.dictDataSheet
+    Set Data = This.dictDataSheet
 End Property
 
 Friend Property Set Data(ByVal customDataSheet As IDataSheet)
-    Set this.dictDataSheet = customDataSheet
+    Set This.dictDataSheet = customDataSheet
 End Property
 
 'Worksheet
@@ -187,11 +187,11 @@ Private Sub Clean()
     Dim endCol As Long
     Dim counter As Long
     Dim dictWksh As Worksheet
-    Dim Rng As Range
+    Dim rng As Range
 
     Set dictWksh = Wksh()
-    Set Rng = dictWksh.UsedRange
-    counter = Rng.Column + Rng.Columns.Count - 1
+    Set rng = dictWksh.UsedRange
+    counter = rng.Column + rng.Columns.Count - 1
     
     With dictWksh
         Do While counter >= 1
@@ -394,7 +394,7 @@ End Sub
 Private Sub Export(ByVal wkb As Workbook, Optional ByVal exportType As String = "__all__")
 
     Dim dictData As IDataSheet
-    Dim Rng As Range
+    Dim rng As Range
     Dim sh As Worksheet
     Dim sheetName As String
 
@@ -408,12 +408,12 @@ Private Sub Export(ByVal wkb As Workbook, Optional ByVal exportType As String = 
     sheetName = Wksh.Name
 
     Set sh = wkb.Worksheets(sheetName)
-    Set Rng = DataRange(includeHeaders:=True)
-    Set Rng = sh.Range(Rng.Address)
+    Set rng = DataRange(includeHeaders:=True)
+    Set rng = sh.Range(rng.Address)
 
     'Add a listObject to the dictionary (for compatibility purposes with previous codes)
     With sh
-        .ListObjects.Add(xlSrcRange, Rng, , xlYes).Name = "o" & LCase(sheetName)
+        .ListObjects.Add(xlSrcRange, rng, , xlYes).Name = "o" & LCase(sheetName)
         'prepare the dictionary
         .Cells(DictEndRow + 1, StartColumn).Font.Color = vbBlue
     End With

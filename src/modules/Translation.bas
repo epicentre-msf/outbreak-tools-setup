@@ -6,30 +6,30 @@ Public Responses As Byte
 'Write one value to the  translation table
 Sub WriteTranslate(sLabel As String, sIndicator As String, Optional iColStart As Integer = 2)
 
-    Dim Rng As Range
+    Dim rng As Range
     Dim iRow As Long
     Dim sLab As String
 
     Dim iLineWrite As Long
 
-    Set Rng = sheetTranslation.ListObjects(C_sTabTranslations).ListColumns(1).Range
+    Set rng = sheetTranslation.ListObjects(C_sTabTranslations).ListColumns(1).Range
 
-    If Application.WorksheetFunction.CountBlank(Rng) = Rng.Rows.Count - 1 Then
-        iLineWrite = Rng.Row + 1
+    If Application.WorksheetFunction.CountBlank(rng) = rng.Rows.Count - 1 Then
+        iLineWrite = rng.Row + 1
     Else
-        iLineWrite = Rng.Rows.Count + Rng.Row
+        iLineWrite = rng.Rows.Count + rng.Row
     End If
 
     sLab = Application.WorksheetFunction.Trim(sLabel)
-    If Not Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = Rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
+    If Not rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        iRow = rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
         sheetTranslation.Cells(iRow, iColStart - 1).Value = sIndicator & "_" & sheetLists.Range("nbtimes").Value
     Else
         sheetTranslation.Cells(iLineWrite, iColStart).Value = sLab
         sheetTranslation.Cells(iLineWrite, iColStart - 1).Value = sIndicator & "_" & sheetLists.Range("nbtimes").Value
     End If
 
-    Set Rng = Nothing
+    Set rng = Nothing
 End Sub
 
 'Split a formula to extract values inside the "", and add them to the translation table
@@ -56,17 +56,17 @@ Public Sub SplitAndWriteFormula(sFormula As String, sIndicator As String)
 End Sub
 
 'Extract values for one column with characters or formulas in it
-Sub WriteColumn(Rng As Range, sIndicator As String, Optional ContainsFormula As Boolean = False)
+Sub WriteColumn(rng As Range, sIndicator As String, Optional ContainsFormula As Boolean = False)
     Dim c As Range 'cell value
 
-    If Not Rng Is Nothing Then
+    If Not rng Is Nothing Then
 
         If ContainsFormula Then
-            For Each c In Rng
+            For Each c In rng
                 Call SplitAndWriteFormula(c.Value, sIndicator:=sIndicator)
             Next
         Else
-            For Each c In Rng
+            For Each c In rng
                 If Not c Is Nothing Then Call WriteTranslate(c.Value, sIndicator:=sIndicator)
             Next
         End If
@@ -95,7 +95,7 @@ Sub WriteSheetColumn(Lo As ListObject, sColName As String, sIndicator As String,
 
     iCol = HeaderRng.Find(What:=sColName, lookAt:=xlWhole).Column - HeaderRng.Column + 1
     Set ColumnRng = Lo.ListColumns(iCol).DataBodyRange
-    Call WriteColumn(Rng:=ColumnRng, sIndicator:=sIndicator, ContainsFormula:=ContainsFormula)
+    Call WriteColumn(rng:=ColumnRng, sIndicator:=sIndicator, ContainsFormula:=ContainsFormula)
 End Sub
 
 Sub WriteDictionary()
@@ -230,7 +230,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     Dim sMessage As String
     Dim iNbBLanks As Long
     Dim idelRow As Long
-    Dim Rng As Range
+    Dim rng As Range
     Dim RngSort As Range
 
     On Error GoTo errHand
@@ -292,16 +292,16 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
 
     With sheetTranslation
         .Cells(iRow - 1, iColStart - 1).Value = "TestValues"
-        Set Rng = Range(.Cells(iRow - 1, iColStart - 1), .Cells(iLastRow, iLastColumn))
+        Set rng = Range(.Cells(iRow - 1, iColStart - 1), .Cells(iLastRow, iLastColumn))
         Set RngSort = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iColStart))
     End With
 
-    Rng.Sort key1:=RngSort, Header:=xlYes, Orientation:=xlTopToBottom
+    rng.Sort key1:=RngSort, Header:=xlYes, Orientation:=xlTopToBottom
 
     With sheetTranslation
         iLastRow = .Cells(.Rows.Count, iColStart).End(xlUp).Row
-        Set Rng = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn))
-        .ListObjects.Add(xlSrcRange, Rng, , xlYes, , "TableStyleLight8").Name = C_sTabTranslations
+        Set rng = Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn))
+        .ListObjects.Add(xlSrcRange, rng, , xlYes, , "TableStyleLight8").Name = C_sTabTranslations
         Set TransLo = .ListObjects(C_sTabTranslations)
 
         Range(.Cells(iRow - 1, iColStart), .Cells(iLastRow, iLastColumn)).Locked = False
@@ -337,7 +337,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
     Call LockFirstColumn
     Call ProtectTranslationSheet
 
-    Set Rng = Nothing
+    Set rng = Nothing
     Set RngSort = Nothing
     Application.Cursor = xlDefault
     EndWork

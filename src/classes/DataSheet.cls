@@ -23,7 +23,7 @@ Private Type TDataSheet
     STARTCOL As Long                             'The column where the data starts (the first column is the column of the variable names.
 End Type
 
-Private this As TDataSheet
+Private This As TDataSheet
 
 Private Const CLASSNAME As String = "DataSheet"
 
@@ -50,29 +50,29 @@ End Property
 
 'Worksheet
 Public Property Get Wksh() As Worksheet
-    Set Wksh = this.dataWksh
+    Set Wksh = This.dataWksh
 End Property
 
 Friend Property Set Wksh(ByVal dataWksh As Worksheet)
-    Set this.dataWksh = dataWksh
+    Set This.dataWksh = dataWksh
 End Property
 
 'StartRow
 Public Property Get StartRow() As Long
-    StartRow = this.startLn
+    StartRow = This.startLn
 End Property
 
 Friend Property Let StartRow(ByVal dataStartRow As Long)
-    this.startLn = dataStartRow
+    This.startLn = dataStartRow
 End Property
 
 'StartColumn
 Public Property Get StartColumn() As Long
-    StartColumn = this.STARTCOL
+    StartColumn = This.STARTCOL
 End Property
 
 Friend Property Let StartColumn(ByVal dataStartColumn As Long)
-    this.STARTCOL = dataStartColumn
+    This.STARTCOL = dataStartColumn
 End Property
 
 'End row and columns of the dictionary
