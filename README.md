@@ -9,6 +9,7 @@ For documentations on how to use the setup file, please refer to the outbreak-to
 
 -` setup.xlsb` is the setup file with test data
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <button class="btn" style="width:50%"><i class="fa fa-download"></i> Download Latest version of setup</button>
 
