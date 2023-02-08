@@ -532,7 +532,7 @@ Public Sub AddGraphOptions(Rng As Range)
     With sheetAnalysis.Cells(graphRow, graphPercColumn)
         If tsAddPerc <> C_sNo Then
             .Locked = False
-            .Font.Color = vbBlack
+            .Font.Color = RGB(34, 96, 162)
             .Font.Italic = False
             SetValidation sheetAnalysis.Cells(graphRow, graphPercColumn), sValidList:="=" & "perc_values", sAlertType:=1
         Else
@@ -590,4 +590,12 @@ Public Sub ClearDropdowns()
     sheetChoicesLists.Cells.Clear
     
     MsgBox "Done!"
+End Sub
+
+
+Public Sub CheckSetup()
+End Sub
+
+Public Sub ImportSetup()
+    Imports.Show
 End Sub
