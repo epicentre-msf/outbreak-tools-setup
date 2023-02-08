@@ -9,4 +9,7 @@ For documentations on how to use the setup file, please refer to the outbreak-to
 
 -` setup.xlsb` is the setup file with test data
 
-[![Download Latest version of the setup](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/downloads.png)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb "Download setup")
+
+<button class="btn" style="width:50%"><i class="fa fa-download"></i> Download Latest version of setup</button>
+
+[Download Latest version of the setup](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb "Download setup")
