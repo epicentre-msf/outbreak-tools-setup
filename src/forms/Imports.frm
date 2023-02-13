@@ -13,5 +13,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 Option Explicit
 
+Private Sub ImportButton_Click()
+    ImportSetup
+End Sub
+
+Private Sub LoadButton_Click()
+    NewSetupPath
+End Sub

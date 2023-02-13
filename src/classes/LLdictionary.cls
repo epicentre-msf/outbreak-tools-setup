@@ -391,7 +391,7 @@ End Sub
 
 'Import and export subs
 'Export
-Private Sub Export(ByVal wkb As Workbook, Optional ByVal exportType As String = "__all__")
+Private Sub Export(ByVal Wkb As Workbook, Optional ByVal exportType As String = "__all__")
 
     Dim dictData As IDataSheet
     Dim rng As Range
@@ -400,14 +400,14 @@ Private Sub Export(ByVal wkb As Workbook, Optional ByVal exportType As String = 
 
     Set dictData = Data()
     If ColumnExists(exportType) Then
-        dictData.Export wkb, filteredVarName:=exportType
+        dictData.Export Wkb, filteredVarName:=exportType
     ElseIf exportType = "__all__" Then
-        dictData.Export wkb
+        dictData.Export Wkb
     End If
     
     sheetName = Wksh.Name
 
-    Set sh = wkb.Worksheets(sheetName)
+    Set sh = Wkb.Worksheets(sheetName)
     Set rng = DataRange(includeHeaders:=True)
     Set rng = sh.Range(rng.Address)
 

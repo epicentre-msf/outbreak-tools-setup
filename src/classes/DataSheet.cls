@@ -324,7 +324,7 @@ Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartc
 End Sub
 
 'Export
-Private Sub Export(ByVal wkb As Workbook, Optional ByVal filteredVarName As String = "__all__", _
+Private Sub Export(ByVal Wkb As Workbook, Optional ByVal filteredVarName As String = "__all__", _
                    Optional ByVal filteredCondition As String = "<>", Optional ByVal Hide As Long = xlSheetHidden)
 
     Dim dataExportData As BetterArray
@@ -333,20 +333,20 @@ Private Sub Export(ByVal wkb As Workbook, Optional ByVal filteredVarName As Stri
     Dim sheetDataExist As Boolean
 
     'Trace on errors on export
-    If wkb Is Nothing Then Exit Sub
+    If Wkb Is Nothing Then Exit Sub
     'Test if the sheet  exists in the workbook
     Set dataWksh = Wksh()
 
     On Error Resume Next
-    Set dataExportWksh = wkb.Worksheets(dataWksh.Name)
+    Set dataExportWksh = Wkb.Worksheets(dataWksh.Name)
     sheetDataExist = (Not dataExportWksh Is Nothing)
     On Error GoTo 0
 
     'Trace on errors on exports
     If sheetDataExist Then Exit Sub
-    wkb.Worksheets.Add(After:=wkb.Worksheets(wkb.Worksheets.Count)).Name = dataWksh.Name
+    Wkb.Worksheets.Add(After:=Wkb.Worksheets(Wkb.Worksheets.Count)).Name = dataWksh.Name
     Set dataExportData = New BetterArray
-    Set dataExportWksh = wkb.Worksheets(dataWksh.Name)
+    Set dataExportWksh = Wkb.Worksheets(dataWksh.Name)
 
     If filteredVarName = "__all__" Then
         dataExportData.FromExcelRange DataRange(colName:="__all__", includeHeaders:=True)
