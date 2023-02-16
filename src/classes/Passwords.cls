@@ -22,7 +22,7 @@ Private Type TPassWord
     sh As Worksheet
 End Type
 
-Private This As TPassWord
+Private this As TPassWord
 
 Private Const className As String = "Passwords"
 
@@ -36,11 +36,11 @@ Public Function Create(ByVal sh As Worksheet) As IPasswords
 End Function
 
 Public Property Get Wksh() As Worksheet
-    Set Wksh = This.sh
+    Set Wksh = this.sh
 End Property
 
 Public Property Set Wksh(ByVal sh As Worksheet)
-    Set This.sh = sh
+    Set this.sh = sh
 End Property
 
 Public Property Get Self() As IPasswords
@@ -127,7 +127,8 @@ End Sub
 'Requirements for instanciation
 Private Sub CheckRequirements(ByVal sh As Worksheet)
 
-    If sh Is Nothing Then ThrowError "Unable to instanciate, no password sheet"
+    If sh Is Nothing Then _
+     ThrowError "Unable to instanciate Password class because there is no sheet given"
 
     'Ranges in the linelist translation worksheet
     RangeExists rngName:="RNG_DebuggingPassword", sh:=sh
@@ -178,5 +179,3 @@ End Sub
 Public Sub IPasswords_UnProtectWkb(ByVal wb As Workbook)
     UnProtectWkb wb
 End Sub
-
-

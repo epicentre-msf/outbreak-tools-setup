@@ -33,7 +33,7 @@ Sub ResizeLo(Lo As ListObject, Optional AddRows As Boolean = True, Optional tota
     Set Wksh = ActiveSheet
 
     With Wksh
-        .Unprotect C_sPassword
+        .UnProtect C_sPassword
 
         'Rows and columns at the begining of the table to resize
         loRowHeader = Lo.Range.Row
@@ -89,7 +89,7 @@ Public Sub AddID(rng As Range, Optional sChar As String = "ID")
     Dim c As Range
     counter = 1
 
-    ActiveSheet.Unprotect C_sPassword
+    ActiveSheet.UnProtect C_sPassword
 
     For Each c In rng
         c.Value = sChar & " " & counter
@@ -502,7 +502,7 @@ Public Sub AddGraphOptions(rng As Range)
 
 
     On Error GoTo errHand
-    ActiveSheet.Unprotect C_sPassword
+    ActiveSheet.UnProtect C_sPassword
     
     'Events are stoped in the BeginWork process
     
@@ -592,10 +592,3 @@ Public Sub ClearDropdowns()
     MsgBox "Done!"
 End Sub
 
-
-Public Sub CheckSetup()
-End Sub
-
-Public Sub ImportSetup()
-    Imports.Show
-End Sub

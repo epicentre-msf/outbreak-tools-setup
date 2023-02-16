@@ -20,8 +20,8 @@ Private Type TDropdownLists
     sh As Worksheet
 End Type
 
-Private This As TDropdownLists
-Private Const CLASSNAME As String = "DropdownLists"
+Private this As TDropdownLists
+Private Const className As String = "DropdownLists"
 
 Public Function Create(ByVal outsh As Worksheet) As IDropdownLists
     'Errors
@@ -39,11 +39,11 @@ Public Property Get Self() As IDropdownLists
 End Property
 
 Public Property Get Wksh() As Worksheet
-    Set Wksh = This.sh
+    Set Wksh = this.sh
 End Property
 
 Public Property Set Wksh(ByVal outsh As Worksheet)
-    Set This.sh = outsh
+    Set this.sh = outsh
 End Property
 
 Private Property Get LastColumn() As Long
@@ -204,7 +204,7 @@ End Sub
 
 'Errors
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
 End Sub
 
 'Exposed methods

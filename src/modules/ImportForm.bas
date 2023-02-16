@@ -21,12 +21,12 @@ Public Sub ImportSetup()
     Dim importPath As String
     Dim progObj As Object 'Progress label
     Dim importObj As ISetupImport 'Import Object
-    Dim pass As
+    Dim pass As IPasswords
 
 
     importDict = [Imports].DictionaryCheck.Value
     importAna = [Imports].AnalysisCheck.Value
-    importTrans = [Imports].TranslationCheck.Value
+    importTrans = [Imports].TranslationsCheck.Value
     importPath = Application.WorksheetFunction.Trim( _
                 Replace([Imports].LabPath, "Path: ", ""))
 
@@ -34,25 +34,22 @@ Public Sub ImportSetup()
 
     'freeze the pane for modifications
     [Imports].Enabled = False
+    [Imports].LabProgress.Caption = ""
 
 
     Set importObj = SetupImport.Create(importPath, progObj)
 
-    'Check import to be sure everything is fine (At least one import has to be made)
+    'Check import to be sure everything is fine (At least one import has to be made
+    'and the file is correct (without missing parts)
+    importObj.Check importDict, importAna, importTrans
 
-    importObj.CheckType importDict, importAna, importTrans
-    importObj.CheckFile
-
-    importObj.Prepare
-    importObj.Import pass
+    'importObj.Import pass
 
     'Check the conformity of current setup file for errors
     If [Imports].ConformityCheck.Value Then
 
     End If
 
-
-
-
+    [Imports].Enabled = True
 End Sub
 

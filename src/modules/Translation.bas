@@ -89,7 +89,7 @@ Sub WriteSheetColumn(Lo As ListObject, sColName As String, sIndicator As String,
 
     'Make a test and exit sub
     If HeaderRng.Find(What:=sColName, lookAt:=xlWhole) Is Nothing Then
-        MsgBox "Column " & sColName & " not found", vbOkOnly
+        MsgBox "Column " & sColName & " not found", vbOKOnly
         Exit Sub
     End If
 
@@ -237,7 +237,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
 
     BeginWork
     Application.Cursor = xlWait
-    sheetTranslation.Unprotect C_sPassword
+    sheetTranslation.UnProtect C_sPassword
 
     Set TransLo = sheetTranslation.ListObjects(C_sTabTranslations)
 
@@ -327,7 +327,7 @@ Sub AddLabelsToTranslationTable(Optional sType As String)
             MsgBox sMessage, vbCritical, "verification of translations"
         End If
     Else
-        MsgBox "All labels are translated, there is no missing label left", vbInformation + vbOkOnly, "DONE!"
+        MsgBox "All labels are translated, there is no missing label left", vbInformation + vbOKOnly, "DONE!"
     End If
 
     Call SetAllUpdates(toValue:=False)
