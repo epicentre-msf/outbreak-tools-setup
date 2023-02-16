@@ -3,7 +3,7 @@
 Download
 
 [![Download stable version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/stable_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb)
-[![Download development version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/dev/src/imgs/dev_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/dev/setup_dev.xlsb)
+[![Download development version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/dev_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/dev/setup_dev.xlsb)
 
 
 
