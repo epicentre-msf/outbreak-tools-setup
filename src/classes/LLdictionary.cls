@@ -404,7 +404,7 @@ Private Sub Export(ByVal Wkb As Workbook, Optional ByVal exportType As String = 
     ElseIf exportType = "__all__" Then
         dictData.Export Wkb
     End If
-    
+
     sheetName = Wksh.Name
 
     Set sh = Wkb.Worksheets(sheetName)
@@ -428,7 +428,6 @@ End Sub
 
 
 'Add a column to the dictionary
-
 Private Sub AddColumn(ByVal colName As String)
     Dim dictWksh As Worksheet
     Dim endCol As Long

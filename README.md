@@ -1,11 +1,13 @@
-## Create a setup for outbreak tools
+## Create a setup for [outbreak tools]((https://github.com/epicentre-msf/outbreak-tools)
 
-Download
-
+< div align = "center">
+<p algin = "center">
+Download:
+<hr />
 [![Download stable version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/stable_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb)
 [![Download development version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/dev_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/dev/setup_dev.xlsb)
-
-
+</p>
+</div>
 
 The setup file for [outbreak tools](https://github.com/epicentre-msf/outbreak-tools)
 For documentations on how to use the setup file, please refer to the outbreak-tools repo and documentation.
