@@ -1,7 +1,7 @@
 ## Create a setup for [outbreak tools]((https://github.com/epicentre-msf/outbreak-tools)
 
-< div align = "center">
-<p algin = "center">
+<div align="center">
+<p align="center">
 Download:
 <hr />
 [![Download stable version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/stable_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb)
