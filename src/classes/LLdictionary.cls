@@ -25,6 +25,7 @@ Private this As TDictionary
 Private DICTIONARYCOLUMNS As BetterArray
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
+Private Const PRESERVEDSHEETNAMES As BetterArray
 Private Const className As String = "ILLdictionary"
 
 Public Function Create(ByVal dictWksh As Worksheet, ByVal dictStartRow As Long, _
@@ -202,32 +203,6 @@ Private Sub Clean()
             counter = counter - 1
         Loop
     End With
-End Sub
-
-
-
-Private Sub GoodSheetNames(ByVal PreservedSheetsNames As BetterArray)
-    Dim dictWksh As Worksheet
-    Dim sheetNameIndex As Long
-
-    Dim EndRow As Long
-    Dim counter As Long
-
-    EndRow = DictEndRow
-    Set dictWksh = Wksh()
-    sheetNameIndex = ColumnIndex("sheet name")
-
-    If (PreservedSheetsNames Is Nothing) Then ClassArraysInitialize
-
-    With dictWksh
-        For counter = StartRow + 1 To EndRow
-            If PreservedSheetsNames.Includes(.Cells(counter, sheetNameIndex).Value) Then
-                .Cells(counter, sheetNameIndex).Value = .Cells(counter, sheetNameIndex).Value & "_"
-                'Trace here for logging
-            End If
-        Next
-    End With
-
 End Sub
 
 'Make unique variable names

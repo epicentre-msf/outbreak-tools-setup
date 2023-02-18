@@ -17,3 +17,5 @@ Attribute VB_Description = ""
 Option Explicit
 
 'Exposed methods
+Public Sub AddRows() : End Sub
+Public Sub RemoveRows(): End Sub

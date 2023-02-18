@@ -210,12 +210,12 @@ Private Function FilterData(ByVal varName As String, _
 
             'end row of data to return
             EndRow = StartRow + returnedRng.Cells.Count - 1 'cells.Count gives the number of cells, even in non contiguous ranges
-            
+
             retEndCol = endCol + 2 + returnedRng.Columns.Count - 1
-            
+
             'return column should be greather than endCol + 2. If it is not the case, there are empty lines causing that
             Set returnedRng = .Range(.Cells(StartRow, endCol + 2), .Cells(EndRow, retEndCol))
-            
+
             returnedData.FromExcelRange returnedRng, DetectLastRow:=False, _
                                         DetectLastColumn:=False
             returnedRng.Cells.Clear
@@ -297,22 +297,30 @@ End Function
 'Import Sub
 Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartcol As Long)
     Dim dataWksh As Worksheet
-    Dim dataImportData As BetterArray
+    Dim dataImportData As IDataSheet
     Dim strtcol As Long
     Dim strtrw As Long
     Dim col As Long
-    
+    Dim dataRng As Range
+
     strtcol = StartColumn()
     strtrw = StartRow()
-    
+
     'Trace on errors on import
     If (fromWksh Is Nothing) Or (fromStartRow <= 0) Or (fromStartcol <= 0) Then Exit Sub
+
     Set dataWksh = Wksh()
-    dataWksh.Cells.Clear
+    'Clear the data range of the current datasheet
+    Set dataRng = DataRange()
+    dataRng.ClearContents
+
+    'Import values columns by columns
+
+
     Set dataImportData = New BetterArray
     dataImportData.FromExcelRange fromWksh.Cells(fromStartRow, fromStartcol), DetectLastColumn:=True, DetectLastRow:=True
     dataImportData.ToExcelRange dataWksh.Cells(strtrw, strtcol)
-    
+
     'Change colnames to lowercase
     col = strtcol
     With dataWksh

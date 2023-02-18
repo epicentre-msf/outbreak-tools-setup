@@ -18,6 +18,8 @@ Option Explicit
 'Exposed methods
 Implements ISetupImport
 
+Private Const CLASSNAME As String = "SetupImport"
+
 Private Type TSetupImport
   inPath As String
   progress As Object
@@ -26,6 +28,9 @@ End Type
 Private this As TSetupImport
 
 Public Function Create(ByVal importPath As String, ByVal progrObj As Object)
+
+  'Error Management when creating the imports.
+  If (progrObj Is Nothing) Then ThrowError "Unable to initialize the class, information Object not found"
 
   With New SetupImport
     .Path = importPath
@@ -141,6 +146,12 @@ Private Sub Check(ByVal importDict As Boolean, _
 
 End Sub
 
+'Errors
+'Errors and checkings
+Private Sub ThrowError(ByVal errorMessage As String)
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
+End Sub
+
 'Check if a sheet with a given name is present in the provided workbook
 Private Sub CheckSheet(ByVal wb As Workbook, sheetName As String)
   Dim sh As Worksheet
@@ -156,11 +167,7 @@ Private Sub CheckSheet(ByVal wb As Workbook, sheetName As String)
     Exit Sub
   End If
 End Sub
-
-
 '-------- INTERFACE
 Public Sub ISetupImport_Check(ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
   CheckType dict, ana, trans
 End Sub
-
-
