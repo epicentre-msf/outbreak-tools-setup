@@ -20,7 +20,7 @@ The setup file is a configuration `.xlsb` file where you define the overall elem
 - The *Translation* sheet where you deal with languages to be used in the linelist.
 
 This repo is the setup file's repo for outbreak tools.
-For documentations on how to use the setup file, please refer to the outbreak-tools [documentation]().
+For documentations on how to use the setup file, please refer to the outbreak-tools [documentation](https://epicentre-msf.github.io/outbreak-tools).
 
 `- src` contains source files for the setup
 
