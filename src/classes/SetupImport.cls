@@ -23,6 +23,7 @@ Private Const CLASSNAME As String = "SetupImport"
 Private Type TSetupImport
   inPath As String
   progress As Object
+  inWb As Workbook
 End Type
 
 Private this As TSetupImport
@@ -82,6 +83,11 @@ Private Sub NotBusyApp()
   Application.Calculation = xlCalculationAutomatic
 
 End Sub
+
+Private Property Get ImportWkb() As Workbook
+  If this.inWb Is Nothing Then Set this.inWb = Workbooks.Open(Path())
+  Set ImportWkb = this.inWb
+End Property
 
 'Write a progress when importing the data
 Private Sub WriteProgress(ByVal numValue As Integer)
@@ -143,6 +149,34 @@ Private Sub Check(ByVal importDict As Boolean, _
 
   wb.Close saveChanges:=False
   NotBusyApp
+End Sub
+
+
+Private Sub ImportTheDictionary(ByVal pass As ILLPasswords)
+  Dim part As Object
+  Dim wb As Workbook
+  Dim sheetName As String
+  Dim sh As Worksheet
+  Dim shImp As Worksheet
+
+  'Import the dictionary
+  Set wb = ImportWkb()
+  sheetName = "Dictionary"
+  Set sh = ThisWorkbook.Worksheets(sheetName)
+  Set part = LLdictionary.Create(sh, 4, 1)
+  Set shImp = wb.Worksheets(sheetName)
+
+  part.Import shImp, pass
+  'Import the choices
+
+  'Import the exports
+
+End Sub
+
+'Import button
+Private Sub Import(ByVal pass As IPasswords, ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
+
+  If dict Then ImportTheDictionary pass
 
 End Sub
 
@@ -170,4 +204,8 @@ End Sub
 '-------- INTERFACE
 Public Sub ISetupImport_Check(ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
   CheckType dict, ana, trans
+End Sub
+
+Public Sub ISetupImport_Import(ByVal pass As IPasswords, ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
+  Import pass, dict, ana, trans
 End Sub

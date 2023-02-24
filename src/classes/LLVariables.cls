@@ -28,7 +28,7 @@ End Type
 
 Private this As TVariable
 Private Const VARIABLENAME As String = "Variable Name"
-Private Const className As String = "LLVariables"
+Private Const CLASSNAME As String = "LLVariables"
 
 Public Function Create(ByVal dict As ILLdictionary) As ILLVariables
 
@@ -68,7 +68,7 @@ Private Function Contains(ByVal varName As String) As Boolean
     If varName = vbNullString Then
         Exist = False
     Else
-        Exist = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        Exist = Not (varRng.Find(What:=varName, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
   
     Contains = Exist
@@ -81,7 +81,7 @@ Private Function RowIndex(ByVal varName As String) As Long
     rowNum = -1
     Set varRng = VarRange()
     If Contains(varName) Then
-        rowNum = varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True).Row
+        rowNum = varRng.Find(What:=varName, LookAt:=xlWhole, MatchCase:=True).Row
     End If
     RowIndex = rowNum
 End Function
@@ -141,7 +141,7 @@ End Sub
 
 'Errors ------------------------------------------------------------------------------------------------------------------------------------
 Private Sub ThrowErrorUnableInstanciateNoVarName()
-    Err.Raise VBA.vbObjectError + 513, className, "Unable to create an instance of the class variable, variable name column does not exists"
+    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class variable, variable name column does not exists"
 End Sub
 
 

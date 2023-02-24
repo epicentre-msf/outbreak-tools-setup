@@ -41,6 +41,11 @@ End Sub
 Public Sub Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
 End Sub
 
-Public Sub Translate(ByVal TransObject As ITranslation)
+'Add and remove rows
+Public Sub AddRows(ByVal pass As IPasswords)
 End Sub
+
+Public Sub RemoveRows(ByVal pass As IPasswords)
+End Sub
+
 

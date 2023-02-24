@@ -24,7 +24,7 @@ End Type
 
 Private this As TPassWord
 
-Private Const className As String = "Passwords"
+Private Const CLASSNAME As String = "Passwords"
 
 Public Function Create(ByVal sh As Worksheet) As IPasswords
     CheckRequirements sh
@@ -156,7 +156,7 @@ End Sub
 
 'Error
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 Public Property Get IPasswords_PassWord() As String

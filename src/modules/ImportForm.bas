@@ -32,10 +32,11 @@ Public Sub ImportSetup()
 
     Set progObj = [Imports].LabProgress
 
+    Set pass = Passwords.Create(ThisWorkbook.Worksheets("__pass"))
+
     'freeze the pane for modifications
     [Imports].Enabled = False
     [Imports].LabProgress.Caption = ""
-
 
     Set importObj = SetupImport.Create(importPath, progObj)
 
@@ -43,7 +44,7 @@ Public Sub ImportSetup()
     'and the file is correct (without missing parts)
     importObj.Check importDict, importAna, importTrans
 
-    'importObj.Import pass
+    importObj.Import pass
 
     'Check the conformity of current setup file for errors
     If [Imports].ConformityCheck.Value Then

@@ -25,8 +25,7 @@ Private this As TDictionary
 Private DICTIONARYCOLUMNS As BetterArray
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
-Private Const PRESERVEDSHEETNAMES As BetterArray
-Private Const className As String = "ILLdictionary"
+Private Const CLASSNAME As String = "ILLdictionary"
 
 Public Function Create(ByVal dictWksh As Worksheet, ByVal dictStartRow As Long, _
                        ByVal dictStartColumn As Long) As ILLdictionary
@@ -180,7 +179,7 @@ Private Function VariableExists(varName As String) As Boolean
     Dim varRng As Range
     Set varRng = DataRange("variable name")
 
-    VariableExists = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+    VariableExists = Not (varRng.Find(What:=varName, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
 End Function
 
 '------ Prepare and clean the dictionary
@@ -193,7 +192,7 @@ Private Sub Clean()
     Set dictWksh = Wksh()
     Set rng = dictWksh.UsedRange
     counter = rng.Column + rng.Columns.Count - 1
-    
+
     With dictWksh
         Do While counter >= 1
             If Not ColumnExists(.Cells(StartRow, counter).Value, checkValidity:=True) Then
@@ -395,12 +394,46 @@ Private Sub Export(ByVal Wkb As Workbook, Optional ByVal exportType As String = 
 End Sub
 
 'Import
-Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartcol As Long)
+Private Sub Import(ByVal fromWksh As Worksheet, pass As IPasswords)
+
+    'It should be a dictionary same as this one, so startrows and startcolumns should be the same
+    Dim strtrw As Long
+    Dim strtcol As Long
     Dim dictData As IDataSheet
+    Dim sh As Worksheet
+
     Set dictData = Data()
-    dictData.Import fromWksh, fromStartRow, fromStartcol
+    Set sh = Wksh()
+    strtrw = StartRow()
+    strtcol = StartCol()
+
+    'Now unprotect the worksheet before proceeding
+    pass.Unprotect sh.Name
+    dictData.Import fromWksh, strtrw, strtcol
+    pass.Protect sh.Name
 End Sub
 
+'Add or remove Rows to the dictionary
+'Add Rows
+Private Sub ManageRows(ByVal pass As IPasswords, Optional ByVal del As Boolean = False)
+    Dim sh As Worksheet
+    Dim Lo As ListObject
+    Dim tabl As ICustomTable
+
+    Set sh = Wksh()
+
+    On Error Resume Next
+    Set Lo = sh.ListObjects(1)
+    On Error GoTo 0
+    If Lo Is Nothing Then Exit Sub
+
+    Set tabl = CustomTable.Create(Lo)
+    If del Then
+        tabl.RemoveRows pass:=pass
+    Else
+        tabl.AddRows pass:=pass
+    End If
+End Sub
 
 'Add a column to the dictionary
 Private Sub AddColumn(ByVal colName As String)
@@ -415,7 +448,7 @@ End Sub
 
 'Throw Errors
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Execution Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Execution Error : " & errorMessage
 End Sub
 
 ' INTERFACE __________________________________________________________________________________________________________________________
@@ -452,17 +485,22 @@ Public Sub ILLdictionary_Clean()
     Clean
 End Sub
 
-Public Sub ILLdictionary_Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
-    Import fromWksh, fromStartRow, fromStartcol
+Public Sub ILLdictionary_Import(ByVal fromWksh As Worksheet, ByVal pass As IPasswords)
+    Import fromWksh :=fromWksh, pass := pass
 End Sub
 
 Public Sub ILLdictionary_Export(ByVal toWkb As Workbook, Optional ByVal exportType As String = "__all__")
     Export toWkb, exportType
 End Sub
 
-
 Public Sub ILLdictionary_AddColumn(ByVal colName As String)
     AddColumn colName
 End Sub
 
+Public Sub ILLdictionary_AddRows(ByVal pass As IPasswords)
+    ManageRows pass:=pass
+End Sub
 
+Public Sub ILLdictionary_RemoveRows(ByVal pass As IPasswords)
+    ManageRows pass:=pass, del:=True
+End Sub

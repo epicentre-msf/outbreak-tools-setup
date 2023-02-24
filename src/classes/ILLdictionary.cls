@@ -29,15 +29,20 @@ Public Function UniqueValues(ByVal colName As String) As BetterArray: End Functi
 Public Function VariableExists(ByVal varName As String) As Boolean: End Function
 
 Public Sub Clean(): End Sub
-Public Sub Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
+
+Public Sub Import(ByVal fromWksh As Worksheet, ByVal pass As IPasswords)
 End Sub
 
 Public Sub Export(ByVal toWkb As Workbook, Optional ByVal exportType As String = "__all__")
 End Sub
 
-
 'Add a column
 Public Sub AddColumn(ByVal colName As String)
 End Sub
 
+'Add and remove rows
+Public Sub AddRows(ByVal pass As IPasswords)
+End Sub
 
+Public Sub RemoveRows(ByVal pass As IPasswords)
+End Sub

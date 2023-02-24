@@ -21,8 +21,8 @@ Sub WriteTranslate(sLabel As String, sIndicator As String, Optional iColStart As
     End If
 
     sLab = Application.WorksheetFunction.Trim(sLabel)
-    If Not rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
-        iRow = rng.Find(What:=sLab, lookAt:=xlWhole, MatchCase:=True).Row
+    If Not rng.Find(What:=sLab, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+        iRow = rng.Find(What:=sLab, LookAt:=xlWhole, MatchCase:=True).Row
         sheetTranslation.Cells(iRow, iColStart - 1).Value = sIndicator & "_" & sheetLists.Range("nbtimes").Value
     Else
         sheetTranslation.Cells(iLineWrite, iColStart).Value = sLab
@@ -88,12 +88,12 @@ Sub WriteSheetColumn(Lo As ListObject, sColName As String, sIndicator As String,
     Set HeaderRng = Lo.HeaderRowRange
 
     'Make a test and exit sub
-    If HeaderRng.Find(What:=sColName, lookAt:=xlWhole) Is Nothing Then
+    If HeaderRng.Find(What:=sColName, LookAt:=xlWhole) Is Nothing Then
         MsgBox "Column " & sColName & " not found", vbOKOnly
         Exit Sub
     End If
 
-    iCol = HeaderRng.Find(What:=sColName, lookAt:=xlWhole).Column - HeaderRng.Column + 1
+    iCol = HeaderRng.Find(What:=sColName, LookAt:=xlWhole).Column - HeaderRng.Column + 1
     Set ColumnRng = Lo.ListColumns(iCol).DataBodyRange
     Call WriteColumn(rng:=ColumnRng, sIndicator:=sIndicator, ContainsFormula:=ContainsFormula)
 End Sub

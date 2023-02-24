@@ -21,7 +21,7 @@ Private Type TDropdownLists
 End Type
 
 Private this As TDropdownLists
-Private Const className As String = "DropdownLists"
+Private Const CLASSNAME As String = "DropdownLists"
 
 Public Function Create(ByVal outsh As Worksheet) As IDropdownLists
     'Errors
@@ -204,7 +204,7 @@ End Sub
 
 'Errors
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 'Exposed methods

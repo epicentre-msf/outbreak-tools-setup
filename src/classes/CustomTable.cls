@@ -2,13 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-
 Attribute VB_Name = "CustomTable"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Attribute VB_Description = ""
+
 
 '@Folder("Dictionary")
 '@ModuleDescription("")
@@ -17,14 +16,14 @@ Attribute VB_Description = ""
 Option Explicit
 Implements ICustomTable
 Private Type TCustomTable
-  lo As ListObject
+  Lo As ListObject
 End Type
 
 Private this As TCustomTable
 Private Const CLASSNAME As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
 
-Public Function Create(Byval lo As ListObject) As ICustomTable
+Public Function Create(ByVal Lo As ListObject) As ICustomTable
   If Lo Is Nothing Then ThrowError "Unable to initialize the class, no listobject provided"
 
   With New CustomTable
@@ -34,7 +33,7 @@ Public Function Create(Byval lo As ListObject) As ICustomTable
 End Function
 
 
-Private Property Self() As ICustomTable
+Public Property Get Self() As ICustomTable
   Set Self = Me
 End Property
 
@@ -42,16 +41,16 @@ End Property
 Private Function Wksh() As Worksheet
   Dim Lo As ListObject
   Set Lo = Table()
-  Wksh = Lo.Parent
+  Set Wksh = Lo.Parent
 End Function
 
 
 'Table listObject
 Public Property Get Table() As ListObject
-  Set Table = this.lo
+  Set Table = this.Lo
 End Property
 
-Public Property Set Table(ByVal lo As ListObject)
+Public Property Set Table(ByVal Lo As ListObject)
   Set this.Lo = Lo
 End Property
 
@@ -77,7 +76,7 @@ Private Sub NotBusyApp()
 End Sub
 
 'Resize a table
-Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
+Private Sub Resize(ByVal pass As IPasswords, Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
 
     Dim Lo As ListObject
     'Begining of the tables
@@ -92,6 +91,10 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal tot
 
     Set sh = Wksh()
     Set Lo = Table()
+
+    BusyApp
+
+    pass.UnProtect sh.Name
 
     'Remove unwanted rows from each listObject
     With sh
@@ -111,20 +114,23 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal tot
                 .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
           Next
           loRowsEnd = loRowsEnd + NBROWSADD
+        
+        Else
 
-          Exit Sub
-        End If
-
-        Do While (rowCounter > loRowHeader + 1)
-          If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
+            Do While (rowCounter > loRowHeader + 1)
+            If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
               .Rows(rowCounter).EntireRow.Delete
               'update the end rows
               loRowsEnd = loRowsEnd - 1
-          End If
-          rowCounter = rowCounter - 1
-        Loop
+            End If
+            rowCounter = rowCounter - 1
+            Loop
+        End If
+    
         Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
     End With
+    NotBusyApp
+    pass.Protect sh.Name
 End Sub
 
 
@@ -156,22 +162,12 @@ Private Function DataRange(ByVal colName As String) As Range
   End If
 End Function
 
-'Add Rows and Remove Rows
-Private Sub AddRows()
-  Resize AddRows := True
+Public Sub ICustomTable_AddRows(ByVal pass As IPasswords)
+  Resize pass:=pass, AddRows:=True
 End Sub
 
-Private Sub DeleteRows(Optional ByVal totalCount As Long = 0)
-  Resize AddRows := False, totalCount := totalCount
-End Sub
-
-
-Public Sub ICustomTable_AddRows()
-  AddRows
-End Sub
-
-Public Sub ICustomTable_RemoveRows(Optional ByVal totalCount As Long = 0)
-  RemoveRows totalCount := totalCount
+Public Sub ICustomTable_RemoveRows(ByVal pass As IPasswords, Optional ByVal totalCount As Long = 0)
+  Resize AddRows:=False, totalRowCount:=totalCount, pass:=pass
 End Sub
 
 

@@ -167,12 +167,27 @@ Private Sub Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVa
     choiData.Import fromWksh, fromStartRow, fromStartcol
 End Sub
 
-'Translation
-Private Sub Translate(ByVal TransObject As ITranslation)
-    Dim lblRng As Range
-    Set lblRng = DataRange("label")
-    TransObject.TranslateRange lblRng
+'Add / Remove Rows
+Private Sub ManageRows(ByVal pass As IPasswords, Optional ByVal del As Boolean = False)
+    Dim sh As Worksheet
+    Dim Lo As ListObject
+    Dim tabl As ICustomTable
+
+    Set sh = Wksh()
+
+    On Error Resume Next
+    Set Lo = sh.ListObjects(1)
+    On Error GoTo 0
+    If Lo Is Nothing Then Exit Sub
+
+    Set tabl = CustomTable.Create(Lo)
+    If del Then
+        tabl.RemoveRows pass:=pass
+    Else
+        tabl.AddRows pass:=pass
+    End If
 End Sub
+
 
 'Properties
 Public Property Get ILLchoice_Wksh() As Worksheet
@@ -217,8 +232,13 @@ Public Sub ILLchoice_Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As L
     Import fromWksh, fromStartRow, fromStartcol
 End Sub
 
-Public Sub ILLchoice_Translate(ByVal TransObject As ITranslation)
-    Translate TransObject
+
+Public Sub ILLchoice_AddRows(ByVal pass As IPasswords)
+    ManageRows pass:=pass
+End Sub
+
+Public Sub ILLchoice_RemoveRows(ByVal pass As IPasswords)
+    ManageRows pass:=pass, del:=True
 End Sub
 
 

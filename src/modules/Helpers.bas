@@ -85,26 +85,26 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
 
     'Range of the variable name column
     Set varRng = sheetDictionary.ListObjects(C_sTabDictionary).ListColumns(1).DataBodyRange
-    
+
     'Range of the choice column
     Set choiRng = SheetChoice.ListObjects(C_sTabChoices).ListColumns(1).DataBodyRange
 
     'If you can't find the variable name, just exist
-    If varRng.Find(What:=sVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
-    varRow = varRng.Find(What:=sVarName, lookAt:=xlWhole, MatchCase:=True).Row
+    If varRng.Find(What:=sVarName, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
+    varRow = varRng.Find(What:=sVarName, LookAt:=xlWhole, MatchCase:=True).Row
 
     'Get the choice corresponding to the variable
     sChoice = sheetDictionary.Cells(varRow, choicesColumn)
-    
+
     'If the choice is a choice_formula, I need to extract the choice name from the formula
     If sheetDictionary.Cells(varRow, choicesColumn - 1).Value = "choice_formula" Then
         sChoice = Replace(Split(sChoice, ",")(0), "CHOICE_FORMULA(", "")
     End If
 
     'If you can't find the corresponding choice in the choice sheet, do nothing and just exit
-    If choiRng.Find(What:=sChoice, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
+    If choiRng.Find(What:=sChoice, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then Exit Sub
 
-    choiceStart = choiRng.Find(What:=sChoice, lookAt:=xlWhole, MatchCase:=True).Row
+    choiceStart = choiRng.Find(What:=sChoice, LookAt:=xlWhole, MatchCase:=True).Row
     sListObjectName = "lo" & "_" & sChoice
 
     'Add the list object if it does not exists
@@ -142,12 +142,12 @@ Sub AddChoices(sVarName As String, choicesAnalysisRow As Long, Optional addTotal
         With sheetLists
             Set listRng = .ListObjects(C_sTabListOfChoicesNames).Range
             namesCol = listRng.Column
-            
-             If listRng.Find(What:=sChoice, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+
+             If listRng.Find(What:=sChoice, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
                 namesRow = IIf(IsEmpty(.Cells(listRng.Rows.Count, namesCol)), listRng.Rows.Count, listRng.Rows.Count + 1)
                 .Cells(namesRow, namesCol).Value = sChoice
             End If
-        
+
         End With
     End With
 
@@ -174,21 +174,21 @@ End Sub
 Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal colVar As String, ByVal labelValue As String) As String
 
     Application.Volatile
-    
+
     Dim dict As ILLdictionary
     Dim vars As ILLVariables
     Dim timeVarLabel As String
     Dim colVarLabel As String
     Dim headerLabel As String
-    
+
     On Error GoTo Err
-    
+
     'Get the label of the time variable in the dictionary
     Set dict = LLdictionary.Create(sheetDictionary, 4, 1)
     Set vars = LLVariables.Create(dict)
     timeVarLabel = vars.Value(varName:=timeVar, colName:="Main Label")
     colVarLabel = vars.Value(varName:=colVar, colName:="Main Label")
-    
+
     If timeVarLabel <> vbNullString Then
         If colVar = vbNullString Then
             headerLabel = labelValue & " v.s " & timeVarLabel
@@ -196,7 +196,7 @@ Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal colVar As String
             headerLabel = colVarLabel & " v.s " & timeVarLabel & " (" & labelValue & ")"
         End If
     End If
-    
+
 Err:
     TimeSeriesHeader = headerLabel
 End Function

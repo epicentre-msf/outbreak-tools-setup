@@ -101,16 +101,6 @@ Public Sub AddID(rng As Range, Optional sChar As String = "ID")
 End Sub
 
 
-'Resize the dictionary table object
-Public Sub AddRowsDict()
-     ResizeLo Lo:=sheetDictionary.ListObjects(C_sTabDictionary)
-End Sub
-
-'Resize the choices table object
-Public Sub AddRowsChoices()
-    Call ResizeLo(SheetChoice.ListObjects(C_sTabChoices))
-End Sub
-
 Public Sub AddRowsGS()
     Call ResizeLo(sheetAnalysis.ListObjects(C_sTabGS))
 End Sub
@@ -156,23 +146,6 @@ End Sub
 
 'resize the tables (delete empty rows at the bottom)----------------------------
 
-'Resize the dictionary table object
-Public Sub RemoveRowsDict()
-    BeginWork
-
-        ResizeLo Lo:=sheetDictionary.ListObjects(C_sTabDictionary), AddRows:=False
-
-    EndWork
-End Sub
-
-'Resize the choices table object
-Public Sub RemoveRowsChoices()
-    BeginWork
-
-        ResizeLo Lo:=SheetChoice.ListObjects(C_sTabChoices), AddRows:=False
-
-    EndWork
-End Sub
 
 Public Sub RemoveRowsGS()
     ResizeLo Lo:=sheetAnalysis.ListObjects(C_sTabGS), AddRows:=False
@@ -332,14 +305,14 @@ Sub UpdateVariablesList()
 
     Set rng = sheetDictionary.ListObjects(C_sTabDictionary).HeaderRowRange
 
-    If rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
-         rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
-         rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True) Is Nothing Then
+    If rng.Find(C_sDictHeaderControl, LookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
+         rng.Find(C_sDictHeaderVarName, LookAt:=xlWhole, MatchCase:=True) Is Nothing Or _
+         rng.Find(C_sDictHeaderType, LookAt:=xlWhole, MatchCase:=True) Is Nothing Then
         Exit Sub
     Else
-        iVarColumn = rng.Find(C_sDictHeaderVarName, lookAt:=xlWhole, MatchCase:=True).Column
-        iControlColumn = rng.Find(C_sDictHeaderControl, lookAt:=xlWhole, MatchCase:=True).Column
-        iTypeColumn = rng.Find(C_sDictHeaderType, lookAt:=xlWhole, MatchCase:=True).Column
+        iVarColumn = rng.Find(C_sDictHeaderVarName, LookAt:=xlWhole, MatchCase:=True).Column
+        iControlColumn = rng.Find(C_sDictHeaderControl, LookAt:=xlWhole, MatchCase:=True).Column
+        iTypeColumn = rng.Find(C_sDictHeaderType, LookAt:=xlWhole, MatchCase:=True).Column
     End If
 
     With sheetDictionary

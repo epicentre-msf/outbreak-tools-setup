@@ -25,7 +25,7 @@ End Type
 
 Private this As TDataSheet
 
-Private Const className As String = "DataSheet"
+Private Const CLASSNAME As String = "DataSheet"
 
 Public Function Create(ByVal dataWksh As Worksheet, ByVal dataStartRow As Long, _
                        ByVal dataStartColumn As Long) As IDataSheet
@@ -130,7 +130,7 @@ Private Function ColumnExists(ByVal colName As String) As Boolean
     If colName = vbNullString Then
         Exist = False
     Else
-        Exist = Not (hRng.Find(What:=colName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        Exist = Not (hRng.Find(What:=colName, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
     ColumnExists = Exist
 End Function
@@ -144,7 +144,7 @@ Private Function ColumnIndex(ByVal colName As String, _
     Set hRng = HeaderRange()
 
     If ColumnExists(colName) Then
-        colIndex = hRng.Find(What:=colName, lookAt:=xlWhole, MatchCase:=True).Column
+        colIndex = hRng.Find(What:=colName, LookAt:=xlWhole, MatchCase:=True).Column
         ColumnIndex = IIf(inDataRange, colIndex - StartColumn + 1, colIndex)
     Else
         If shouldExist Then
@@ -296,39 +296,37 @@ End Function
 
 'Import Sub
 Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartcol As Long)
-    Dim dataWksh As Worksheet
-    Dim dataImportData As IDataSheet
-    Dim strtcol As Long
-    Dim strtrw As Long
-    Dim col As Long
-    Dim dataRng As Range
+    Dim importingData As IDataSheet
+    Dim impcolRng As Range
+    Dim actcolRng As Range
+    Dim cellRng As Range
+    Dim impColValues As BetterArray
+    Dim hRng As Range
+    Dim headerValue As String
 
-    strtcol = StartColumn()
-    strtrw = StartRow()
-
-    'Trace on errors on import
+    'Trace on eventual errors on import
     If (fromWksh Is Nothing) Or (fromStartRow <= 0) Or (fromStartcol <= 0) Then Exit Sub
+    Set importingData = DataSheet.Create(fromWksh, fromStartRow, fromStartCol)
 
-    Set dataWksh = Wksh()
-    'Clear the data range of the current datasheet
-    Set dataRng = DataRange()
-    dataRng.ClearContents
+    Set hRng = HeaderRange()
+    Set impColValues = New BetterArray
 
-    'Import values columns by columns
+    For Each cellRng in hRng
+        headerValue = cellRng.Value
+        Set actcolRng = DataRange(headerValue) 'actual column range to replace
 
+        'clear the content of the range (even if it does not exists in importing data)
+        actcolRng.ClearContents
 
-    Set dataImportData = New BetterArray
-    dataImportData.FromExcelRange fromWksh.Cells(fromStartRow, fromStartcol), DetectLastColumn:=True, DetectLastRow:=True
-    dataImportData.ToExcelRange dataWksh.Cells(strtrw, strtcol)
+        If importingData.ColumnExists(headerValue) Then
+            Set impcolRng = importingData.DataRange(headerValue)
+            impColValues.FromExcelRange impcolRng, DetectLastCol := False, DetectLastRow := False
 
-    'Change colnames to lowercase
-    col = strtcol
-    With dataWksh
-        Do While (.Cells(strtrw, col) <> vbNullString)
-            .Cells(strtrw, col).Value = LCase(Application.WorksheetFunction.Trim(.Cells(strtrw, col).Value))
-            col = col + 1
-        Loop
-    End With
+            'Transpose data to this range
+            impColValues.ToExcelRange actcolRng.Cells(1, 1)
+            impColValues.Clear
+        End If
+    Next
 End Sub
 
 'Export
@@ -368,16 +366,16 @@ End Sub
 
 'Errors ----------------------------------------------------------------------
 Private Sub ThrowErrorEmptySheetGiven(Optional ByVal Class As String = ":")
-    Err.Raise VBA.vbObjectError + 513, className, "Unable to create an instance of the class" & Class & " Given Worksheet object does not exists, please verify if you set it."
+    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class" & Class & " Given Worksheet object does not exists, please verify if you set it."
 End Sub
 
 Private Sub ThrowErrorStartNumber(Optional ByVal startNumber As Long = -1, Optional ByVal startLabel As String = " Start ", Optional ByVal Class As String = ":")
-    Err.Raise VBA.vbObjectError + 514, className, "Unable to create an instance of the class" & Class & " The " & startLabel & _
+    Err.Raise VBA.vbObjectError + 514, CLASSNAME, "Unable to create an instance of the class" & Class & " The " & startLabel & _
                                                  "should be >= 1. " & "Actual value : " & startNumber
 End Sub
 
 Private Sub ThrowErrorUnFoundColumn(ByVal colName As String)
-    Err.Raise VBA.vbObjectError + 515, className, "Column " & colName & " does not exists" & " in worksheet " & Wksh.Name
+    Err.Raise VBA.vbObjectError + 515, CLASSNAME, "Column " & colName & " does not exists" & " in worksheet " & Wksh.Name
 End Sub
 
 'Inteface ----------------------------------------------------------------------
