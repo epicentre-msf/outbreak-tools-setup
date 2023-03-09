@@ -23,9 +23,9 @@ Private Type TDataSheet
     STARTCOL As Long                             'The column where the data starts (the first column is the column of the variable names.
 End Type
 
-Private this As TDataSheet
+Private This As TDataSheet
 
-Private Const CLASSNAME As String = "DataSheet"
+Private Const className As String = "DataSheet"
 
 Public Function Create(ByVal dataWksh As Worksheet, ByVal dataStartRow As Long, _
                        ByVal dataStartColumn As Long) As IDataSheet
@@ -50,29 +50,29 @@ End Property
 
 'Worksheet
 Public Property Get Wksh() As Worksheet
-    Set Wksh = this.dataWksh
+    Set Wksh = This.dataWksh
 End Property
 
 Friend Property Set Wksh(ByVal dataWksh As Worksheet)
-    Set this.dataWksh = dataWksh
+    Set This.dataWksh = dataWksh
 End Property
 
 'StartRow
 Public Property Get StartRow() As Long
-    StartRow = this.startLn
+    StartRow = This.startLn
 End Property
 
 Friend Property Let StartRow(ByVal dataStartRow As Long)
-    this.startLn = dataStartRow
+    This.startLn = dataStartRow
 End Property
 
 'StartColumn
 Public Property Get StartColumn() As Long
-    StartColumn = this.STARTCOL
+    StartColumn = This.STARTCOL
 End Property
 
 Friend Property Let StartColumn(ByVal dataStartColumn As Long)
-    this.STARTCOL = dataStartColumn
+    This.STARTCOL = dataStartColumn
 End Property
 
 'End row and columns of the dictionary
@@ -306,12 +306,12 @@ Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartc
 
     'Trace on eventual errors on import
     If (fromWksh Is Nothing) Or (fromStartRow <= 0) Or (fromStartcol <= 0) Then Exit Sub
-    Set importingData = DataSheet.Create(fromWksh, fromStartRow, fromStartCol)
+    Set importingData = DataSheet.Create(fromWksh, fromStartRow, fromStartcol)
 
     Set hRng = HeaderRange()
     Set impColValues = New BetterArray
 
-    For Each cellRng in hRng
+    For Each cellRng In hRng
         headerValue = cellRng.Value
         Set actcolRng = DataRange(headerValue) 'actual column range to replace
 
@@ -320,7 +320,7 @@ Private Sub Import(ByVal fromWksh As Worksheet, fromStartRow As Long, fromStartc
 
         If importingData.ColumnExists(headerValue) Then
             Set impcolRng = importingData.DataRange(headerValue)
-            impColValues.FromExcelRange impcolRng, DetectLastCol := False, DetectLastRow := False
+            impColValues.FromExcelRange impcolRng, DetectLastCol:=False, DetectLastRow:=False
 
             'Transpose data to this range
             impColValues.ToExcelRange actcolRng.Cells(1, 1)
@@ -366,16 +366,16 @@ End Sub
 
 'Errors ----------------------------------------------------------------------
 Private Sub ThrowErrorEmptySheetGiven(Optional ByVal Class As String = ":")
-    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class" & Class & " Given Worksheet object does not exists, please verify if you set it."
+    Err.Raise VBA.vbObjectError + 513, className, "Unable to create an instance of the class" & Class & " Given Worksheet object does not exists, please verify if you set it."
 End Sub
 
 Private Sub ThrowErrorStartNumber(Optional ByVal startNumber As Long = -1, Optional ByVal startLabel As String = " Start ", Optional ByVal Class As String = ":")
-    Err.Raise VBA.vbObjectError + 514, CLASSNAME, "Unable to create an instance of the class" & Class & " The " & startLabel & _
+    Err.Raise VBA.vbObjectError + 514, className, "Unable to create an instance of the class" & Class & " The " & startLabel & _
                                                  "should be >= 1. " & "Actual value : " & startNumber
 End Sub
 
 Private Sub ThrowErrorUnFoundColumn(ByVal colName As String)
-    Err.Raise VBA.vbObjectError + 515, CLASSNAME, "Column " & colName & " does not exists" & " in worksheet " & Wksh.Name
+    Err.Raise VBA.vbObjectError + 515, className, "Column " & colName & " does not exists" & " in worksheet " & Wksh.Name
 End Sub
 
 'Inteface ----------------------------------------------------------------------

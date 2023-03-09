@@ -26,9 +26,9 @@ Private Type TVariable
     varRng As Range
 End Type
 
-Private this As TVariable
+Private This As TVariable
 Private Const VARIABLENAME As String = "Variable Name"
-Private Const CLASSNAME As String = "LLVariables"
+Private Const className As String = "LLVariables"
 
 Public Function Create(ByVal dict As ILLdictionary) As ILLVariables
 
@@ -45,16 +45,16 @@ Public Property Get Self() As ILLVariables
 End Property
 
 Public Property Get Dictionary() As ILLdictionary
-    Set Dictionary = this.dict
+    Set Dictionary = This.dict
 End Property
 
 Public Property Set Dictionary(ByVal dict As ILLdictionary)
-    Set this.dict = dict
-    Set this.varRng = dict.DataRange(VARIABLENAME)
+    Set This.dict = dict
+    Set This.varRng = dict.DataRange(VARIABLENAME)
 End Property
 
 Friend Property Get VarRange() As Range
-    Set VarRange = this.varRng
+    Set VarRange = This.varRng
 End Property
 
 'Functions --------------------------------------------------------------------------
@@ -141,7 +141,7 @@ End Sub
 
 'Errors ------------------------------------------------------------------------------------------------------------------------------------
 Private Sub ThrowErrorUnableInstanciateNoVarName()
-    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class variable, variable name column does not exists"
+    Err.Raise VBA.vbObjectError + 513, className, "Unable to create an instance of the class variable, variable name column does not exists"
 End Sub
 
 

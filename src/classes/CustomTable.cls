@@ -19,8 +19,8 @@ Private Type TCustomTable
   Lo As ListObject
 End Type
 
-Private this As TCustomTable
-Private Const CLASSNAME As String = "ICustomTable"
+Private This As TCustomTable
+Private Const className As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
 
 Public Function Create(ByVal Lo As ListObject) As ICustomTable
@@ -47,11 +47,11 @@ End Function
 
 'Table listObject
 Public Property Get Table() As ListObject
-  Set Table = this.Lo
+  Set Table = This.Lo
 End Property
 
 Public Property Set Table(ByVal Lo As ListObject)
-  Set this.Lo = Lo
+  Set This.Lo = Lo
 End Property
 
 'HeaderRowRange
@@ -173,5 +173,5 @@ End Sub
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
 End Sub

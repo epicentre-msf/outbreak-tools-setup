@@ -2,13 +2,13 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-
 Attribute VB_Name = "IChecking"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A class for checking at each level of the setup file"
+
 
 '@Folder("Checkings")
 '@ModuleDescription("Interface of setup checkings")
@@ -31,11 +31,11 @@ Option Explicit
 
 
 'Exposed methods
-Public Sub Add(ByVal keyName As String, ByVal label As String, _
-                Optional Byval scope As CheckingScope = checkingNote)
+Public Sub Add(ByVal keyName As String, ByVal LABEL As String, _
+                Optional ByVal scope As CheckingScope = checkingNote)
 End Sub
-Public Property Get ListOfKeys() As BetterArray : End Property
+Public Property Get ListOfKeys() As BetterArray: End Property
 'Heading could be subtitle or title.
-Public Property Get Heading(Optional ByVal subTitle As Boolean = False) As String : End Property
+Public Property Get Heading(Optional ByVal subTitle As Boolean = False) As String: End Property
 'You can retrieve the label, the scope or the color
-Public Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As checkingValue = 1) As String : End Property
+Public Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As CheckingValue = 1) As String: End Property

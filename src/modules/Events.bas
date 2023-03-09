@@ -5,23 +5,30 @@ Option Explicit
 'Module for all the events - related actions in the setup file
 
 'Import from another setup
-Public Sub clickImport()
+Public Sub clickImport(ByRef Control As Office.IRibbonControl)
+    [Imports].Show
 End Sub
 
 'add rows to listObject
-Public Sub clickAddRows()
+Public Sub clickAddRows(ByRef Control As Office.IRibbonControl)
+    Dim sheetName As String
+    sheetName = ActiveSheet.Name
+    ManageRows sheetName:=sheetName, del:=False
 End Sub
 
 'resize the current listObject
-Public Sub clickResize()
+Public Sub clickResize(ByRef Control As Office.IRibbonControl)
+    Dim sheetName As String
+    sheetName = ActiveSheet.Name
+    ManageRows sheetName:=sheetName, del:=True
 End Sub
 
 'clear data in the current setup
-Public Sub clickClearSetup()
+Public Sub clickClearSetup(ByRef Control As Office.IRibbonControl)
 End Sub
 
 'check the current setup for incoherences
-Public Sub clickCheck()
+Public Sub clickCheck(ByRef Control As Office.IRibbonControl)
 End Sub
 
 'Add or Remove Rows to a table
@@ -40,21 +47,19 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
 
     '4 is the start line of the dictionary
     '1 is the start column of the dictionary
-
-    '2 is the start line of the choices
-    '1 is the start column of the choices
-
     Select Case sheetName
     Case "Dictionary"
         Set part = LLdictionary.Create(sh, 4, 1)
     Case "Choices"
-        Set part = LLchoice.Create(sh, 2, 1)
+        Set part = LLchoice.Create(sh, 4, 1)
     Case "Analysis"
         'Set part = Analysis.Create(sh)
     End Select
 
-    Set pass = Passwords.Create(shpass)
+    'Exit if unable to find the corresponding object
+    If part Is Nothing Then Exit Sub
 
+    Set pass = Passwords.Create(shpass)
     If del Then
         part.RemoveRows pass:=pass
     Else

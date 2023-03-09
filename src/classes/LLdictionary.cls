@@ -21,11 +21,11 @@ Private Type TDictionary
     dictDataSheet As IDataSheet                  'Worksheet data of the dictionary
 End Type
 
-Private this As TDictionary
+Private This As TDictionary
 Private DICTIONARYCOLUMNS As BetterArray
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
-Private Const CLASSNAME As String = "ILLdictionary"
+Private Const className As String = "ILLdictionary"
 
 Public Function Create(ByVal dictWksh As Worksheet, ByVal dictStartRow As Long, _
                        ByVal dictStartColumn As Long) As ILLdictionary
@@ -47,11 +47,11 @@ End Property
 
 'Data sheet
 Public Property Get Data() As IDataSheet
-    Set Data = this.dictDataSheet
+    Set Data = This.dictDataSheet
 End Property
 
 Friend Property Set Data(ByVal customDataSheet As IDataSheet)
-    Set this.dictDataSheet = customDataSheet
+    Set This.dictDataSheet = customDataSheet
 End Property
 
 'Worksheet
@@ -405,10 +405,10 @@ Private Sub Import(ByVal fromWksh As Worksheet, pass As IPasswords)
     Set dictData = Data()
     Set sh = Wksh()
     strtrw = StartRow()
-    strtcol = StartCol()
+    strtcol = STARTCOL()
 
     'Now unprotect the worksheet before proceeding
-    pass.Unprotect sh.Name
+    pass.UnProtect sh.Name
     dictData.Import fromWksh, strtrw, strtcol
     pass.Protect sh.Name
 End Sub
@@ -448,7 +448,7 @@ End Sub
 
 'Throw Errors
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Execution Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, className, "Execution Error : " & errorMessage
 End Sub
 
 ' INTERFACE __________________________________________________________________________________________________________________________
@@ -486,7 +486,7 @@ Public Sub ILLdictionary_Clean()
 End Sub
 
 Public Sub ILLdictionary_Import(ByVal fromWksh As Worksheet, ByVal pass As IPasswords)
-    Import fromWksh :=fromWksh, pass := pass
+    Import fromWksh:=fromWksh, pass:=pass
 End Sub
 
 Public Sub ILLdictionary_Export(ByVal toWkb As Workbook, Optional ByVal exportType As String = "__all__")
