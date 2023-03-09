@@ -118,6 +118,3 @@ Public Sub ConfigureSetup()
     'Return the state after completion
     NotBusyApp
 End Sub
-
-
-

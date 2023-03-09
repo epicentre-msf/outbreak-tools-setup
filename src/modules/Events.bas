@@ -4,6 +4,26 @@ Option Explicit
 
 'Module for all the events - related actions in the setup file
 
+'Import from another setup
+Public Sub clickImport()
+End Sub
+
+'add rows to listObject
+Public Sub clickAddRows()
+End Sub
+
+'resize the current listObject
+Public Sub clickResize()
+End Sub
+
+'clear data in the current setup
+Public Sub clickClearSetup()
+End Sub
+
+'check the current setup for incoherences
+Public Sub clickCheck()
+End Sub
+
 'Add or Remove Rows to a table
 Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
     Dim part As Object
