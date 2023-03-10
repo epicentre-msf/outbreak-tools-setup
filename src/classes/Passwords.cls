@@ -60,7 +60,10 @@ Private Property Get InDebugMode() As Boolean
 End Property
 
 'protect
-Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByVal allowShapes As Boolean = False)
+Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByVal strictProtect As Boolean = False)
+
+    'Strict protect restricts from deleting / inserting rows and formatting columns
+    'and cells.
 
     Dim pwd As String
     Dim sh As Worksheet
@@ -78,11 +81,11 @@ Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByV
     If sh Is Nothing Then Exit Sub
     If Not InDebugMode() Then
         pwd = Password()
-        sh.Protect Password:=pwd, DrawingObjects:=(Not allowShapes), Contents:=True, Scenarios:=allowShapes, _
-                   AllowInsertingRows:=True, AllowSorting:=True, AllowFiltering:=True, _
-                   AllowFormattingCells:=True, AllowDeletingRows:=True, AllowFormattingColumns:=True
-
-        If Not allowShapes Then sh.EnableSelection = xlUnlockedCells
+        sh.Protect Password:=pwd, DrawingObjects:=False, Contents:=True, Scenarios:=True, _
+                   AllowInsertingRows:=(Not strictProtect), AllowSorting:=True, AllowFiltering:=True, _
+                   AllowFormattingCells:=(Not strictProtect), AllowDeletingRows:=(Not strictProtect), _
+                   AllowFormattingColumns:=(Not strictProtect), _
+                   AllowFormattingRows:=True
     End If
 
 End Sub
@@ -167,8 +170,8 @@ Public Sub IPasswords_UnProtect(Optional ByVal sheetName As String = "_active")
     UnProtect sheetName
 End Sub
 
-Public Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", Optional ByVal allowShapes As Boolean = False)
-    Protect sheetName, allowShapes
+Public Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", Optional ByVal strictProtect As Boolean = False)
+    Protect sheetName, strictProtect
 End Sub
 
     'Protect and unprotect the workbook to avoid sheet name changes

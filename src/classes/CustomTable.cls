@@ -114,7 +114,7 @@ Private Sub Resize(ByVal pass As IPasswords, Optional ByVal AddRows As Boolean =
                 .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
           Next
           loRowsEnd = loRowsEnd + NBROWSADD
-        
+
         Else
 
             Do While (rowCounter > loRowHeader + 1)
@@ -126,7 +126,7 @@ Private Sub Resize(ByVal pass As IPasswords, Optional ByVal AddRows As Boolean =
             rowCounter = rowCounter - 1
             Loop
         End If
-    
+
         Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
     End With
     NotBusyApp
