@@ -134,6 +134,28 @@ Private Sub Resize(ByVal pass As IPasswords, Optional ByVal AddRows As Boolean =
 End Sub
 
 
+Private Sub SetValidation(ByVal colName As String, _
+                          ByVal drop As IDropdownLists, _
+                          ByVal dropName As String, _
+                          ByVal pass As IPasswords, _
+                          Optional ByVal alertType As String = "info")
+
+    Dim rng As Range
+    Dim sh As Worksheet
+    
+    Set sh = Wksh()
+    pass.UnProtect sh.Name
+    'Test if the colname exists before seting the validation
+    If Not ColumnExists(colName) Then Exit Sub
+    Set rng = DataRange(colName)
+    'set validation for each cell in the datarange
+    drop.SetValidation cellRng:=rng, listName:=dropName, _
+                       alertType:=alertType
+                       
+    pass.Protect sh.Name
+End Sub
+
+
 'Column Range and column Index of a custom table
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
@@ -154,11 +176,21 @@ Private Function ColumnIndex(ByVal colName) As Long
     ColumnIndex = Index
 End Function
 
-Private Function DataRange(ByVal colName As String) As Range
+Private Function DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
   Dim Lo As ListObject
   Set Lo = Table()
-  If ColumnExists(colName) Then
-    Set DataRange = Lo.ListColumns(ColumnIndex(colName)).Range
+  Dim rng As Range
+  If Not ColumnExists(colName) Then Exit Function
+  If includeHeaders Then
+    Set rng = Lo.ListColumns(ColumnIndex(colName)).Range
+  Else
+    'DataBody range could be Nothing
+    On Error Resume Next
+    Set rng = Lo.ListColumns(ColumnIndex(colName)).DataBodyRange
+    On Error GoTo 0
+    'You can test here if it is Nothing, in that case the table is Empty, just return the second line
+    If rng Is Nothing Then Set rng = Lo.ListColumns(ColumnIndex(colName)).Range.Cells(2, 1)
+    Set DataRange = rng
   End If
 End Function
 
@@ -170,6 +202,11 @@ Public Sub ICustomTable_RemoveRows(ByVal pass As IPasswords, Optional ByVal tota
   Resize AddRows:=False, totalRowCount:=totalCount, pass:=pass
 End Sub
 
+Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
+                                      ByVal dropName As String, ByVal pass As IPasswords, _
+                                      Optional ByVal alertType As String = "info")
+    SetValidation colName, drop, dropName, pass, alertType
+End Sub
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)

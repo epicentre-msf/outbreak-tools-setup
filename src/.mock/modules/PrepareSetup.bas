@@ -1,5 +1,5 @@
-
 Attribute VB_Name = "PrepareSetup"
+
 Option Explicit
 
 
@@ -37,6 +37,8 @@ End Sub
 
 'Function to add Elements to the dropdown list
 Private Sub AddElements(ByVal dropdownName As String, ParamArray Els() As Variant)
+    Initialize
+    
     Dim nbEls As Integer
     For nbEls = 0 To UBound(Els())
         dropArray.Push Els(nbEls)
@@ -104,7 +106,7 @@ Public Sub ConfigureSetup()
     '- axis_position
     AddElements "__axis_pos", "left", "right"
     '- swich between analysis tables
-    AddElements "__swicth_tables",  _
+    AddElements "__swicth_tables", _
                 "Add or remove rows of Global Summary", _
                 "Add or remove rows of Univariate Analysis", _
                 "Add or remove rows of Bivariate Analysis", _

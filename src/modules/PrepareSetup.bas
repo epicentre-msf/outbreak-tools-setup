@@ -37,8 +37,6 @@ End Sub
 
 'Function to add Elements to the dropdown list
 Private Sub AddElements(ByVal dropdownName As String, ParamArray Els() As Variant)
-    Initialize
-    
     Dim nbEls As Integer
     For nbEls = 0 To UBound(Els())
         dropArray.Push Els(nbEls)
@@ -47,7 +45,7 @@ Private Sub AddElements(ByVal dropdownName As String, ParamArray Els() As Varian
     dropArray.Clear
 End Sub
 
-Public Sub ConfigureSetup()
+Private Sub CreateDropdowns()
 
     'The first parameter or AddElements is the dropdown name, the others are
     'values to put in the dropdown
@@ -68,7 +66,7 @@ Public Sub ConfigureSetup()
     ' - variable status
     AddElements "__var_status", "mandatory", "optional", "hidden"
     '- variable_type
-    AddElements "var_type", "date", "integer", "text", "decimal"
+    AddElements "__var_type", "date", "integer", "text", "decimal"
     '- sheet_type
     AddElements "__sheet_type", "vlist1D", "hlist2D"
     '- control
@@ -119,4 +117,59 @@ Public Sub ConfigureSetup()
 
     'Return the state after completion
     NotBusyApp
+End Sub
+
+Private Sub AddValidations()
+    Dim csTab As ICustomTable
+    Dim dropName As String
+    Dim sheetName As String
+    Dim wb As Workbook
+    Dim sh As Worksheet
+    Dim Lo As ListObject
+    Dim pass As IPasswords
+
+
+    Set wb = ThisWorkbook
+
+    'Dictionary dropdowns -----------------------------------------------------
+
+    sheetName = "Dictionary"
+    Set sh = wb.Worksheets(sheetName)
+    Set Lo = sh.ListObjects(1)
+    Set csTab = CustomTable.Create(Lo)
+    Set pass = Passwords.Create(wb.Worksheets("__pass"))
+
+    'Set validation on dictionary colnames elements
+    'sheet type
+    csTab.SetValidation colName:="Sheet Type", dropName:="__sheet_type", drop:=drop, alertType:="error", pass:=pass
+    'variable status
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    'personal identifier
+    csTab.SetValidation colName:="Personal Identifier", dropName:="__yesno", drop:=drop, alertType:="error", pass:=pass
+    'variable type
+    csTab.SetValidation colName:="Type", dropName:="__var_type", drop:=drop, alertType:="error", pass:=pass
+    'variable format
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+
+
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+    csTab.SetValidation colName:="Status", dropName:="__var_status", drop:=drop, alertType:="error", pass:=pass
+End Sub
+
+Public Sub ConfigureSetup()
+    'Initialize elements
+    Initialize
+    CreateDropdowns 'Create dropdowns for the setup
+    AddValidations  'Add the validations to each parts of the setup
 End Sub
