@@ -142,7 +142,7 @@ Private Sub SetValidation(ByVal colName As String, _
 
     Dim rng As Range
     Dim sh As Worksheet
-    
+
     Set sh = Wksh()
     pass.UnProtect sh.Name
     'Test if the colname exists before seting the validation
@@ -151,7 +151,7 @@ Private Sub SetValidation(ByVal colName As String, _
     'set validation for each cell in the datarange
     drop.SetValidation cellRng:=rng, listName:=dropName, _
                        alertType:=alertType
-                       
+
     pass.Protect sh.Name
 End Sub
 
@@ -160,7 +160,7 @@ End Sub
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
     Set hRng = HeaderRowRange
-    ColumnExists = (Not hRng.Find(What:=colName, LookAt:=xlWhole, MatchCase:=False) Is Nothing)
+    ColumnExists = (Not hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False) Is Nothing)
 End Function
 
 Private Function ColumnIndex(ByVal colName) As Long
