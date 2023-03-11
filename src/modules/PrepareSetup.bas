@@ -39,7 +39,7 @@ Private Sub Initialize()
 End Sub
 
 Private Sub MoveToSheet(ByVal sheetName As String)
-    Set currSh = wb.Worksheet(sheetName)
+    Set currSh = wb.Worksheets(sheetName)
 End Sub
 
 Private Sub MoveToTable(ByVal tabName As String)
@@ -61,16 +61,13 @@ Private Sub CreateDropdowns()
     'The first parameter or AddElements is the dropdown name, the others are
     'values to put in the dropdown
 
-    'Stop events and calculations
-    BusyApp
-
     'GLOBAL SETUP LEVEL --------------------------------------------------------
     '- yes_no dropdown
     AddElements "__yesno", "yes", "no"
     '- formats
-    AddElements "__formats", "round0", "round1", "round2", "round3", _
-                "percentage0", "percentage1", "percentage2", _
-                "percentage3", "text", "euros", "dollars", _
+    AddElements "__formats", "integer", "round0", "round1", _
+                "round2", "round3",  "percentage0", "percentage1", _
+                "percentage2", "percentage3", "text", "euros", "dollars", _
                 "dd/mm/yyyy", "d-mmm-yyyy", ""
 
     'DICTIONARY ----------------------------------------------------------------
@@ -82,8 +79,8 @@ Private Sub CreateDropdowns()
     AddElements "__sheet_type", "vlist1D", "hlist2D"
     '- control
     AddElements "__var_control", "choice_manual", _
-                 "choice_formula", "formula", "geo", "hf", "custom", "list_auto", _
-                 "case_when"
+                 "choice_formula", "formula", "geo", "hf", "custom", _
+                 "list_auto", "case_when"
     '- alert
     AddElements "__var_alert", "error", "warning", "info"
     '- geo_variables
@@ -93,7 +90,7 @@ Private Sub CreateDropdowns()
     '- time_variables
     AddElements "__time_vars", "", ""
 
-    'EXPORTS -------------------------------------------------------------------
+    'EXPORTS ------------------------------------------ -------------------------
     '- export_status
     AddElements "__export_status", "active", "inactive"
     '- export_format
@@ -107,7 +104,7 @@ Private Sub CreateDropdowns()
     '- missing_ba
     AddElements "__missing_ba", "no", "row", "column", "all"
     '- percentage_ta
-    AddElements "__percentage_ta", "no", "row", "variable labels"
+    AddElements "__percentage_ta", "no", "row", "column"
     '- percentage_vs_values
     AddElements "__perc_val", "percentages", "values"
     '- chart_type
@@ -131,155 +128,173 @@ Private Sub CreateDropdowns()
     AddElements "__graphs_titles", "", ""
     AddElements "__series_titles", "", ""
 
-    'Return the state after completion
-    NotBusyApp
 End Sub
 
 Private Sub AddValidations()
 
     'Dictionary dropdowns -----------------------------------------------------
     MoveToSheet "Dictionary"
+    pass.UnProtect "Dictionary"
     MoveToTable "Tab_Dictionary"
 
     'Set validation on dictionary colnames elements
     'sheet type
+
     currTab.SetValidation colName:="sheet type", dropName:="__sheet_type", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     'variable status
     currTab.SetValidation colName:="status", dropName:="__var_status", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     'personal identifier
     currTab.SetValidation colName:="personal identifier", dropName:="__yesno", _
-                         drop:=drop, alertType:="error", pass:=pass
+                         drop:=drop, alertType:="error"
     'variable type
-    currTab.SetValidation colName:="type", dropName:="__var_type", drop:=drop, _
-                        alertType:="error", pass:=pass
+    currTab.SetValidation colName:="var type", dropName:="__var_type", drop:=drop, _
+                        alertType:="error"
     'variable format
-    currTab.SetValidation colName:="format", dropName:="__formats", _
-                        drop:=drop, alertType:="info", pass:=pass
+    currTab.SetValidation colName:="variable format", dropName:="__formats", _
+                        drop:=drop, alertType:="info"
     'variable control
     currTab.SetValidation colName:="control", dropName:="__var_control", _
-                        drop:=drop, alertType:="info", pass:=pass
+                        drop:=drop, alertType:="info"
     'variable should be unique
     currTab.SetValidation colName:="unique", dropName:="__yesno", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     'Alert
     currTab.SetValidation colName:="alert", dropName:="__var_alert", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     'Lock cells on conditional formatting
-    currTab.SetValidation colName:="lock cells", dropName:="__var_status", _
-                        drop:=drop, alertType:="error", pass:=pass
+    currTab.SetValidation colName:="lock cells", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
 
+
+    pass.Protect "Dictionary"
     'Exports dropdowns -----------------------------------------------------------------------------------------
     MoveToSheet "Exports"
+    pass.UnProtect "Exports"
     MoveToTable "Tab_Exports"
 
     currTab.SetValidation colName:="password", dropName:="__yesno", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="status", dropName:="__export_status", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export metadata", dropName:="__yesno", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export translation", dropName:="__yesno", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="file format", dropName:="__export_format", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export header", dropName:="__export_header", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
 
+    pass.Protect "Exports"
     'Analysis dropdowns ------------------------------------------------------------------------------------
     MoveToSheet "Analysis"
+    pass.UnProtect "Analysis"
 
     'Global summary table
     MoveToTable "Tab_Global_Summary"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
-                          alertType:="info", pass:=pass
+                          alertType:="info"
     'Univariate analysis table
     MoveToTable "Tab_Univariate_Analysis"
 
     currTab.SetValidation colName:="add missing data", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
-                          alertType:="info", pass:=pass
+                          alertType:="info"
     currTab.SetValidation colName:="add percentage", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add graph", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     'Group_by variable
-    currTab.SetValidation colName:="row", dropName:="__choices_vars", drop:=drop, _
-                          alertType:="error", pass:=pass
+    currTab.SetValidation colName:="row", dropName:="__choice_vars", drop:=drop, _
+                          alertType:="error"
 
     'Bivariate analysis table
     MoveToTable "Tab_Bivariate_Analysis"
     currTab.SetValidation colName:="add missing data", dropName:="__missing_ba", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
-                          alertType:="info", pass:=pass
+                          alertType:="info"
     currTab.SetValidation colName:="add percentage", dropName:="__percentage_ba", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add Graph", dropName:="__perc_val", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
+                          drop:=drop, alertType:="error"
     'Row and columns groupby
-    currTab.SetValidation colName:="row", dropName:="__choices_vars", drop:=drop, _
-                          alertType:="error", pass:=pass
-    currTab.SetValidation colName:="column", dropName:="__choices_vars", drop:=drop, _
-                          alertType:="error", pass:=pass
+    currTab.SetValidation colName:="row", dropName:="__choice_vars", drop:=drop, _
+                          alertType:="error"
+    currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
+                          alertType:="error"
 
     'Time Series analysis table
     MoveToTable "Tab_TimeSeries_Analysis"
     currTab.SetValidation colName:="add missing data", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
-                          alertType:="info", pass:=pass
+                          alertType:="info"
     currTab.SetValidation colName:="add percentage", dropName:="__percentage_ta", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add total", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     'Row and columns groupby
     currTab.SetValidation colName:="row", dropName:="__time_vars", drop:=drop, _
-                          alertType:="error", pass:=pass
+                          alertType:="error"
+    'column group by is not mandatory for time series tables
     currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
-                          alertType:="error", pass:=pass
+                          alertType:="info"
 
     'Graph on time series
     MoveToTable "Tab_Graph_TimeSeries"
     currTab.SetValidation colName:="plot values or percentages", _
                           dropName:="__perc_val", drop:=drop, _
-                          alertType:="error", pass:=pass
+                          alertType:="error"
     currTab.SetValidation colName:="chart type", dropName:="__chart_type", _
-                          drop:=drop, alertType:="info", pass:=pass
+                          drop:=drop, alertType:="info"
     currTab.SetValidation colName:="y-axis", dropName:="__axis_pos", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     'graph title and series title
     currTab.SetValidation colName:="graph title", dropName:="__graphs_titles", _
-                          alertType:="error", pass:=pass
+                          alertType:="error", drop:=drop
     currTab.SetValidation colName:="series title", dropName:="__series_titles", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     'Spatial Analysis
     MoveToTable "Tab_Spatial_Analysis"
 
     currTab.SetValidation colName:="row", dropName:="__geo_vars", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
+    'On spatial analysis column variables are not mandatory
     currTab.SetValidation colName:="column", dropName:="__choice_vars", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="info"
     currTab.SetValidation colName:="add missing data", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add percentage", dropName:="__yesno", _
-                          drop:=drop, alertType:="error", pass:=pass
+                          drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add graph", dropName:="__perc_val", _
-                        drop:=drop, alertType:="error", pass:=pass
+                        drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
+                        alertType:="info"
 
     'Spatio-Temporal Analysis
-
+    pass.Protect "Analysis"
 End Sub
 
 Public Sub ConfigureSetup()
     'Initialize elements
+    BusyApp
+
     Initialize
     CreateDropdowns 'Create dropdowns for the setup
     AddValidations  'Add the validations to each parts of the setup
+
+    NotBusyApp
+    MsgBox "Done!"
 End Sub

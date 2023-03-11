@@ -22,6 +22,5 @@ Public Sub RemoveRows(ByVal pass As IPasswords, _
 End Sub
 
 Public Sub SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
-                         ByVal dropName As String, ByVal pass As IPasswords, _
-                         Optional ByVal alertType As String = "info")
+                         ByVal dropName As String, Optional ByVal alertType As String = "info")
 End Sub

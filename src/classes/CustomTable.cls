@@ -137,22 +137,18 @@ End Sub
 Private Sub SetValidation(ByVal colName As String, _
                           ByVal drop As IDropdownLists, _
                           ByVal dropName As String, _
-                          ByVal pass As IPasswords, _
                           Optional ByVal alertType As String = "info")
 
     Dim rng As Range
     Dim sh As Worksheet
 
     Set sh = Wksh()
-    pass.UnProtect sh.Name
     'Test if the colname exists before seting the validation
     If Not ColumnExists(colName) Then Exit Sub
     Set rng = DataRange(colName)
     'set validation for each cell in the datarange
     drop.SetValidation cellRng:=rng, listName:=dropName, _
                        alertType:=alertType
-
-    pass.Protect sh.Name
 End Sub
 
 
@@ -169,7 +165,7 @@ Private Function ColumnIndex(ByVal colName) As Long
 
     Set hRng = HeaderRowRange()
     If ColumnExists(colName) Then
-        Index = hRng.Find(What:=colName, LookAt:=xlWhole, MatchCase:=False).Column - hRng.Column + 1
+        Index = hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
     Else
         Index = -1
     End If
@@ -180,6 +176,7 @@ Private Function DataRange(ByVal colName As String, Optional ByVal includeHeader
   Dim Lo As ListObject
   Set Lo = Table()
   Dim rng As Range
+  
   If Not ColumnExists(colName) Then Exit Function
   If includeHeaders Then
     Set rng = Lo.ListColumns(ColumnIndex(colName)).Range
@@ -203,9 +200,8 @@ Public Sub ICustomTable_RemoveRows(ByVal pass As IPasswords, Optional ByVal tota
 End Sub
 
 Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
-                                      ByVal dropName As String, ByVal pass As IPasswords, _
-                                      Optional ByVal alertType As String = "info")
-    SetValidation colName, drop, dropName, pass, alertType
+                                      ByVal dropName As String, Optional ByVal alertType As String = "info")
+    SetValidation colName, drop, dropName, alertType
 End Sub
 
 'Errors and checkings
