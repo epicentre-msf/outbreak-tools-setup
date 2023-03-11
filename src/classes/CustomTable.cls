@@ -21,7 +21,7 @@ Private Type TCustomTable
   idPrefix As String
 End Type
 
-Private this As TCustomTable
+Private This As TCustomTable
 Private Const className As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
 
@@ -32,6 +32,8 @@ Public Function Create(ByVal Lo As ListObject, _
 
   With New CustomTable
     Set .Table = Lo
+    .IdValue = idCol
+    .PrefixValue = idPrefix
     Set Create = .Self()
   End With
 End Function
@@ -59,19 +61,19 @@ Public Property Set Table(ByVal Lo As ListObject)
 End Property
 
 Public Property Get IdValue() As String
-  IdValue = this.idCol
+  IdValue = This.idCol
 End Property
 
 Public Property Get PrefixValue() As String
-  PrefixValue = this.idPrefix
+  PrefixValue = This.idPrefix
 End Property
 
 Public Property Let IdValue(ByVal idCol As String)
-  this.idCol = idCol
+  This.idCol = idCol
 End Property
 
 Public Property Let PrefixValue(ByVal idPrefix As String)
-  this.idPrefix = idPrefix
+  This.idPrefix = idPrefix
 End Property
 
 'HeaderRowRange
@@ -119,7 +121,7 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal tot
     rowCounter = loRowsEnd
     If AddRows Then
       loRowsEnd = loRowsEnd + 1 'Start at the bottom of the table
-     For rowCounter = 1 To NBROWSADD + 1
+      For rowCounter = 1 To NBROWSADD + 1
             .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
       Next
       loRowsEnd = loRowsEnd + NBROWSADD
@@ -132,7 +134,7 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal tot
           'update the end rows
           loRowsEnd = loRowsEnd - 1
         End If
-        rowCounter    = rowCounter - 1
+        rowCounter = rowCounter - 1
       Loop
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
     End If
@@ -150,8 +152,8 @@ Private Sub AddIds()
   If Not (ColumnExists(id)) Then Exit Sub
   idPref = PrefixValue()
   Set rng = DataRange(id)
-  For counter = 1 to rng.Rows.Count
-    rng.Cells(counter, 1).Value = Application.WorksheetFunction.Trim(idPref & " " & idPref)
+  For counter = 1 To rng.Rows.Count
+    rng.Cells(counter, 1).Value = Application.WorksheetFunction.Trim(idPref & " " & counter)
   Next
 End Sub
 

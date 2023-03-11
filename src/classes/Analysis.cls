@@ -19,9 +19,9 @@ Private Type TAnalysis
     anash As Worksheet
 End Type
 
-Private this As TAnalysis
+Private This As TAnalysis
 
-Private Const CLASSNAME As String = "Analysis"
+Private Const className As String = "Analysis"
 Private Const GLOBALSUMMARY As String = "Tab_global_summary"
 Private Const UNIVARIATE As String = "Tab_Univariate_Analysis"
 Private Const BIVARIATE As String = "Tab_Bivariate_Analysis"
@@ -44,11 +44,11 @@ End Function
 
 
 Public Property Get Wksh() As Worksheet
-  Set Wksh = this.anash
+  Set Wksh = This.anash
 End Property
 
 Public Property Set Wksh(ByVal anash As Worksheet)
-  Set this.anash = anash
+  Set This.anash = anash
 End Property
 
 Public Property Get Self() As IAnalysis
@@ -63,13 +63,18 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
   Dim Lo As ListObject
   Dim tabl As ICustomTable
   Dim listLoNames As BetterArray
+
   Dim loName As String
+  Dim prefName As String
+  Dim idColName As String
   Dim counter As Long
   Dim selectedTable As String
+  Dim totalCount As Long
 
   Set sh = Wksh()
   Set listLoNames = New BetterArray
-  selectedTable = Replace(LCase(sh.Cells(1, 1).Value),  _
+
+  selectedTable = Replace(LCase(sh.Cells(1, 1).Value), _
                           "add or remove rows of", "")
   selectedTable = Application.WorksheetFunction.Trim(selectedTable)
 
@@ -82,7 +87,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     listLoNames.Push BIVARIATE
   Case "time series analysis"
     listLoNames.Push TIMESERIES
-  Case "graph on time series labels"
+  Case "labels for time series graphs"
     listLoNames.Push TITLEGRAPHTIMESERIES
   Case "graph on time series"
     listLoNames.Push GRAPHTIMESERIES
@@ -98,13 +103,34 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
 
   For counter = listLoNames.LowerBound To listLoNames.UpperBound
     loName = listLoNames.Item(counter)
+
+    Select Case loName
+
+    Case TIMESERIES
+      prefName = "Series"
+      idColName = "series id"
+      totalCount = 2
+    Case TITLEGRAPHTIMESERIES
+      prefName = "Graph"
+      idColName = "graph id"
+      totalCount = 1
+    Case GRAPHTIMESERIES
+      prefName = vbNullString
+      idColName = vbNullString
+      totalCount = 4
+    Case Else
+      prefName = vbNullString
+      idColName = vbNullString
+      totalCount = 0
+    End Select
+
     On Error Resume Next
       Set Lo = sh.ListObjects(loName)
-      If  Lo Is Nothing Then Exit Sub
+      If Lo Is Nothing Then Exit Sub
     On Error GoTo 0
-    Set tabl = CustomTable.Create(Lo)
+    Set tabl = CustomTable.Create(Lo, idColName, prefName)
     If del Then
-        tabl.RemoveRows
+        tabl.RemoveRows totalCount:=totalCount
     Else
         tabl.AddRows
     End If
@@ -116,7 +142,7 @@ Private Sub CheckTablesRequirements()
   Dim loTable As BetterArray
   Dim counter As Long
   Dim Lo As ListObject
-  Dim LoName As String
+  Dim loName As String
 
   Set loTable = New BetterArray
 
@@ -124,25 +150,25 @@ Private Sub CheckTablesRequirements()
                GRAPHTIMESERIES, TITLEGRAPHTIMESERIES, SPATIAL, SPATIOTEMPORAL
 
   For counter = loTable.LowerBound To loTable.UpperBound
-      LoName = loTable.Items(counter)
+      loName = loTable.Items(counter)
       On Error Resume Next
-      Set Lo = Wksh.ListObjects(LoName)
+      Set Lo = Wksh.ListObjects(loName)
       If Lo Is Nothing Then _
-       ThrowError " Listobject " & LoName _
+       ThrowError " Listobject " & loName _
         & " does not exist in analysis worksheet "
       On Error GoTo 0
   Next
 End Sub
 
 Private Sub ThrowError(ByVal errorMessage As String)
-  Err.Raise VBA.vbObjectError + 515, CLASSNAME, errorMessage
+  Err.Raise VBA.vbObjectError + 515, className, errorMessage
 End Sub
 
 'Exposed methods
-Public Sub IAnalysis_AddRows(ByVal pass As IPasswords)
-  ManageRows pass:=pass
+Public Sub IAnalysis_AddRows()
+  ManageRows
 End Sub
 
-Public Sub IAnalysis_RemoveRows(ByVal pass As IPasswords)
-  ManageRows pass:=pass, del:=True
+Public Sub IAnalysis_RemoveRows()
+  ManageRows del:=True
 End Sub

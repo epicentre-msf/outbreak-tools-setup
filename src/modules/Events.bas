@@ -69,13 +69,13 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Case "Choices"
         Set part = LLchoice.Create(sh, 4, 1)
     Case "Analysis"
-        'Set part = Analysis.Create(sh)
+        Set part = Analysis.Create(sh)
     End Select
 
     'Exit if unable to find the corresponding object
     If part Is Nothing Then Exit Sub
     Set pass = Passwords.Create(shpass)
-    pass.Unprotect sh.Name
+    pass.UnProtect sh.Name
 
     If del Then
         part.RemoveRows

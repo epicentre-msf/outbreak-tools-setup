@@ -20,6 +20,8 @@ Public Sub AddRows(): End Sub
 Public Sub RemoveRows(Optional ByVal totalCount As Long = 0)
 End Sub
 
-Public Sub SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
-                         ByVal dropName As String, Optional ByVal alertType As String = "info")
+Public Sub SetValidation(ByVal colName As String, _
+                         ByVal drop As IDropdownLists, _
+                         ByVal dropName As String, _
+                         Optional ByVal alertType As String = "info")
 End Sub

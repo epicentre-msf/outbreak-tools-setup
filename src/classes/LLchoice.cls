@@ -168,7 +168,7 @@ Private Sub Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVa
 End Sub
 
 'Add / Remove Rows
-Private Sub ManageRows(ByVal pass As IPasswords, Optional ByVal del As Boolean = False)
+Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Dim sh As Worksheet
     Dim Lo As ListObject
     Dim tabl As ICustomTable
@@ -182,9 +182,9 @@ Private Sub ManageRows(ByVal pass As IPasswords, Optional ByVal del As Boolean =
 
     Set tabl = CustomTable.Create(Lo)
     If del Then
-        tabl.RemoveRows pass:=pass
+        tabl.RemoveRows
     Else
-        tabl.AddRows pass:=pass
+        tabl.AddRows
     End If
 End Sub
 

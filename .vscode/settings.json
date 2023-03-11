@@ -1,0 +1,12 @@
+{
+    "settings": {
+        "files.exclude": {
+            "**/.git": true,         // this is a default value
+            "**/.DS_Store": true,    // this is a default value
+            "**/setup_mock.xlsb": true,
+            "**/.settings.json": true,
+            "**/.mock": true,
+            "**/.vscode": true
+        }
+    }
+}

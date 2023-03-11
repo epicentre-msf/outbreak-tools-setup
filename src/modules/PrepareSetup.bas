@@ -113,14 +113,14 @@ Private Sub CreateDropdowns()
     AddElements "__axis_pos", "left", "right"
     '- swich between analysis tables
     AddElements "__swicth_tables", _
-                "Add or remove rows of Global Summary", _
-                "Add or remove rows of Univariate Analysis", _
-                "Add or remove rows of Bivariate Analysis", _
-                "Add or remove rows of Time Series Analysis", _
-                "Add or remove rows of Labels for Time Series Graph", _
-                "Add or remove rows of Graph on Time Series", _
-                "Add or remove rows of Spatial Analysis", _
-                "Add or remove rows of Spatio-Temporal Analysis", _
+                "Add or remove rows of global summary", _
+                "Add or remove rows of univariate analysis", _
+                "Add or remove rows of bivariate analysis", _
+                "Add or remove rows of time series analysis", _
+                "Add or remove rows of labels for time series graphs", _
+                "Add or remove rows of graph on time series", _
+                "Add or remove rows of spatial analysis", _
+                "Add or remove rows of spatio-temporal analysis", _
                 "Add or remove rows of all tables"
 
 
@@ -193,7 +193,7 @@ Private Sub AddValidations()
     pass.UnProtect "Analysis"
 
     'add validation on select table
-    drop.SetValidation cellRng := currSh.Range("RNG_SelectTable"), _
+    drop.SetValidation cellRng:=currSh.Range("RNG_SelectTable"), _
                        listName:="__swicth_tables", alertType:="error"
 
     'Global summary table
