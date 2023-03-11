@@ -31,6 +31,21 @@ End Sub
 Public Sub clickCheck(ByRef Control As Office.IRibbonControl)
 End Sub
 
+'speed app
+Private Sub BusyApp()
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    Application.EnableAnimations = False
+    Application.Calculation = xlCalculationManual
+End Sub
+
+Private Sub NotBusyApp()
+    Application.EnableEvents = True
+    Application.ScreenUpdating = True
+    Application.EnableAnimations = True
+    Application.Calculation = xlCalculationAutomatic
+End Sub
+
 'Add or Remove Rows to a table
 Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
     Dim part As Object
@@ -38,6 +53,7 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Dim shpass As Worksheet
     Dim pass As IPasswords
 
+    BusyApp
     On Error Resume Next
     Set sh = ThisWorkbook.Worksheets(sheetName)
     Set shpass = ThisWorkbook.Worksheets("__pass")
@@ -45,11 +61,11 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
 
     If (sh Is Nothing) Or (shpass Is Nothing) Then Exit Sub
 
-    '4 is the start line of the dictionary
-    '1 is the start column of the dictionary
+    '5 is the start line of the dictionary
+    '4 is the start column of the dictionary
     Select Case sheetName
     Case "Dictionary"
-        Set part = LLdictionary.Create(sh, 4, 1)
+        Set part = LLdictionary.Create(sh, 5, 1)
     Case "Choices"
         Set part = LLchoice.Create(sh, 4, 1)
     Case "Analysis"
@@ -58,11 +74,15 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
 
     'Exit if unable to find the corresponding object
     If part Is Nothing Then Exit Sub
-
     Set pass = Passwords.Create(shpass)
+    pass.Unprotect sh.Name
+
     If del Then
-        part.RemoveRows pass:=pass
+        part.RemoveRows
     Else
-        part.AddRows pass:=pass
+        part.AddRows
     End If
+
+    pass.Protect sh.Name
+    NotBusyApp
 End Sub

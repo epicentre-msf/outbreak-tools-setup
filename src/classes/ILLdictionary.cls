@@ -41,8 +41,8 @@ Public Sub AddColumn(ByVal colName As String)
 End Sub
 
 'Add and remove rows
-Public Sub AddRows(ByVal pass As IPasswords)
+Public Sub AddRows()
 End Sub
 
-Public Sub RemoveRows(ByVal pass As IPasswords)
+Public Sub RemoveRows()
 End Sub

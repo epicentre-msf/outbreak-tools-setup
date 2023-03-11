@@ -16,3 +16,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'Exposed methods
+Public Sub AddRows()
+End Sub
+
+Public Sub RemoveRows()
+End Sub

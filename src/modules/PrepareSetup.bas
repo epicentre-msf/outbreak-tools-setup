@@ -66,7 +66,7 @@ Private Sub CreateDropdowns()
     AddElements "__yesno", "yes", "no"
     '- formats
     AddElements "__formats", "integer", "round0", "round1", _
-                "round2", "round3",  "percentage0", "percentage1", _
+                "round2", "round3", "percentage0", "percentage1", _
                 "percentage2", "percentage3", "text", "euros", "dollars", _
                 "dd/mm/yyyy", "d-mmm-yyyy", ""
 
@@ -117,7 +117,7 @@ Private Sub CreateDropdowns()
                 "Add or remove rows of Univariate Analysis", _
                 "Add or remove rows of Bivariate Analysis", _
                 "Add or remove rows of Time Series Analysis", _
-                "Add or remove rows of Graph on Time Series Labels", _
+                "Add or remove rows of Labels for Time Series Graph", _
                 "Add or remove rows of Graph on Time Series", _
                 "Add or remove rows of Spatial Analysis", _
                 "Add or remove rows of Spatio-Temporal Analysis", _
@@ -191,6 +191,10 @@ Private Sub AddValidations()
     'Analysis dropdowns ------------------------------------------------------------------------------------
     MoveToSheet "Analysis"
     pass.UnProtect "Analysis"
+
+    'add validation on select table
+    drop.SetValidation cellRng := currSh.Range("RNG_SelectTable"), _
+                       listName:="__swicth_tables", alertType:="error"
 
     'Global summary table
     MoveToTable "Tab_Global_Summary"

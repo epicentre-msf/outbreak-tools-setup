@@ -16,9 +16,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'Exposed methods
-Public Sub AddRows(ByVal pass As IPasswords): End Sub
-Public Sub RemoveRows(ByVal pass As IPasswords, _
-                     Optional ByVal totalCount As Long = 0)
+Public Sub AddRows(): End Sub
+Public Sub RemoveRows(Optional ByVal totalCount As Long = 0)
 End Sub
 
 Public Sub SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _

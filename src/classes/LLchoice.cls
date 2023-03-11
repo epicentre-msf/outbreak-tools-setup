@@ -233,12 +233,12 @@ Public Sub ILLchoice_Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As L
 End Sub
 
 
-Public Sub ILLchoice_AddRows(ByVal pass As IPasswords)
-    ManageRows pass:=pass
+Public Sub ILLchoice_AddRows()
+    ManageRows
 End Sub
 
-Public Sub ILLchoice_RemoveRows(ByVal pass As IPasswords)
-    ManageRows pass:=pass, del:=True
+Public Sub ILLchoice_RemoveRows()
+    ManageRows del:=True
 End Sub
 
 

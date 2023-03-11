@@ -17,13 +17,17 @@ Option Explicit
 Implements ICustomTable
 Private Type TCustomTable
   Lo As ListObject
+  idCol As String
+  idPrefix As String
 End Type
 
-Private This As TCustomTable
+Private this As TCustomTable
 Private Const className As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
 
-Public Function Create(ByVal Lo As ListObject) As ICustomTable
+Public Function Create(ByVal Lo As ListObject, _
+                      Optional ByVal idCol As String = vbNullString, _
+                      Optional ByVal idPrefix As String = vbNullString) As ICustomTable
   If Lo Is Nothing Then ThrowError "Unable to initialize the class, no listobject provided"
 
   With New CustomTable
@@ -54,6 +58,22 @@ Public Property Set Table(ByVal Lo As ListObject)
   Set This.Lo = Lo
 End Property
 
+Public Property Get IdValue() As String
+  IdValue = this.idCol
+End Property
+
+Public Property Get PrefixValue() As String
+  PrefixValue = this.idPrefix
+End Property
+
+Public Property Let IdValue(ByVal idCol As String)
+  this.idCol = idCol
+End Property
+
+Public Property Let PrefixValue(ByVal idPrefix As String)
+  this.idPrefix = idPrefix
+End Property
+
 'HeaderRowRange
 Private Property Get HeaderRowRange() As Range
   Dim Lo As ListObject
@@ -76,61 +96,63 @@ Private Sub NotBusyApp()
 End Sub
 
 'Resize a table
-Private Sub Resize(ByVal pass As IPasswords, Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
-
-    Dim Lo As ListObject
-    'Begining of the tables
-    Dim loRowHeader As Long
-    Dim loColHeader  As Long
-    Dim rowCounter As Long
-
-    'End of the listobject table
-    Dim loRowsEnd As Long
-    Dim loColsEnd As Long
-    Dim sh As Worksheet
-
-    Set sh = Wksh()
-    Set Lo = Table()
-
-    BusyApp
-
-    pass.UnProtect sh.Name
-
-    'Remove unwanted rows from each listObject
-    With sh
-        'Rows and columns at the begining of the table to resize
-        loRowHeader = Lo.Range.Row
-        loColHeader = Lo.Range.Column
-
-        'Rows and Columns at the end of the Table to resize
-        loRowsEnd = loRowHeader + Lo.Range.Rows.Count - 1
-        loColsEnd = loColHeader + Lo.Range.Columns.Count - 1
-        rowCounter = loRowsEnd
-
-        If AddRows Then
-          loRowsEnd = loRowsEnd + 1 'Start at the bottom of the table
-
-          For rowCounter = 1 To NBROWSADD + 1
-                .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
-          Next
-          loRowsEnd = loRowsEnd + NBROWSADD
-
-        Else
-
-            Do While (rowCounter > loRowHeader + 1)
-            If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
-              .Rows(rowCounter).EntireRow.Delete
-              'update the end rows
-              loRowsEnd = loRowsEnd - 1
-            End If
-            rowCounter = rowCounter - 1
-            Loop
+Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
+  Dim Lo As ListObject
+  'Begining of the tables
+  Dim loRowHeader As Long
+  Dim loColHeader  As Long
+  Dim rowCounter As Long
+  'End of the listobject table
+  Dim loRowsEnd As Long
+  Dim loColsEnd As Long
+  Dim sh As Worksheet
+  Set sh = Wksh()
+  Set Lo = Table()
+  'Remove unwanted rows from each listObject
+  With sh
+    'Rows and columns at the begining of the table to resize
+    loRowHeader = Lo.Range.Row
+    loColHeader = Lo.Range.Column
+   'Rows and Columns at the end of the Table to resize
+    loRowsEnd = loRowHeader + Lo.Range.Rows.Count - 1
+    loColsEnd = loColHeader + Lo.Range.Columns.Count - 1
+    rowCounter = loRowsEnd
+    If AddRows Then
+      loRowsEnd = loRowsEnd + 1 'Start at the bottom of the table
+     For rowCounter = 1 To NBROWSADD + 1
+            .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+      Next
+      loRowsEnd = loRowsEnd + NBROWSADD
+      Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
+      AddIds
+    Else
+      Do While (rowCounter > loRowHeader + 1)
+        If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
+          .Rows(rowCounter).EntireRow.Delete
+          'update the end rows
+          loRowsEnd = loRowsEnd - 1
         End If
+        rowCounter    = rowCounter - 1
+      Loop
+      Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
+    End If
+  End With
+End Sub
 
-        Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
-    End With
-    NotBusyApp
-    pass.Protect sh.Name
+Private Sub AddIds()
+  Dim rng As Range
+  Dim counter As Long
+  Dim idPref As String
+  Dim id As String
+
+  id = IdValue()
+  If (id = vbNullString) Then Exit Sub
+  If Not (ColumnExists(id)) Then Exit Sub
+  idPref = PrefixValue()
+  Set rng = DataRange(id)
+  For counter = 1 to rng.Rows.Count
+    rng.Cells(counter, 1).Value = Application.WorksheetFunction.Trim(idPref & " " & idPref)
+  Next
 End Sub
 
 
@@ -176,7 +198,7 @@ Private Function DataRange(ByVal colName As String, Optional ByVal includeHeader
   Dim Lo As ListObject
   Set Lo = Table()
   Dim rng As Range
-  
+
   If Not ColumnExists(colName) Then Exit Function
   If includeHeaders Then
     Set rng = Lo.ListColumns(ColumnIndex(colName)).Range
@@ -191,12 +213,12 @@ Private Function DataRange(ByVal colName As String, Optional ByVal includeHeader
   End If
 End Function
 
-Public Sub ICustomTable_AddRows(ByVal pass As IPasswords)
-  Resize pass:=pass, AddRows:=True
+Public Sub ICustomTable_AddRows()
+  Resize AddRows:=True
 End Sub
 
-Public Sub ICustomTable_RemoveRows(ByVal pass As IPasswords, Optional ByVal totalCount As Long = 0)
-  Resize AddRows:=False, totalRowCount:=totalCount, pass:=pass
+Public Sub ICustomTable_RemoveRows(Optional ByVal totalCount As Long = 0)
+  Resize AddRows:=False, totalRowCount:=totalCount
 End Sub
 
 Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
