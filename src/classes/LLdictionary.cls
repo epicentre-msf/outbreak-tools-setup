@@ -455,7 +455,7 @@ Private Property Get SpecialVars(ByVal first_condition As String, _
             ctrlValue = ctrlRng.Cells(counter, 1).Value
             sheetValue = sheetRng.Cells(counter, 1).Value
             'Two conditions on control
-            If  (second_condition <> vbNullString) Then
+            If (second_condition <> vbNullString) Then
                 If (sheetValue = "hlist2D") And ((ctrlValue = first_condition) Or _
                     (ctrlValue = second_condition)) Then _
                     lsVars.Push varRng.Cells(counter, 1).Value
