@@ -18,11 +18,9 @@ Option Explicit
 'Properties
 Private Property Get Dictionary() As ILLdictionary: End Property
 
-
 'Exposed methods
 Public Function Value(ByVal colName As String, ByVal varName As String) As String
 End Function
-
 
 Public Function Contains(ByVal varName As String) As Boolean
 End Function

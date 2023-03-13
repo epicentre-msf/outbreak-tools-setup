@@ -46,3 +46,7 @@ End Sub
 
 Public Sub RemoveRows()
 End Sub
+
+Public Property Get ChoicesVars() As BetterArray: End Property
+Public Property Get GeoVars() As BetterArray: End Property
+Public Property Get TimeVars() As BetterArray: End Property

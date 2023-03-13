@@ -86,3 +86,26 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     pass.Protect sh.Name
     NotBusyApp
 End Sub
+
+'Fire this event when leaving the dictionary
+Public Sub EnterAnalysis()
+
+    Dim dict As ILLdictionary
+    Dim drop As IDropdownLists
+    Dim lst As BetterArray
+
+    Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
+    Set drop = DropdownLists.Create(ThisWorkbook.Worksheets("__variables"))
+
+    'Update choices vars
+    Set lst = dict.ChoicesVars()
+    drop.Update lst, "__choice_vars"
+
+    'Update geo vars
+    Set lst = dict.GeoVars()
+    drop.Update lst, "__geo_vars"
+
+    'Update time vars
+    Set lst = dict.TimeVars()
+    drop.Update lst, "__time_vars"
+End Sub

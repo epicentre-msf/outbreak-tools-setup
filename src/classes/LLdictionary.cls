@@ -240,8 +240,6 @@ End Sub
 
 
 
-
-
 Private Sub AppendNumberColumn(Optional ByVal onColName As String = "sheet name", _
                                Optional ByVal tablePrefix As String = "table", _
                                Optional ByVal newColumn As String = "table name")
@@ -433,6 +431,51 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     End If
 End Sub
 
+'Get the choices Var, GeoVar or time vars
+Private Property Get SpecialVars(ByVal first_condition As String, _
+                                Optional ByVal second_condition As String = vbNullString, _
+                                Optional ByVal conditionName As String = "Control") As BetterArray
+    Dim lsVars As BetterArray
+    Dim ctrlRng As Range
+    Dim varRng As Range
+    Dim endrw As Long
+    Dim counter As Long
+    Dim ctrlValue As String
+    Dim sheetRng As Range
+    Dim sheetValue As String
+
+    Set lsVars = New BetterArray
+    If (ColumnExists(conditionName) And ColumnExists("Variable Name") And ColumnExists("Sheet Type")) Then
+        Set ctrlRng = DataRange(conditionName)
+        Set varRng = DataRange("Variable Name")
+        Set sheetRng = DataRange("Sheet Type")
+        endrw = DictEndRow()
+
+        For counter = 1 To endrw
+            ctrlValue = ctrlRng.Cells(counter, 1).Value
+            sheetValue = sheetRng.Cells(counter, 1).Value
+            'Two conditions on control
+            If  (second_condition <> vbNullString) Then
+                If (sheetValue = "hlist2D") And ((ctrlValue = first_condition) Or _
+                    (ctrlValue = second_condition)) Then _
+                    lsVars.Push varRng.Cells(counter, 1).Value
+            Else
+            'only one condition on control
+                If (sheetValue = "hlist2D") And (ctrlValue = first_condition) _
+                 Then lsVars.Push varRng.Cells(counter, 1).Value
+            End If
+        Next
+    End If
+
+    Set SpecialVars = lsVars.Clone()
+End Property
+
+Private Property Get GeoVars() As BetterArray
+End Property
+
+Private Property Get TimeVars() As BetterArray
+End Property
+
 'Add a column to the dictionary
 Private Sub AddColumn(ByVal colName As String)
     Dim dictWksh As Worksheet
@@ -502,3 +545,18 @@ End Sub
 Public Sub ILLdictionary_RemoveRows()
     ManageRows del:=True
 End Sub
+
+Public Property Get ILLdictionary_ChoicesVars() As BetterArray
+    Set ILLdictionary_ChoicesVars = SpecialVars(first_condition:="choice_manual", _
+                                                second_condition:="choice_formula")
+End Property
+
+Public Property Get ILLdictionary_GeoVars() As BetterArray
+    Set ILLdictionary_GeoVars = SpecialVars(first_condition:="geo", _
+                                            second_condition:="hf")
+End Property
+
+Public Property Get ILLdictionary_TimeVars() As BetterArray
+    Set ILLdictionary_TimeVars = SpecialVars(first_condition:="date", _
+                                             conditionName:="Variable Type")
+End Property
