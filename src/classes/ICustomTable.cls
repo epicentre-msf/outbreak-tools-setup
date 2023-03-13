@@ -25,3 +25,9 @@ Public Sub SetValidation(ByVal colName As String, _
                          ByVal dropName As String, _
                          Optional ByVal alertType As String = "info")
 End Sub
+
+Public Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
+End Property
+
+Public Property Get Value(ByVal colName As String, ByVal keyName As String) As String
+End Property

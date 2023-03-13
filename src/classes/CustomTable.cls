@@ -196,12 +196,12 @@ Private Function ColumnIndex(ByVal colName) As Long
     ColumnIndex = Index
 End Function
 
-Private Function DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
+Private Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
   Dim Lo As ListObject
   Set Lo = Table()
   Dim rng As Range
 
-  If Not ColumnExists(colName) Then Exit Function
+  If Not ColumnExists(colName) Then Exit Property
   If includeHeaders Then
     Set rng = Lo.ListColumns(ColumnIndex(colName)).Range
   Else
@@ -213,7 +213,30 @@ Private Function DataRange(ByVal colName As String, Optional ByVal includeHeader
     If rng Is Nothing Then Set rng = Lo.ListColumns(ColumnIndex(colName)).Range.Cells(2, 1)
     Set DataRange = rng
   End If
-End Function
+End Property
+
+Private Property Get Value(ByVal colName As String, ByVal keyName As String) As String
+
+  Dim idRng As Range
+  Dim colRng As Range
+  Dim sh As Worksheet
+  Dim FUN As WorksheetFunction
+  Dim formValue As Variant
+
+  If IdValue = vbNullString Then Exit Property
+
+  Set FUN = Application.WorksheetFunction
+  Set sh = Wksh()
+  If (Not ColumnExists(colName)) Or (Not ColumnExists(IdValue)) Then Exit Property
+  Set idRng = DataRange(IdValue)
+  Set colRng = DataRange(colName)
+
+  On Error Resume Next
+  formValue = CStr(FUN.Index(colRng, FUN.Match(keyName, idRng, 0), 1))
+  On Error GoTo 0
+
+  If TypeName(formValue) = "String" Then Value = formValue
+End Property
 
 Public Sub ICustomTable_AddRows()
   Resize AddRows:=True
@@ -227,6 +250,15 @@ Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDr
                                       ByVal dropName As String, Optional ByVal alertType As String = "info")
     SetValidation colName, drop, dropName, alertType
 End Sub
+
+Public Property Get ICustomTable_DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
+  Set ICustomTable_DataRange = DataRange(colName, includeHeaders)
+End Property
+
+Public Property Get ICustomTable_Value(ByVal colName As String, ByVal keyName As String) As String
+  ICustomTable_Value = Value(colName, keyName)
+End Property
+
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
