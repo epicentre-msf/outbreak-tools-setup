@@ -93,13 +93,11 @@ Public Sub EnterAnalysis()
     Dim dict As ILLdictionary
     Dim drop As IDropdownLists
     Dim lst As BetterArray
+    Dim vars As ILLVariables
 
     Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
+    Set vars = ILLVariables.Create(dict)
     Set drop = DropdownLists.Create(ThisWorkbook.Worksheets("__variables"))
-
-    'Update choices vars
-    Set lst = dict.ChoicesVars()
-    drop.Update lst, "__choice_vars"
 
     'Update geo vars
     Set lst = dict.GeoVars()
@@ -108,4 +106,79 @@ Public Sub EnterAnalysis()
     'Update time vars
     Set lst = dict.TimeVars()
     drop.Update lst, "__time_vars"
+
+    'Update choices vars
+    Set lst = dict.ChoicesVars()
+    drop.Update lst, "__choice_vars"
+
+End Sub
+
+Private Sub FormatLockCell(ByVal cellRng As Range, Locked = True)
+    cellRng.Font.Color = IIf(Locked, RGB(51, 142, 202), vbBlack)
+    cellRng.Font.Italic = Locked
+    cellRng.Locked = Locked
+End Sub
+
+
+'Add Dropdown on choices
+Public Sub AddChoicesDropdown(ByVal Target As Range)
+
+    CONST LOBJNAME As String = "Tab_Graph_TimeSeries"
+    CONST LOBJTSNAME As String = "Tab_TimeSeries_Analysis"
+
+    Dim sh As Worksheets
+    Dim csTab As ICustomTable
+    Dim tsTab As ICustomTable
+    Dim colValue As String
+    Dim drop As IDropdownLists
+    Dim dropArray As BetterArray
+    Dim choi As ILLchoice
+    Dim seriestitleRng As Range
+    Dim colValue As String
+    Dim choiceName As String
+    Dim cellRng As Range
+    Dim dict As ILLdictionary
+    Dim vars As ILLVariables
+    Dim sumLab As String
+
+    Set sh = ThisWorkbook.Worksheets("Analysis")
+    Set csTab = CustomTable.Create(sh.ListObjects(LOBJNAME), "series title")
+    Set seriestitleRng = csTab.DataRange("series title")
+
+    If Intersect(Target, seriestitleRng) Is Nothing Then Exit Sub
+
+    'Create the choices object
+    Set choi = LLchoice.Create(ThisWorkbook.Worksheets("Choices"), 4, 1)
+    Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Choices"), 5, 1)
+    Set vars = LLVariables.Create(dict)
+
+    'Now get the value of column on the custom table and test it
+    colValue = csTab.Value(colName:="column", keyName:=Target.Value)
+
+    If colValue <> vbNullString Then
+        choiceName = vars.Value(colName:="Control Details", varName:=colValue)
+        Set dropArray = choi.Categories(choiceName)
+        drop.Add dropArray, choiceName & "__"
+        drop.Update dropArray, choiceName & "__"
+
+        'get the cell Range for choices
+        Set cellRng = csTab.CellRange("choice", Target.Row)
+        drop.SetValidation cellRng, choiceName & "__"
+        FormatLockCell cellRng, False
+
+        'get the cell Range for plot values or percentage
+        Set cellRng = csTab.CellRange("values or percentages")
+        drop.SetValidation cellRng, "__perc_val"
+        FormatLockCell cellRng, False
+    Else
+        'Get the cellRang for choice
+        Set cellRng = csTab.CellRange("choice", Target.Row)
+        Set tsTab = CustomTable.Create(sh.ListObjects(TSNAME), "title")
+        sumLab = tsTab.Value(colName:="summary label", keyName = Target.Value)
+        FormatLockCell cellRng, True
+
+        Set cellRng = csTab.CellRange("values or percentages")
+        cellRng.Value = "values"
+        FormatLockCell cellRng, True
+    End If
 End Sub

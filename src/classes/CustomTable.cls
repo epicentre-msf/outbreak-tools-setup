@@ -215,6 +215,17 @@ Private Property Get DataRange(ByVal colName As String, Optional ByVal includeHe
   End If
 End Property
 
+Private Property Get CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
+  Dim cellPos As Long
+  Dim rng As Range
+
+  If Not ColumnExists(colName) Then Exit Property
+  Set rng = DataRange(colName)
+  cellPos = lineNum - rng.Row
+  If cellPos < 0 Then Exit Property
+  Set CellRange = rng.Cells(cellPos, 1)
+End Property
+
 Private Property Get Value(ByVal colName As String, ByVal keyName As String) As String
 
   Dim idRng As Range
@@ -257,6 +268,10 @@ End Property
 
 Public Property Get ICustomTable_Value(ByVal colName As String, ByVal keyName As String) As String
   ICustomTable_Value = Value(colName, keyName)
+End Property
+
+Public Property Get ICustomTable_CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
+  Set ICustomTable_CellRange = CellRange(colName, lineNum)
 End Property
 
 
