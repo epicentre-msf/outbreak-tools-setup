@@ -264,10 +264,6 @@ Private Sub AddValidations()
     currTab.SetValidation colName:="y-axis", dropName:="__axis_pos", _
                           drop:=drop, alertType:="error"
     'graph title and series title
-    currTab.SetValidation colName:="graph title", dropName:="__graphs_titles", _
-                          alertType:="error", drop:=drop
-    currTab.SetValidation colName:="series title", dropName:="__series_titles", _
-                          drop:=drop, alertType:="error"
     'Spatial Analysis
     MoveToTable "Tab_Spatial_Analysis"
 
