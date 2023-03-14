@@ -26,7 +26,7 @@ Private Const className As String = "DropdownLists"
 Public Function Create(ByVal outsh As Worksheet) As IDropdownLists
     'Errors
     If outsh Is Nothing Then ThrowError "Dropdown worksheet not initialised"
-  
+
     With New DropdownLists
         Set .Wksh = outsh
         Set Create = .Self
@@ -84,7 +84,7 @@ End Function
 
 'Add New list to the dropdown sheet
 Private Sub Add(ByVal listValues As BetterArray, ByVal listName As String)
-  
+
     Dim sh As Worksheet
     Dim colIndex As Long
     Dim headerName As String                     'header Name
@@ -122,25 +122,25 @@ Private Sub Remove(ByVal listName As String)
     Dim headerName As String
 
     If Exists(listName) Then
-    
+
         loName = CurrentLoName(listName)
         headerName = CurrentHeaderName(listName)
 
         Set sh = Wksh()
         Set rng = sh.ListObjects(loName).Range
         Set Wkb = sh.Parent
-    
+
         Wkb.NAMES(headerName).Delete
-    
+
         If rng.Column = 1 Then
-    
+
             rng.EntireColumn.Delete
-    
+
         Else
-    
+
             rng.EntireColumn.Delete
             rng.Offset(, 1).EntireColumn.Delete
-    
+
         End If
 
     End If
@@ -148,7 +148,7 @@ End Sub
 
 'Update a list with new values
 Private Sub Update(ByVal UpdateData As BetterArray, ByVal listName As String)
-    
+
     Dim sh As Worksheet
     Dim cellRng As Range
     Dim rng As Range
@@ -160,10 +160,10 @@ Private Sub Update(ByVal UpdateData As BetterArray, ByVal listName As String)
     loName = CurrentLoName(listName)
     Set Lo = sh.ListObjects(loName)
     Set cellRng = Lo.Range.Cells(2, 1)
-    
+
     'put the new data in the range
     UpdateData.ToExcelRange cellRng
-    
+
     'Resize the listObject to the new Range
     Set rng = sh.Range(cellRng.Cells(0, 1), cellRng.Cells(UpdateData.Length, 1))
     Lo.Resize rng
@@ -179,7 +179,7 @@ Private Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
     If Not Exists(listName) Then ThrowError "There is no available dropdown for " & listName
 
     headerName = "= " & CurrentHeaderName(listName)
-    
+
     With cellRng.validation
         .Delete
         Select Case alertType
