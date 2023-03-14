@@ -4,11 +4,11 @@
 
 update_setup  <- function(update_stable = 0) {
     #move previous version of my designer
-   file.copy(from = "./setup_aky.xlsb",
+   file.copy(from = "./src/bin/setup_aky.xlsb",
              to = "./Rscripts/", overwrite = TRUE)
     # move back and overwrite
     file.copy(from = "./Rscripts/setup_aky.xlsb",
-             to = "./setup_dev.xlsb", overwrite = TRUE)
+             to = "./bin/setup_dev.xlsb", overwrite = TRUE)
     # update the stable version if needed
     if (update_stable == 1) {
        # previous stable version
@@ -18,12 +18,13 @@ update_setup  <- function(update_stable = 0) {
          file.copy(from = "./Rscripts/setup_aky.xlsb",
              to = "./setup.xlsb", overwrite = TRUE)
     }
+
     # revert back previous stable designer due to corrupt files.
     if (update_stable == 2) {
          file.copy(from = "./Rscripts/setup_prev.xlsb",
              to = "./setup.xlsb", overwrite = TRUE)
          file.copy(from = "./Rscripts/setup_prev.xlsb",
-                 to = "./setup_dev.xlsb", overwrite = TRUE)
+                 to = "./src/bin/setup_dev.xlsb", overwrite = TRUE)
          file.copy(from = "./Rscripts/setup_prev.xlsb",
                  to = "./setup_aky.xlsb", overwrite = TRUE)
     }
