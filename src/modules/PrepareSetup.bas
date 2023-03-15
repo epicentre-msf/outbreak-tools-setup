@@ -11,11 +11,14 @@ Private drop As IDropdownLists
 Private wb As Workbook
 Private currSh As Worksheet
 Private currTab As ICustomTable
+Private currLo As ListObject
+Private currUp As IUpdatedValues
 Private pass As IPasswords
 
 Private Sub BusyApp()
     Application.EnableEvents = False
     Application.ScreenUpdating = False
+    Application.CalculateBeforeSave = False
     Application.EnableAnimations = False
     Application.Calculation = xlCalculationManual
   End Sub
@@ -42,9 +45,15 @@ Private Sub MoveToSheet(ByVal sheetName As String)
     Set currSh = wb.Worksheets(sheetName)
 End Sub
 
-Private Sub MoveToTable(ByVal tabName As String)
-    Set currTab = CustomTable.Create(currSh.ListObjects(tabName))
+Private Sub MoveToUp(ByVal upName As String)
+    Set currUp = UpdatedValues.Create(wb.Worksheets("__updated"), upName)
 End Sub
+
+Private Sub MoveToTable(ByVal tabName As String)
+    Set currLo = currSh.ListObjects(tabName)
+    Set currTab = CustomTable.Create(currLo)
+End Sub
+
 
 'Function to add Elements to the dropdown list
 Private Sub AddElements(ByVal dropdownName As String, ParamArray Els() As Variant)
@@ -130,11 +139,13 @@ Private Sub CreateDropdowns()
 
 End Sub
 
-Private Sub AddValidations()
+Private Sub AddValidationsAndUpdates()
 
     'Dictionary dropdowns -----------------------------------------------------
     MoveToSheet "Dictionary"
+    BusyApp
     pass.UnProtect "Dictionary"
+    BusyApp
     MoveToTable "Tab_Dictionary"
 
     'Set validation on dictionary colnames elements
@@ -168,10 +179,25 @@ Private Sub AddValidations()
                         drop:=drop, alertType:="error"
 
 
+    'Add watchers on columns
+    MoveToUp "dict"
+    currUp.AddColumns currLo
+    BusyApp
     pass.Protect "Dictionary"
+    BusyApp
+
+    'Choices worksheet -----------------------------------------------------------------------------------------
+
+    MoveToSheet "Choices"
+    MoveToTable "Tab_Choices"
+    MoveToUp "choi"
+    currUp.AddColumns currLo
+
     'Exports dropdowns -----------------------------------------------------------------------------------------
     MoveToSheet "Exports"
+    BusyApp
     pass.UnProtect "Exports"
+    BusyApp
     MoveToTable "Tab_Exports"
 
     currTab.SetValidation colName:="password", dropName:="__yesno", _
@@ -187,10 +213,18 @@ Private Sub AddValidations()
     currTab.SetValidation colName:="export header", dropName:="__export_header", _
                         drop:=drop, alertType:="error"
 
+    'Add Watchers on columns
+    MoveToUp "exp"
+    currUp.AddColumns currLo
+    BusyApp
     pass.Protect "Exports"
+    BusyApp
+
     'Analysis dropdowns ------------------------------------------------------------------------------------
     MoveToSheet "Analysis"
+    BusyApp
     pass.UnProtect "Analysis"
+    BusyApp
 
     'add validation on select table
     drop.SetValidation cellRng:=currSh.Range("RNG_SelectTable"), _
@@ -200,6 +234,11 @@ Private Sub AddValidations()
     MoveToTable "Tab_Global_Summary"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                           alertType:="info"
+
+    'columns to watch on global summary
+    MoveToUp "ana_gs"
+    currUp.AddColumns currLo
+
     'Univariate analysis table
     MoveToTable "Tab_Univariate_Analysis"
 
@@ -216,6 +255,10 @@ Private Sub AddValidations()
     'Group_by variable
     currTab.SetValidation colName:="row", dropName:="__choice_vars", drop:=drop, _
                           alertType:="error"
+
+    'add columns
+    MoveToUp "ana_ua"
+    currUp.AddColumns currLo
 
     'Bivariate analysis table
     MoveToTable "Tab_Bivariate_Analysis"
@@ -237,6 +280,10 @@ Private Sub AddValidations()
     currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
                           alertType:="error"
 
+    'add columns on bivariate analysis to watcher
+    MoveToUp "ana_ba"
+    currUp.AddColumns currLo
+
     'Time Series analysis table
     MoveToTable "Tab_TimeSeries_Analysis"
     currTab.SetValidation colName:="add missing data", dropName:="__yesno", _
@@ -254,6 +301,15 @@ Private Sub AddValidations()
     currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
                           alertType:="info"
 
+    'add column on time series analysis to watcher
+    MoveToUp "ana_ts"
+    currUp.AddColumns currLo
+
+    'add columns on graph on time series labels
+    MoveToTable "Tab_Label_TSGraph"
+    MoveToUp "ana_tsgrlab"
+    currUp.AddColumns currLo
+
     'Graph on time series
     MoveToTable "Tab_Graph_TimeSeries"
     currTab.SetValidation colName:="plot values or percentages", _
@@ -263,6 +319,9 @@ Private Sub AddValidations()
                           drop:=drop, alertType:="info"
     currTab.SetValidation colName:="y-axis", dropName:="__axis_pos", _
                           drop:=drop, alertType:="error"
+    MoveToUp "ana_tsgr"
+    currUp.AddColumns currLo
+
     'graph title and series title
     'Spatial Analysis
     MoveToTable "Tab_Spatial_Analysis"
@@ -283,18 +342,20 @@ Private Sub AddValidations()
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                         alertType:="info"
 
+    MoveToUp "ana_sp"
+    currUp.AddColumns currLo
+
     'Spatio-Temporal Analysis
+    BusyApp
     pass.Protect "Analysis"
+    BusyApp
 End Sub
 
 Public Sub ConfigureSetup()
     'Initialize elements
     BusyApp
-
     Initialize
     CreateDropdowns 'Create dropdowns for the setup
-    AddValidations  'Add the validations to each parts of the setup
-
-    NotBusyApp
+    AddValidationsAndUpdates  'Add the validations to each parts of the setup
     MsgBox "Done!"
 End Sub

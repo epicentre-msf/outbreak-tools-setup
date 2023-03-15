@@ -2,19 +2,24 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-
 Attribute VB_Name = "UpdatedValues"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Attribute VB_Description = ""
+
 
 '@Folder("Setup")
 '@ModuleDescription("Watch updated values in the setup")
 '@IgnoreModule
 Option Explicit
+Implements IUpdatedValues
+
 Private Const CLASSNAME As String = "IUpdatedValues"
+Private Const TRANSLATETEXT As String = "translate as text"
+Private Const TRANSLATEFORM As String = "translate as formula"
+Private Const WATCHUPDATE As String = "watch for update"
+
 Private Type TUpValues
   upLo As ListObject
   sh As Worksheet
@@ -34,7 +39,7 @@ Public Function Create(ByVal sh As Worksheet, ByVal upName As String) As IUpdate
   End With
 End Function
 
-Public Property Get Self() As IDropdownLists
+Public Property Get Self() As IUpdatedValues
     Set Self = Me
 End Property
 
@@ -58,10 +63,7 @@ Private Property Get LastColumn() As Long
     Dim sh As Worksheet
     Dim colIndex As Long
     Set sh = Wksh()
-    With sh
-        colIndex = .Cells(1, .Columns.Count).End(xlToLeft).Column
-        colIndex = IIf(colIndex = 1 And .Cells(1, 1).Value <> "", colIndex, colIndex + 2)
-    End With
+    colIndex = sh.Cells(1, .Columns.Count).End(xlToLeft).Column + 2
     LastColumn = colIndex
 End Property
 
@@ -78,11 +80,12 @@ Private Property Get Table() As ListObject
         .Cells(1, colIndex).Value = "colname"
         .Cells(1, colIndex + 1).Value = "rngname"
         .Cells(1, colIndex + 2).Value = "updated"
-        Set rng = .Range(.Cells(1, colIndex), .Cells(2, colIndex + 2))
+        .Cells(1, colIndex + 3).Value = "headername"
+        Set rng = .Range(.Cells(1, colIndex), .Cells(2, colIndex + 3))
         .ListObjects.Add(xlSrcRange, rng, , xlYes).Name = CurrentLoName(ID)
       End With
     End If
-    Set this.upLo = .ListObjects(CurrentLoName(ID))
+    Set this.upLo = sh.ListObjects(CurrentLoName(ID))
   End If
   Set Table = this.upLo
 End Property
@@ -93,67 +96,87 @@ Private Property Get IsUpdated(ByVal checkColName As String) As Boolean
   Dim cellRng As Range
   Set upLo = Table()
   Set rng = upLo.ListColumns("rngname").Range
-  Set cellRng = rng.Find(What:=checkColName, LookAt:=xlWhole, MatchCase:=True)
+  Set cellRng = rng.Find(What:=checkColName, lookAt:=xlWhole, MatchCase:=True)
   If cellRng Is Nothing Then Exit Property
   IsUpdated = (cellRng.Cells(1, 2).Value = "yes")
 End Property
 
-Private Sub AddColumn(ByVal Lo As ListObject, colName As String, idName As String)
+Private Sub AddColumns(ByVal Lo As ListObject)
 
   Dim hRng As Range 'header row range of the listObject
   Dim idRng As Range
   Dim upLo As ListObject 'Current Updating listObject
   Dim wb As Workbook
   Dim sh As Worksheet
+  Dim rngName As String
+  Dim colName As String
+  Dim headerName As String
+  Dim idName As String
+  Dim counter As Long
 
   If Lo Is Nothing Then ThrowError "ListObject is not initialize, please provide valid listObject"
-  If Not Exists(ID) Then ThrowError "Unable to add elements to a non existant update table, check the id name"
+  Set upLo = Table()
 
   'Check if the column Exists in the header range
   Set hRng = Lo.HeaderRowRange
-  If hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing _
-   Then ThrowError colName & " not found in listobject " & Lo.Name
 
-  'Check if the id already Exists, in that case exit
-  Set idRng = upLo.ListColums("rngname").Range()
-  If (Not idRng.Find(What:=idName, looAt:=xlWhole, MatchCase:=True) _
-     Is Nothing) Then Exit Sub
+  For counter = 1 To hRng.Columns.Count
 
-  Set sh = Wksh()
-  Set wb = sh.Parent
+    colName = hRng.Cells(1, counter).Value
+    headerName = hRng.Cells(-2, counter).Value
 
-  'Now add values and names to the workbook
-  wb.Names.Add Name:="RNG_" & idName & "_" & ID(), _
-              RefersToR1C1:="=" & Lo.Name & "[" & colName & "]"
-  'Write values to the listObject of the update
-  WriteValues colName, "RNG_" & idName & "_" & ID()
+    If (headerName = TRANSLATETEXT) Or _
+       (headerName = TRANSLATEFORM) Or _
+       (headerName = WATCHUPDATE) Then
+      idName = LCase(Application.WorksheetFunction.Trim(Replace(colName, " ", "_")))
+      'Check if the id already Exists, in that case exit
+      Set idRng = upLo.ListColumns("rngname").Range()
+
+      If (idRng.Find(What:=idName, lookAt:=xlWhole, MatchCase:=True) Is Nothing) Then
+          Set sh = Wksh()
+          Set wb = sh.Parent
+    
+          'Now add values and names to the workbook
+          rngName = "RNG_" & idName & "_" & ID()
+          On Error Resume Next
+              wb.Names(rngName).Delete
+          On Error GoTo 0
+    
+          wb.Names.Add Name:=rngName, RefersToR1C1:="=" & Lo.Name & "[" & colName & "]"
+          'Write values to the listObject of the update
+          WriteValues Lo.Name & "-" & colName, rngName, headerName
+      End If
+    End If
+  Next
 End Sub
 
-
-Private Sub WriteValues(ByVal colName As String, rngName As String, Optional ByVal statusType As String = "no")
+Private Sub WriteValues(ByVal colName As String, ByVal rngName As String, _
+                        ByVal headerName As String, _
+                        Optional ByVal statusType As String = "no")
   Dim upLo As ListObject
   Dim rowRng As Range
   Dim loRng As Range
   Dim sh As Worksheet
 
   Set upLo = Table()
-  Set rowRng = upLo.HeaderRowRange
+  Set rowRng = upLo.HeaderRowRange.Cells(1, 1)
 
-  Do While (Not IsEmpty(rowRng))
+  Do While (rowRng.Value <> vbNullString)
     Set rowRng = rowRng.Offset(1)
   Loop
 
   rowRng.Cells(1, 1).Value = colName
   rowRng.Cells(1, 2).Value = rngName
   rowRng.Cells(1, 3).Value = statusType
+  rowRng.Cells(1, 4).Value = headerName
 
   'Resize the listObject
   Set sh = Wksh()
-  Set loRng = sh.Range(upLo.HeaderRowRange.Cells(1, 1), rowRng.cells(1, 3))
+  Set loRng = sh.Range(upLo.HeaderRowRange.Cells(1, 1), rowRng.Cells(1, 4))
   upLo.Resize loRng
 End Sub
 
-Private Sub WriteUpdate(ByVal idName As String, Byval pos As Long, Optional Byval statusType As String = "yes")
+Private Sub WriteUpdate(ByVal idName As String, ByVal pos As Long, Optional ByVal statusType As String = "yes")
   Dim upLo As ListObject
   Dim idRng As Range
   'Find the colName in the listObject
@@ -175,6 +198,8 @@ Private Sub CheckStatus(ByVal sh As Worksheet, ByVal Target As Range)
   Dim idRng As Range
   Dim upLo As ListObject
   Dim rngName As String
+
+  If Not Exists(ID) Then ThrowError "Unable to add elements to a non existant update table, check the id name"
   Set upLo = Table()
   Set idRng = upLo.ListColumns("rngname").Range
   For counter = 1 To idRng.Rows.Count
@@ -223,10 +248,20 @@ Public Function Exists(ByVal listName As String) As Boolean
     Exists = (Not Lo Is Nothing)
 End Function
 
-
 'Errors
 Private Sub ThrowError(ByVal errorMessage As String)
   Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 'Exposed methods
+Public Sub IUpdatedValues_AddColumns(ByVal Lo As ListObject)
+  AddColumns Lo
+End Sub
+
+Public Property Get IUpdatedValues_IsUpdated(ByVal colName As String) As Boolean
+  IUpdatedValues_IsUpdated = IsUpdated(colName)
+End Property
+
+Public Sub IUpdatedValues_CheckUpdate(ByVal sh As Worksheet, ByVal Target As Range)
+  CheckStatus sh, Target
+End Sub

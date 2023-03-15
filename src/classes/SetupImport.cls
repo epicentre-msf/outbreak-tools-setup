@@ -18,7 +18,7 @@ Option Explicit
 'Exposed methods
 Implements ISetupImport
 
-Private Const className As String = "SetupImport"
+Private Const CLASSNAME As String = "SetupImport"
 
 Private Type TSetupImport
   inPath As String
@@ -26,7 +26,7 @@ Private Type TSetupImport
   inWb As Workbook
 End Type
 
-Private This As TSetupImport
+Private this As TSetupImport
 
 Public Function Create(ByVal importPath As String, ByVal progrObj As Object)
 
@@ -43,19 +43,19 @@ End Function
 
 'Get the path of the import of the setup
 Public Property Get Path() As String
-  Path = This.inPath
+  Path = this.inPath
 End Property
 
 Public Property Let Path(ByVal importPath As String)
-  This.inPath = importPath
+  this.inPath = importPath
 End Property
 
 Public Property Get ProgressObject() As Object
-  Set ProgressObject = This.progress
+  Set ProgressObject = this.progress
 End Property
 
 Public Property Set ProgressObject(ByVal progrObj As Object)
-  Set This.progress = progrObj
+  Set this.progress = progrObj
 End Property
 
 Public Property Get Self() As ISetupImport
@@ -85,8 +85,8 @@ Private Sub NotBusyApp()
 End Sub
 
 Private Property Get ImportWkb() As Workbook
-  If This.inWb Is Nothing Then Set This.inWb = Workbooks.Open(Path())
-  Set ImportWkb = This.inWb
+  If this.inWb Is Nothing Then Set this.inWb = Workbooks.Open(Path())
+  Set ImportWkb = this.inWb
 End Property
 
 'Write a progress when importing the data
@@ -183,7 +183,7 @@ End Sub
 'Errors
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 'Check if a sheet with a given name is present in the provided workbook

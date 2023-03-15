@@ -19,9 +19,9 @@ Private Type TAnalysis
     anash As Worksheet
 End Type
 
-Private This As TAnalysis
+Private this As TAnalysis
 
-Private Const className As String = "Analysis"
+Private Const CLASSNAME As String = "Analysis"
 Private Const GLOBALSUMMARY As String = "Tab_global_summary"
 Private Const UNIVARIATE As String = "Tab_Univariate_Analysis"
 Private Const BIVARIATE As String = "Tab_Bivariate_Analysis"
@@ -44,11 +44,11 @@ End Function
 
 
 Public Property Get Wksh() As Worksheet
-  Set Wksh = This.anash
+  Set Wksh = this.anash
 End Property
 
 Public Property Set Wksh(ByVal anash As Worksheet)
-  Set This.anash = anash
+  Set this.anash = anash
 End Property
 
 Public Property Get Self() As IAnalysis
@@ -161,7 +161,7 @@ Private Sub CheckTablesRequirements()
 End Sub
 
 Private Sub ThrowError(ByVal errorMessage As String)
-  Err.Raise VBA.vbObjectError + 515, className, errorMessage
+  Err.Raise VBA.vbObjectError + 515, CLASSNAME, errorMessage
 End Sub
 
 'Exposed methods

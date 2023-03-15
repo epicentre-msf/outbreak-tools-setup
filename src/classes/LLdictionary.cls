@@ -21,11 +21,11 @@ Private Type TDictionary
     dictDataSheet As IDataSheet                  'Worksheet data of the dictionary
 End Type
 
-Private This As TDictionary
+Private this As TDictionary
 Private DICTIONARYCOLUMNS As BetterArray
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
-Private Const className As String = "ILLdictionary"
+Private Const CLASSNAME As String = "ILLdictionary"
 
 Public Function Create(ByVal dictWksh As Worksheet, ByVal dictStartRow As Long, _
                        ByVal dictStartColumn As Long) As ILLdictionary
@@ -47,11 +47,11 @@ End Property
 
 'Data sheet
 Public Property Get Data() As IDataSheet
-    Set Data = This.dictDataSheet
+    Set Data = this.dictDataSheet
 End Property
 
 Friend Property Set Data(ByVal customDataSheet As IDataSheet)
-    Set This.dictDataSheet = customDataSheet
+    Set this.dictDataSheet = customDataSheet
 End Property
 
 'Worksheet
@@ -179,7 +179,7 @@ Private Function VariableExists(varName As String) As Boolean
     Dim varRng As Range
     Set varRng = DataRange("variable name")
 
-    VariableExists = Not (varRng.Find(What:=varName, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
+    VariableExists = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
 End Function
 
 '------ Prepare and clean the dictionary
@@ -489,7 +489,7 @@ End Sub
 
 'Throw Errors
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Execution Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Execution Error : " & errorMessage
 End Sub
 
 ' INTERFACE __________________________________________________________________________________________________________________________

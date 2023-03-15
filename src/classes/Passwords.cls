@@ -22,9 +22,9 @@ Private Type TPassWord
     sh As Worksheet
 End Type
 
-Private This As TPassWord
+Private this As TPassWord
 
-Private Const className As String = "Passwords"
+Private Const CLASSNAME As String = "Passwords"
 
 Public Function Create(ByVal sh As Worksheet) As IPasswords
     CheckRequirements sh
@@ -36,11 +36,11 @@ Public Function Create(ByVal sh As Worksheet) As IPasswords
 End Function
 
 Public Property Get Wksh() As Worksheet
-    Set Wksh = This.sh
+    Set Wksh = this.sh
 End Property
 
 Public Property Set Wksh(ByVal sh As Worksheet)
-    Set This.sh = sh
+    Set this.sh = sh
 End Property
 
 Public Property Get Self() As IPasswords
@@ -159,7 +159,7 @@ End Sub
 
 'Error
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 Public Property Get IPasswords_PassWord() As String

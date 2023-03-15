@@ -23,8 +23,8 @@ Private Type TTablesSpecs
     tType As AnalysisTablesType
 End Type
 
-Private This As TTablesSpecs
-Private Const className As String = "TableSpecs"
+Private this As TTablesSpecs
+Private Const CLASSNAME As String = "TableSpecs"
 
 'Instanciation
 
@@ -46,27 +46,27 @@ End Function
 
 'Properties
 Public Property Get HeaderRange() As Range
-    Set HeaderRange = This.hRng
+    Set HeaderRange = this.hRng
 End Property
 
 Public Property Get TableRange() As Range
-    Set TableRange = This.tRng
+    Set TableRange = this.tRng
 End Property
 
 Public Property Get LinelistSpecifications() As ILinelistSpecs
-    Set LinelistSpecifications = This.lData
+    Set LinelistSpecifications = this.lData
 End Property
 
 Public Property Set HeaderRange(ByVal hRng As Range)
-    Set This.hRng = hRng
+    Set this.hRng = hRng
 End Property
 
 Public Property Set TableRange(ByVal tRng As Range)
-    Set This.tRng = tRng
+    Set this.tRng = tRng
 End Property
 
 Public Property Set LinelistSpecifications(ByVal lData As ILinelistSpecs)
-    Set This.lData = lData
+    Set this.lData = lData
 End Property
 
 Public Property Get TableType() As AnalysisTablesType
@@ -268,14 +268,14 @@ End Property
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
     Set hRng = HeaderRange
-    ColumnExists = (Not hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False) Is Nothing)
+    ColumnExists = (Not hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing)
 End Function
 
 Private Function ColumnIndex(ByVal colName As String) As Long
     Dim hRng As Range
     Set hRng = HeaderRange
     If ColumnExists(colName) Then
-        ColumnIndex = hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
+        ColumnIndex = hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
     Else
         ColumnIndex = -1
     End If
@@ -372,11 +372,11 @@ End Property
 'Errors
 'Errors ---------------------------------------------------------------------------------
 Private Sub ThrowErrorUnableInstanciate(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 515, className, "Unable to create an instance of the class : " & errorMessage
+    Err.Raise VBA.vbObjectError + 515, CLASSNAME, "Unable to create an instance of the class : " & errorMessage
 End Sub
 
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Execution Error: " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Execution Error: " & errorMessage
 End Sub
 
 'Interface

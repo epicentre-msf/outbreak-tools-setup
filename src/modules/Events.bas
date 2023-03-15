@@ -23,6 +23,9 @@ Public Sub clickResize(ByRef Control As Office.IRibbonControl)
     ManageRows sheetName:=sheetName, del:=True
 End Sub
 
+Public Sub clickUpdateTranslate()
+End Sub
+
 'clear data in the current setup
 Public Sub clickClearSetup(ByRef Control As Office.IRibbonControl)
 End Sub
@@ -94,26 +97,34 @@ Public Sub EnterAnalysis()
     Dim drop As IDropdownLists
     Dim lst As BetterArray
     Dim vars As ILLVariables
+    Dim upObj As IUpdatedValues
 
     Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
-    Set vars = ILLVariables.Create(dict)
+    Set vars = LLVariables.Create(dict)
     Set drop = DropdownLists.Create(ThisWorkbook.Worksheets("__variables"))
+    Set upObj = UpdatedValues.Create(ThisWorkbook.Worksheets("__updated"), "dict")
 
-    'Update geo vars
-    Set lst = dict.GeoVars()
-    drop.Update lst, "__geo_vars"
+    BusyApp
 
-    'Update time vars
-    Set lst = dict.TimeVars()
-    drop.Update lst, "__time_vars"
+    If upObj.IsUpdated("control_details") Then
+        'Update geo vars
+        Set lst = dict.GeoVars()
+        drop.Update lst, "__geo_vars"
+        'Update choices vars
+        Set lst = dict.ChoicesVars()
+        drop.Update lst, "__choice_vars"
+    End If
 
-    'Update choices vars
-    Set lst = dict.ChoicesVars()
-    drop.Update lst, "__choice_vars"
+    If upObj.IsUpdated("variable_type") Then
+        'Update time vars
+        Set lst = dict.TimeVars()
+        drop.Update lst, "__time_vars"
+    End If
 
+    NotBusyApp
 End Sub
 
-Private Sub FormatLockCell(ByVal cellRng As Range, Locked = True)
+Private Sub FormatLockCell(ByVal cellRng As Range, Optional ByVal Locked = True)
     cellRng.Font.Color = IIf(Locked, RGB(51, 142, 202), vbBlack)
     cellRng.Font.Italic = Locked
     cellRng.Locked = Locked
@@ -123,8 +134,8 @@ End Sub
 'Add Dropdown on choices
 Public Sub AddChoicesDropdown(ByVal Target As Range)
 
-    CONST LOBJNAME As String = "Tab_Graph_TimeSeries"
-    CONST LOBJTSNAME As String = "Tab_TimeSeries_Analysis"
+    Const LOBJNAME As String = "Tab_Graph_TimeSeries"
+    Const LOBJTSNAME As String = "Tab_TimeSeries_Analysis"
 
     Dim sh As Worksheets
     Dim csTab As ICustomTable
@@ -145,7 +156,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     Set csTab = CustomTable.Create(sh.ListObjects(LOBJNAME), "series title")
     Set seriestitleRng = csTab.DataRange("series title")
 
-    If Intersect(Target, seriestitleRng) Is Nothing Then Exit Sub
+    If InterSect(Target, seriestitleRng) Is Nothing Then Exit Sub
 
     'Create the choices object
     Set choi = LLchoice.Create(ThisWorkbook.Worksheets("Choices"), 4, 1)
@@ -174,7 +185,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
         'Get the cellRang for choice
         Set cellRng = csTab.CellRange("choice", Target.Row)
         Set tsTab = CustomTable.Create(sh.ListObjects(TSNAME), "title")
-        sumLab = tsTab.Value(colName:="summary label", keyName = Target.Value)
+        sumLab = tsTab.Value(colName:="summary label", keyName:=Target.Value)
         FormatLockCell cellRng, True
 
         Set cellRng = csTab.CellRange("values or percentages")

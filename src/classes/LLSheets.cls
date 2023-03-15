@@ -23,10 +23,10 @@ Private Type TLLSheets
     sheetRng As Range
 End Type
 
-Private This As TLLSheets
+Private this As TLLSheets
 Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
-Private Const className As String = "LLSheets"
+Private Const CLASSNAME As String = "LLSheets"
 Private Const SHEETHORIZONTALNBROWS As Long = 201
 
 Private Enum SHEETSTART
@@ -52,16 +52,16 @@ Public Property Get Self() As ILLSheets
 End Property
 
 Public Property Get Dictionary() As ILLdictionary
-    Set Dictionary = This.dict
+    Set Dictionary = this.dict
 End Property
 
 Public Property Set Dictionary(ByVal dict As ILLdictionary)
-    Set This.dict = dict
-    Set This.sheetRng = dict.DataRange("sheet name", includeHeaders:=True)
+    Set this.dict = dict
+    Set this.sheetRng = dict.DataRange("sheet name", includeHeaders:=True)
 End Property
 
 Public Property Get SheetRange() As Range
-    Set SheetRange = This.sheetRng
+    Set SheetRange = this.sheetRng
 End Property
 
 'methods
@@ -73,7 +73,7 @@ Private Function Contains(ByVal sheetName As String) As Boolean
     If sheetName = vbNullString Or sheetName = "sheet name" Then
         Exists = False
     Else
-        Exists = Not (sheetRng.Find(What:=sheetName, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        Exists = Not (sheetRng.Find(What:=sheetName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
 
     Contains = Exists
@@ -86,7 +86,7 @@ Private Function RowIndex(ByVal sheetName As String) As Long
     rowNum = -1
     Set sheetRng = SheetRange()
     If Contains(sheetName) Then
-        rowNum = sheetRng.Find(What:=sheetName, LookAt:=xlWhole, MatchCase:=True).Row
+        rowNum = sheetRng.Find(What:=sheetName, lookAt:=xlWhole, MatchCase:=True).Row
     End If
     RowIndex = rowNum
 End Function
@@ -242,11 +242,11 @@ End Function
 
 'Errors
 Private Sub ThrowErrorUnableInstanciateNoSheetName()
-    Err.Raise VBA.vbObjectError + 513, className, "Unable to create an instance of the class variable, sheet name and sheet types columns do not exists"
+    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class variable, sheet name and sheet types columns do not exists"
 End Sub
 
 Private Sub ThrowErrorUnableInstanciateNotPrepared()
-    Err.Raise VBA.vbObjectError + 514, className, "Unable to create an instance of the class variable: The dictionary is not prepared"
+    Err.Raise VBA.vbObjectError + 514, CLASSNAME, "Unable to create an instance of the class variable: The dictionary is not prepared"
 End Sub
 
 'Interface ---------------------------------------------------------------------

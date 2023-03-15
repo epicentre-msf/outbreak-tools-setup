@@ -21,8 +21,8 @@ Private Type TCustomTable
   idPrefix As String
 End Type
 
-Private This As TCustomTable
-Private Const className As String = "ICustomTable"
+Private this As TCustomTable
+Private Const CLASSNAME As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
 
 Public Function Create(ByVal Lo As ListObject, _
@@ -53,27 +53,27 @@ End Function
 
 'Table listObject
 Public Property Get Table() As ListObject
-  Set Table = This.Lo
+  Set Table = this.Lo
 End Property
 
 Public Property Set Table(ByVal Lo As ListObject)
-  Set This.Lo = Lo
+  Set this.Lo = Lo
 End Property
 
 Public Property Get IdValue() As String
-  IdValue = This.idCol
+  IdValue = this.idCol
 End Property
 
 Public Property Get PrefixValue() As String
-  PrefixValue = This.idPrefix
+  PrefixValue = this.idPrefix
 End Property
 
 Public Property Let IdValue(ByVal idCol As String)
-  This.idCol = idCol
+  this.idCol = idCol
 End Property
 
 Public Property Let PrefixValue(ByVal idPrefix As String)
-  This.idPrefix = idPrefix
+  this.idPrefix = idPrefix
 End Property
 
 'HeaderRowRange
@@ -145,13 +145,13 @@ Private Sub AddIds()
   Dim rng As Range
   Dim counter As Long
   Dim idPref As String
-  Dim id As String
+  Dim ID As String
 
-  id = IdValue()
-  If (id = vbNullString) Then Exit Sub
-  If Not (ColumnExists(id)) Then Exit Sub
+  ID = IdValue()
+  If (ID = vbNullString) Then Exit Sub
+  If Not (ColumnExists(ID)) Then Exit Sub
   idPref = PrefixValue()
-  Set rng = DataRange(id)
+  Set rng = DataRange(ID)
   For counter = 1 To rng.Rows.Count
     rng.Cells(counter, 1).Value = Application.WorksheetFunction.Trim(idPref & " " & counter)
   Next
@@ -180,7 +180,7 @@ End Sub
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
     Set hRng = HeaderRowRange
-    ColumnExists = (Not hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False) Is Nothing)
+    ColumnExists = (Not hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing)
 End Function
 
 Private Function ColumnIndex(ByVal colName) As Long
@@ -189,7 +189,7 @@ Private Function ColumnIndex(ByVal colName) As Long
 
     Set hRng = HeaderRowRange()
     If ColumnExists(colName) Then
-        Index = hRng.Find(What:=colName, LookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
+        Index = hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
     Else
         Index = -1
     End If
@@ -277,5 +277,5 @@ End Property
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub

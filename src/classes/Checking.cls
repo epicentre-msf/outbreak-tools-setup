@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IChecking
 
-Private Const className As String = "Checking"
+Private Const CLASSNAME As String = "Checking"
 
 Private Type TChecking
   title As String
@@ -26,7 +26,7 @@ Private Type TChecking
   scopesTable As BetterArray
 End Type
 
-Private This As TChecking
+Private this As TChecking
 
 'Exposed methods
 Public Function Create(ByVal titleName As String, Optional ByVal subtitleName As String = vbNullString) As IChecking
@@ -45,19 +45,19 @@ End Property
 
 'title and subTitle
 Private Property Get CheckingTitle() As String
-  CheckingTitle = This.title
+  CheckingTitle = this.title
 End Property
 
 Private Property Get CheckingSubTitle() As String
-  CheckingSubTitle = This.subTitle
+  CheckingSubTitle = this.subTitle
 End Property
 
 Private Property Let CheckingTitle(ByVal titleName As String)
-  This.title = titleName
+  this.title = titleName
 End Property
 
 Private Property Let CheckingSubTitle(ByVal subtitleName As String)
-  This.subTitle = subtitleName
+  this.subTitle = subtitleName
 End Property
 
 'Heading Property
@@ -74,11 +74,11 @@ End Property
 Private Property Get ListOfKeys() As BetterArray
 
   'If the keysTable is unitialised, initialize it
-  If This.keysTable Is Nothing Then
-    Set This.keysTable = New BetterArray
-    This.keysTable.LowerBound = 1
+  If this.keysTable Is Nothing Then
+    Set this.keysTable = New BetterArray
+    this.keysTable.LowerBound = 1
   End If
-  Set ListOfKeys = This.keysTable.Clone()
+  Set ListOfKeys = this.keysTable.Clone()
 End Property
 
 'Test if a key already exists
@@ -102,20 +102,20 @@ Private Sub Add(ByVal keyName As String, ByVal LABEL As String, _
   If keyExists(keyName) Then ThrowError keyName & " already exists, keys should be unique."
 
   'Initialize the tables
-  If (This.labelsTable Is Nothing) And (This.scopesTable Is Nothing) Then
-    Set This.labelsTable = New BetterArray
-    Set This.scopesTable = New BetterArray
-    Set This.keysTable = New BetterArray
+  If (this.labelsTable Is Nothing) And (this.scopesTable Is Nothing) Then
+    Set this.labelsTable = New BetterArray
+    Set this.scopesTable = New BetterArray
+    Set this.keysTable = New BetterArray
 
-    This.labelsTable.LowerBound = 1
-    This.scopesTable.LowerBound = 1
-    This.keysTable.LowerBound = 1
+    this.labelsTable.LowerBound = 1
+    this.scopesTable.LowerBound = 1
+    this.keysTable.LowerBound = 1
   End If
 
   'Push the three values
-  This.keysTable.Push keyName
-  This.scopesTable.Push scope
-  This.labelsTable.Push LABEL
+  this.keysTable.Push keyName
+  this.scopesTable.Push scope
+  this.labelsTable.Push LABEL
 End Sub
 
 
@@ -126,14 +126,14 @@ Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedVa
 
   If (Not keyExists(keyName)) Then ThrowError keyName & " does not exists in this checking"
 
-  indexValue = This.keysTable.IndexOf(keyName)
-  actualScope = This.scopesTable.IndexOf(keyName)
+  indexValue = this.keysTable.IndexOf(keyName)
+  actualScope = this.scopesTable.IndexOf(keyName)
 
   Select Case retrievedValue
 
     Case checkingLabel
 
-      returnedValue = This.labelsTable.Item(indexValue)
+      returnedValue = this.labelsTable.Item(indexValue)
 
     Case checkingType
 
@@ -169,7 +169,7 @@ End Property
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
-    Err.Raise VBA.vbObjectError + 516, className, "Error : " & errorMessage
+    Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
 
