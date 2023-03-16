@@ -63,7 +63,7 @@ Private Property Get LastColumn() As Long
     Dim sh As Worksheet
     Dim colIndex As Long
     Set sh = Wksh()
-    colIndex = sh.Cells(1, .Columns.Count).End(xlToLeft).Column + 2
+    colIndex = sh.Cells(1, sh.Columns.Count).End(xlToLeft).Column + 2
     LastColumn = colIndex
 End Property
 
@@ -185,10 +185,21 @@ Private Sub WriteUpdate(ByVal idName As String, ByVal pos As Long, Optional ByVa
   idRng.Cells(pos, 2).Value = statusType
 End Sub
 
-Private Sub Clear()
+Private Sub ClearUp()
   Dim upLo As ListObject
   Set upLo = Table()
   If Not upLo.DataBodyRange Is Nothing Then upLo.DataBodyRange.Delete
+End Sub
+
+Private Sub DeleteUp()
+  Dim upLo As ListObject
+  Dim rng As Range
+  Dim counter As Long
+  Set upLo = Table()
+  Set rng = upLo.Range
+  If Not upLo.DataBodyRange Is Nothing Then upLo.DataBodyRange.Delete
+  upLo.Unlist
+  rng.Cells.Clear
 End Sub
 
 'Check the update status
@@ -264,4 +275,12 @@ End Property
 
 Public Sub IUpdatedValues_CheckUpdate(ByVal sh As Worksheet, ByVal Target As Range)
   CheckStatus sh, Target
+End Sub
+
+Public Sub IUpdatedValues_ClearUp()
+  ClearUp
+End Sub
+
+Public Sub IUpdatedValues_DeleteUp()
+  DeleteUp
 End Sub

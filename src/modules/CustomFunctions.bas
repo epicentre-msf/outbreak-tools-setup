@@ -8,20 +8,17 @@ Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal grpVar As String
                                  ByVal sumLab As String) As String
     Application.Volatile
 
-
-    Dim vars As ILLVariables
-    Dim dict As ILLdictionary
     Dim sh As Worksheet
+    Dim csTab As ICustomTable
     Dim timeVarLab As String
     Dim colVarLab As String
     Dim header As String
 
     Set sh = ThisWorkbook.Worksheets("Dictionary")
-    Set dict = LLdictionary.Create(sh, 5, 1)
-    Set vars = LLVariables.Create(dict)
+    Set csTab = CustomTable.Create(sh.ListObjects(1), "variable name")
 
-    timeVarLab = vars.Value(colName:="Main Label", varName:=timeVar)
-    colVarLab = vars.Value(colName:="Main Label", varName:=grpVar)
+    timeVarLab = csTab.Value(colName:="Main Label", keyName:=timeVar)
+    colVarLab = csTab.Value(colName:="Main Label", keyName:=grpVar)
 
     If (grpVar = vbNullString) Then
         header = sumLab & " " & ChrW(9472) & " " & timeVarLab

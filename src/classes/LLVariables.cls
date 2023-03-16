@@ -62,16 +62,16 @@ End Property
 'Test if a variable is present
 Private Function Contains(ByVal varName As String) As Boolean
     Dim varRng As Range
-    Dim Exist As Boolean
+    Dim exist As Boolean
   
     Set varRng = VarRange()
     If varName = vbNullString Then
-        Exist = False
+        exist = False
     Else
-        Exist = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        exist = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
   
-    Contains = Exist
+    Contains = exist
 End Function
 
 'Find the row index of one variable

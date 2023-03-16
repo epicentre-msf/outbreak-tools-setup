@@ -160,7 +160,7 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="personal identifier", dropName:="__yesno", _
                          drop:=drop, alertType:="error"
     'variable type
-    currTab.SetValidation colName:="var type", dropName:="__var_type", drop:=drop, _
+    currTab.SetValidation colName:="variable type", dropName:="__var_type", drop:=drop, _
                         alertType:="error"
     'variable format
     currTab.SetValidation colName:="variable format", dropName:="__formats", _

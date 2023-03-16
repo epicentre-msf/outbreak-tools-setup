@@ -125,14 +125,14 @@ End Property
 'Check if colname exists
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
-    Dim Exist As Boolean
+    Dim exist As Boolean
     Set hRng = HeaderRange()                     'Header Range of the dictionary
     If colName = vbNullString Then
-        Exist = False
+        exist = False
     Else
-        Exist = Not (hRng.Find(What:=colName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        exist = Not (hRng.Find(What:=colName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
-    ColumnExists = Exist
+    ColumnExists = exist
 End Function
 
 'Column Index within the data range of the dictionary

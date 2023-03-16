@@ -180,9 +180,9 @@ Private Function ContainsControl(ByVal sheetName As String, _
     Set varData = New BetterArray
     Set dict = Dictionary()
 
-    Dim Exist As Boolean                         'Test if there is a listauto var in the sheet (at least one)
+    Dim exist As Boolean                         'Test if there is a listauto var in the sheet (at least one)
 
-    Exist = False
+    exist = False
 
     Set controlVar = dict.Data.FilterData("control", Control, "variable name")
     Set varData = Varlist(sheetName)
@@ -190,13 +190,13 @@ Private Function ContainsControl(ByVal sheetName As String, _
     If controlVar.Length <> 0 Then
         For counter = controlVar.LowerBound To controlVar.UpperBound
             If varData.Includes(controlVar.Item(counter)) Then
-                Exist = True
+                exist = True
                 Exit For
             End If
         Next
     End If
 
-    ContainsControl = Exist
+    ContainsControl = exist
 End Function
 
 'Variable Address

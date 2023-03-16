@@ -127,17 +127,17 @@ End Property
 'Check if colname exists
 Private Function ColumnExists(ByVal colName As String, Optional ByVal checkValidity As Boolean = False) As Boolean
     Dim customDataSheet As IDataSheet
-    Dim Exist As Boolean
+    Dim exist As Boolean
 
     Set customDataSheet = Data()
-    Exist = customDataSheet.ColumnExists(colName)
+    exist = customDataSheet.ColumnExists(colName)
 
-    If Exist And checkValidity Then
+    If exist And checkValidity Then
         If DICTIONARYCOLUMNS Is Nothing Then ClassArraysInitialize
-        Exist = DICTIONARYCOLUMNS.Includes(colName)
+        exist = DICTIONARYCOLUMNS.Includes(colName)
     End If
 
-    ColumnExists = Exist
+    ColumnExists = exist
 End Function
 
 'Column Index within the data range of the dictionary

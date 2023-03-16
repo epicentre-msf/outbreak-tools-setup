@@ -178,9 +178,14 @@ End Sub
 
 'Column Range and column Index of a custom table
 Private Function ColumnExists(ByVal colName As String) As Boolean
+    Dim exist As Boolean
     Dim hRng As Range
     Set hRng = HeaderRowRange
-    ColumnExists = (Not hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing)
+    exist = False
+    On Error Resume Next
+    exist = (Not hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing)
+    On Error GoTo 0
+    ColumnExists = exist
 End Function
 
 Private Function ColumnIndex(ByVal colName) As Long

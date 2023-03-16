@@ -20,3 +20,5 @@ Option Explicit
 Public Sub AddColumns(ByVal Lo As ListObject): End Sub
 Public Property Get IsUpdated(ByVal colName As String) As Boolean: End Property
 Public Sub CheckUpdate(ByVal sh As Worksheet, ByVal Target As Range): End Sub
+Public Sub ClearUp(): End Sub
+Public Sub DeleteUp(): End Sub

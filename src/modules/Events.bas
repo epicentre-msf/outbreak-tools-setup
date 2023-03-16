@@ -23,7 +23,71 @@ Public Sub clickResize(ByRef Control As Office.IRibbonControl)
     ManageRows sheetName:=sheetName, del:=True
 End Sub
 
-Public Sub clickUpdateTranslate()
+Public Sub clickUpdateTranslate(ByRef Control As Office.IRibbonControl)
+    'remove update columns and add new columns to watch
+    BusyApp
+    CleanUpdateColumns
+    UpdatedWatchedValues
+    NotBusyApp
+    MsgBox "Done!"
+End Sub
+
+'Clear the names of the columns to update
+Private Sub CleanUpdateColumns()
+    'Clear the update sheet
+    Dim upSh As Worksheet
+    Dim Lo As ListObject
+    Dim wb As Workbook
+    Dim namesRng As Range
+    Dim counter As Long
+    Set wb = ThisWorkbook
+    Set upSh = wb.Worksheets("__updated")
+
+    'Unlist all listObjects in the worksheet and delete all names
+    For Each Lo In upSh.ListObjects
+        Set namesRng = Lo.ListColumns("rngname").Range
+        For counter = 1 To namesRng.Rows.Count
+            On Error Resume Next
+            wb.Names(namesRng.Cells(counter, 1).Value).Delete
+            On Error GoTo 0
+        Next
+        Lo.Unlist
+    Next
+    upSh.Cells.Clear
+End Sub
+
+'Update the translation values
+Private Sub UpdatedWatchedValues()
+    Dim sh As Worksheet
+    Dim sheetsList As BetterArray
+    Dim counter As Long
+    Dim sheetName As String
+
+    Set sheetsList = New BetterArray
+    sheetsList.Push "Dictionary", "Choices", "Exports", "Analysis"
+    For counter = sheetsList.LowerBound To sheetsList.UpperBound
+        sheetName = sheetsList.Item(counter)
+        Set sh = ThisWorkbook.Worksheets(sheetName)
+        'Write update status on each sheet
+        writeUpdateStatus sh
+    Next
+End Sub
+
+'Update status of columns to watch
+Private Sub writeUpdateStatus(sh As Worksheet)
+    Dim upSh As Worksheet
+    Dim upId As String
+    Dim upObj As IUpdatedValues
+    Dim Lo As ListObject
+
+    Set upSh = ThisWorkbook.Worksheets("__updated")
+    upId = LCase(Left(sh.Name, 4))
+    For Each Lo In sh.ListObjects
+        If sh.Name = "Analysis" Then _
+        upId = LCase(Replace(Lo.Name, "Tab_", ""))
+        Set upObj = UpdatedValues.Create(upSh, upId)
+        upObj.AddColumns Lo
+    Next
 End Sub
 
 'clear data in the current setup
@@ -46,7 +110,6 @@ Private Sub NotBusyApp()
     Application.EnableEvents = True
     Application.ScreenUpdating = True
     Application.EnableAnimations = True
-    Application.Calculation = xlCalculationAutomatic
 End Sub
 
 'Add or Remove Rows to a table
@@ -57,8 +120,10 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Dim pass As IPasswords
 
     BusyApp
+
     On Error Resume Next
     Set sh = ThisWorkbook.Worksheets(sheetName)
+    sh.EnableCalculation = False
     Set shpass = ThisWorkbook.Worksheets("__pass")
     On Error GoTo 0
 
@@ -87,6 +152,7 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     End If
 
     pass.Protect sh.Name
+    sh.EnableCalculation = True
     NotBusyApp
 End Sub
 
@@ -99,12 +165,13 @@ Public Sub EnterAnalysis()
     Dim vars As ILLVariables
     Dim upObj As IUpdatedValues
 
+    BusyApp
+
     Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
     Set vars = LLVariables.Create(dict)
     Set drop = DropdownLists.Create(ThisWorkbook.Worksheets("__variables"))
     Set upObj = UpdatedValues.Create(ThisWorkbook.Worksheets("__updated"), "dict")
 
-    BusyApp
 
     If upObj.IsUpdated("control_details") Then
         'Update geo vars
@@ -129,7 +196,6 @@ Private Sub FormatLockCell(ByVal cellRng As Range, Optional ByVal Locked = True)
     cellRng.Font.Italic = Locked
     cellRng.Locked = Locked
 End Sub
-
 
 'Add Dropdown on choices
 Public Sub AddChoicesDropdown(ByVal Target As Range)
@@ -192,4 +258,28 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
         cellRng.Value = "values"
         FormatLockCell cellRng, True
     End If
+End Sub
+
+Public Sub checUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
+    Dim upSh As Worksheet
+    Dim upObj As IUpdatedValues
+    Dim upId As String
+    Dim Lo As ListObject
+
+    BusyApp
+
+    Set upSh = ThisWorkbook.Worksheets("__updated")
+    upId = LCase(Left(sheetName, 4))
+    If sh.Name = "Analysis" Then
+        For Each Lo In sh.ListObjects
+            upId = upId & "_" & LCase(Replace(Lo.Name, "Tab_", ""))
+            upObj = UpdatedValues.Create(upSh, upId)
+            upObj.CheckUpdate sh, Target
+        Next
+    Else
+        upObj = UpdatedValues.Create(upSh, upId)
+        upObj.CheckUpdate sh, Target
+    End If
+
+    NotBusyApp
 End Sub
