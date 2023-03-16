@@ -162,18 +162,16 @@ Public Sub EnterAnalysis()
     Dim dict As ILLdictionary
     Dim drop As IDropdownLists
     Dim lst As BetterArray
-    Dim vars As ILLVariables
     Dim upObj As IUpdatedValues
 
     BusyApp
 
     Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
-    Set vars = LLVariables.Create(dict)
     Set drop = DropdownLists.Create(ThisWorkbook.Worksheets("__variables"))
     Set upObj = UpdatedValues.Create(ThisWorkbook.Worksheets("__updated"), "dict")
 
 
-    If upObj.IsUpdated("control_details") Then
+    If upObj.IsUpdated("control_details") Or upObj.IsUpdated("variable_name") Then
         'Update geo vars
         Set lst = dict.GeoVars()
         drop.Update lst, "__geo_vars"
@@ -182,7 +180,7 @@ Public Sub EnterAnalysis()
         drop.Update lst, "__choice_vars"
     End If
 
-    If upObj.IsUpdated("variable_type") Then
+    If upObj.IsUpdated("variable_type") Or upObj.IsUpdated("variable_name") Then
         'Update time vars
         Set lst = dict.TimeVars()
         drop.Update lst, "__time_vars"
@@ -203,13 +201,12 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     Const LOBJNAME As String = "Tab_Graph_TimeSeries"
     Const LOBJTSNAME As String = "Tab_TimeSeries_Analysis"
 
-    Dim sh As Worksheets
+    Dim sh As Worksheet
     Dim csTab As ICustomTable
     Dim tsTab As ICustomTable
-    Dim colValue As String
     Dim drop As IDropdownLists
     Dim dropArray As BetterArray
-    Dim choi As ILLchoice
+    Dim choi As Object
     Dim seriestitleRng As Range
     Dim colValue As String
     Dim choiceName As String
@@ -217,50 +214,82 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     Dim dict As ILLdictionary
     Dim vars As ILLVariables
     Dim sumLab As String
+    Dim pass As IPasswords
+    Dim wb As Workbook
 
-    Set sh = ThisWorkbook.Worksheets("Analysis")
+    Set wb = ThisWorkbook
+
+    Set sh = wb.Worksheets("Analysis")
     Set csTab = CustomTable.Create(sh.ListObjects(LOBJNAME), "series title")
     Set seriestitleRng = csTab.DataRange("series title")
+    Set pass = Passwords.Create(wb.Worksheets("__pass"))
+    Set drop = DropdownLists.Create(wb.Worksheets("__variables"))
 
     If InterSect(Target, seriestitleRng) Is Nothing Then Exit Sub
+    BusyApp
+    pass.UnProtect "Analysis"
 
     'Create the choices object
-    Set choi = LLchoice.Create(ThisWorkbook.Worksheets("Choices"), 4, 1)
-    Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Choices"), 5, 1)
+    Set dict = LLdictionary.Create(ThisWorkbook.Worksheets("Dictionary"), 5, 1)
     Set vars = LLVariables.Create(dict)
+
 
     'Now get the value of column on the custom table and test it
     colValue = csTab.Value(colName:="column", keyName:=Target.Value)
 
     If colValue <> vbNullString Then
-        choiceName = vars.Value(colName:="Control Details", varName:=colValue)
-        Set dropArray = choi.Categories(choiceName)
+
+        choiceName = Application.WorksheetFunction.Trim(vars.Value(colName:="Control Details", varName:=colValue))
+
+        'Test if it is a choice formula, if it is the case you get the categories by another way
+        If (InStr(1, choiceName, "CHOICE_FORMULA") = 1) Then
+            Set choi = ChoiceFormula.Create(choiceName)
+            choiceName = choi.choiceName()
+            Set dropArray = choi.Categories()
+        Else
+            Set choi = LLchoice.Create(ThisWorkbook.Worksheets("Choices"), 4, 1)
+            Set dropArray = choi.Categories(choiceName)
+        End If
+
+        If dropArray.Length = 0 Then
+            NotBusyApp
+            Exit Sub
+        End If
+
         drop.Add dropArray, choiceName & "__"
         drop.Update dropArray, choiceName & "__"
 
         'get the cell Range for choices
         Set cellRng = csTab.CellRange("choice", Target.Row)
-        drop.SetValidation cellRng, choiceName & "__"
+        cellRng.Value = ""
+        drop.SetValidation cellRng, choiceName & "__", ignoreBlank:=False
         FormatLockCell cellRng, False
 
         'get the cell Range for plot values or percentage
-        Set cellRng = csTab.CellRange("values or percentages")
+        Set cellRng = csTab.CellRange("values or percentages", Target.Row)
         drop.SetValidation cellRng, "__perc_val"
         FormatLockCell cellRng, False
     Else
         'Get the cellRang for choice
         Set cellRng = csTab.CellRange("choice", Target.Row)
-        Set tsTab = CustomTable.Create(sh.ListObjects(TSNAME), "title")
+        cellRng.Validation.Delete
+        Set tsTab = CustomTable.Create(sh.ListObjects(LOBJTSNAME), "title")
         sumLab = tsTab.Value(colName:="summary label", keyName:=Target.Value)
+        cellRng.Value = sumLab
         FormatLockCell cellRng, True
 
-        Set cellRng = csTab.CellRange("values or percentages")
+        Set cellRng = csTab.CellRange("values or percentages", Target.Row)
+        cellRng.Validation.Delete
         cellRng.Value = "values"
         FormatLockCell cellRng, True
     End If
+
+    pass.Protect "Analysis"
+    NotBusyApp
 End Sub
 
-Public Sub checUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
+'Check update status when something changes in a range
+Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
     Dim upSh As Worksheet
     Dim upObj As IUpdatedValues
     Dim upId As String
@@ -269,17 +298,40 @@ Public Sub checUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
     BusyApp
 
     Set upSh = ThisWorkbook.Worksheets("__updated")
-    upId = LCase(Left(sheetName, 4))
+    upId = LCase(Left(sh.Name, 4))
     If sh.Name = "Analysis" Then
         For Each Lo In sh.ListObjects
             upId = upId & "_" & LCase(Replace(Lo.Name, "Tab_", ""))
-            upObj = UpdatedValues.Create(upSh, upId)
+            Set upObj = UpdatedValues.Create(upSh, upId)
             upObj.CheckUpdate sh, Target
         Next
     Else
-        upObj = UpdatedValues.Create(upSh, upId)
+        Set upObj = UpdatedValues.Create(upSh, upId)
         upObj.CheckUpdate sh, Target
     End If
+
+    NotBusyApp
+End Sub
+
+'Calculate columns of analysis worksheet
+Public Sub CalculateAnalysis(ByVal sh As Worksheet)
+    Dim rng As Range
+    Dim csTab As ICustomTable
+
+    'I prefer not declaring a table for
+    BusyApp
+    sh.Range("__ana_series_title_").Calculate
+    Set csTab = CustomTable.Create(sh.ListObjects("Tab_Graph_TimeSeries"))
+    Set rng = csTab.DataRange("graph id")
+    rng.Calculate
+    Set rng = csTab.DataRange("series id")
+    rng.Calculate
+    Set rng = csTab.DataRange("graph order")
+    rng.Calculate
+    Set rng = csTab.DataRange("row")
+    rng.Calculate
+    Set rng = csTab.DataRange("column")
+    rng.Calculate
 
     NotBusyApp
 End Sub

@@ -201,9 +201,8 @@ Private Function FilterData(ByVal varName As String, _
 
         On Error Resume Next
         Set returnedRng = .Range(.Cells(startRetRow, startRetColIndex), .Cells(EndRow, endRetColIndex)).SpecialCells(xlCellTypeVisible)
-        On Error GoTo 0
-
         .AutoFilter.ShowAllData
+        On Error GoTo 0
 
         If Not returnedRng Is Nothing Then
             returnedRng.Copy .Cells(StartRow, endCol + 2)

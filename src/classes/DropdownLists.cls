@@ -172,7 +172,8 @@ End Sub
 'Set a validation on a range
 Private Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
                           Optional ByVal alertType As String = "info", _
-                          Optional ByVal message As String = vbNullString)
+                          Optional ByVal message As String = vbNullString, _
+                          Optional ByVal ignoreBlank As Boolean = True)
 
     Dim headerName As String
 
@@ -180,7 +181,7 @@ Private Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
 
     headerName = "= " & CurrentHeaderName(listName)
 
-    With cellRng.validation
+    With cellRng.Validation
         .Delete
         Select Case alertType
         Case "error"                             '"error"
@@ -191,7 +192,7 @@ Private Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
             .Add Type:=xlValidateList, AlertStyle:=xlValidAlertInformation, Operator:=xlBetween, Formula1:=headerName
         End Select
 
-        .IgnoreBlank = True
+        .ignoreBlank = ignoreBlank
         .InCellDropdown = True
         .InputTitle = ""
         .errorTitle = ""
@@ -222,9 +223,10 @@ End Sub
 
 Public Sub IDropdownLists_SetValidation(ByVal cellRng As Range, ByVal listName As String, _
                                         Optional ByVal alertType As String = "info", _
-                                        Optional ByVal message As String = vbNullString)
+                                        Optional ByVal message As String = vbNullString, _
+                                        Optional ByVal ignoreBlank As Boolean = True)
 
-    SetValidation cellRng:=cellRng, listName:=listName, alertType:=alertType, message:=message
+    SetValidation cellRng:=cellRng, listName:=listName, alertType:=alertType, message:=message, ignoreBlank:=ignoreBlank
 End Sub
 
 

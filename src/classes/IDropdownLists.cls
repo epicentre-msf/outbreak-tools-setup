@@ -22,7 +22,8 @@ Public Sub Add(ByVal listValues As BetterArray, ByVal listName As String): End S
 Public Sub Remove(ByVal listName As String): End Sub
 Public Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
                          Optional ByVal alertType As String = "info", _
-                         Optional ByVal message As String = vbNullString)
+                         Optional ByVal message As String = vbNullString, _
+                         Optional ByVal ignoreBlank As Boolean = True)
 End Sub
 
 

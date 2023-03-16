@@ -94,9 +94,14 @@ Private Property Get IsUpdated(ByVal checkColName As String) As Boolean
   Dim upLo As ListObject
   Dim rng As Range
   Dim cellRng As Range
+  Dim rngName As String
+  
   Set upLo = Table()
+  
+  rngName = "RNG_" & LCase(Application.WorksheetFunction.Trim(Replace(checkColName, " ", "_"))) & "_" & ID()
+  
   Set rng = upLo.ListColumns("rngname").Range
-  Set cellRng = rng.Find(What:=checkColName, lookAt:=xlWhole, MatchCase:=True)
+  Set cellRng = rng.Find(What:=rngName, lookAt:=xlWhole, MatchCase:=True)
   If cellRng Is Nothing Then Exit Property
   IsUpdated = (cellRng.Cells(1, 2).Value = "yes")
 End Property

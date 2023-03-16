@@ -226,7 +226,7 @@ Private Property Get CellRange(ByVal colName As String, ByVal lineNum As Long) A
 
   If Not ColumnExists(colName) Then Exit Property
   Set rng = DataRange(colName)
-  cellPos = lineNum - rng.Row
+  cellPos = lineNum - rng.Row + 1
   If cellPos < 0 Then Exit Property
   Set CellRange = rng.Cells(cellPos, 1)
 End Property

@@ -117,7 +117,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Case GRAPHTIMESERIES
       prefName = vbNullString
       idColName = vbNullString
-      totalCount = 4
+      totalCount = 7
     Case Else
       prefName = vbNullString
       idColName = vbNullString

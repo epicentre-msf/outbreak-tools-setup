@@ -23,9 +23,9 @@ End Type
 
 Private this As Tchoice
 
-Private Const listName As String = "list name"
-Private Const LABEL   As String = "label"
-Private Const ORDER   As String = "ordering list"
+Private Const listName As String = "List Name"
+Private Const LABEL   As String = "Label"
+Private Const ORDER   As String = "Ordering List"
 
 'Instanciation
 Public Function Create(ByVal choiceWorksheet As Worksheet, ByVal choiceStartRow As Long, ByVal choiceStartColumn As Long) As ILLchoice
@@ -83,13 +83,18 @@ End Property
 
 'Get the categories
 Public Property Get Categories(ByVal choiceName As String) As BetterArray
-    Dim dataObject As IDataSheet
-
-    Set dataObject = ChoiceData
-
-    Set Categories = dataObject.FilterData(varName:=listName, _
-                                           criteriaName:=choiceName, returnedColumnName:=LABEL, _
-                                           includeHeaders:=False)
+    Dim counter As Long
+    Dim rngName As Range
+    Dim rngLabel As Range
+    Dim lst As BetterArray
+    Set lst = New BetterArray
+    Set rngName = DataRange(listName, includeHeaders:=False)
+    Set rngLabel = DataRange(LABEL, includeHeaders:=False)
+    For counter = 1 To rngName.Rows.Count
+        If rngName.Cells(counter, 1).Value = choiceName Then _
+         lst.Push rngLabel.Cells(counter, 1).Value
+    Next
+    Set Categories = lst.Clone()
 End Property
 
 'Sort the Choices sheet
