@@ -8,7 +8,7 @@ update_setup  <- function(update_stable = 0) {
              to = "./Rscripts/", overwrite = TRUE)
     # move back and overwrite
     file.copy(from = "./Rscripts/setup_aky.xlsb",
-             to = "./bin/setup_dev.xlsb", overwrite = TRUE)
+             to = "./src/bin/setup_dev.xlsb", overwrite = TRUE)
     # update the stable version if needed
     if (update_stable == 1) {
        # previous stable version
