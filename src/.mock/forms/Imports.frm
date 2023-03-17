@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Option Explicit
 
 Private Sub DictionaryCheck_Click()
@@ -30,3 +31,8 @@ Private Sub LoadButton_Click()
     'Load a new setup
     NewSetupPath
 End Sub
+
+Private Sub Quit_Click()
+    Me.Hide
+End Sub
+
