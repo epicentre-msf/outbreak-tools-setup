@@ -29,8 +29,12 @@ End Sub
 Public Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
 End Property
 
+Public Property Get HeaderRange() As Range: End Property
+Public Property Get Name() As String: End Property
+
 Public Property Get CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
 End Property
 
 Public Property Get Value(ByVal colName As String, ByVal keyName As String) As String
 End Property
+Public Sub Import(ByVal impTab As ICustomTable): End Sub

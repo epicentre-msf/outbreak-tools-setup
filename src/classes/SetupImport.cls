@@ -75,28 +75,22 @@ Private Sub BusyApp()
   Application.Calculation = xlCalculationManual
 End Sub
 
-Private Sub NotBusyApp()
-
-  Application.EnableEvents = True
-  Application.ScreenUpdating = True
-  Application.EnableAnimations = True
-  Application.Calculation = xlCalculationAutomatic
-
-End Sub
-
 Private Property Get ImportWkb() As Workbook
+  BusyApp
   If this.inWb Is Nothing Then Set this.inWb = Workbooks.Open(Path())
+  Application.WindowState = xlMinimized
+  BusyApp
   Set ImportWkb = this.inWb
 End Property
 
 'Write a progress when importing the data
 Private Sub WriteProgress(ByVal numValue As Integer)
 
-  Const NUMBEROFBARS As Integer = 100
+  Const NUMBEROFBARS As Integer = 30
   Dim CurrentStatus As Integer
   Dim progrObj As Object
   Set progrObj = ProgressObject()
-  CurrentStatus = (NUMBEROFBARS) * Round(numValue / 100, 1)
+  CurrentStatus = (NUMBEROFBARS) * Round(Application.WorksheetFunction.Min(numValue, 100) / 100, 1)
   progrObj.Caption = "[" & String(CurrentStatus, "|") & SPACE(NUMBEROFBARS - CurrentStatus) & "]" & _
                         " " & CInt(numValue) & "%"
 End Sub
@@ -104,6 +98,8 @@ End Sub
 
 'Check if the setup file to import is a valid setup file
 Private Sub Check(ByVal importDict As Boolean, _
+                  ByVal importChoi As Boolean, _
+                  ByVal importExp As Boolean, _
                   ByVal importAna As Boolean, _
                   ByVal importTrans As Boolean)
 
@@ -114,7 +110,7 @@ Private Sub Check(ByVal importDict As Boolean, _
   Const NO_FILE_WB As String = "Error : the specified file is not an excel workbook, or is broken, unable to open it."
   Const IMPORT_OPTIONS_WARNING As String = "Error: Please select at least one option for imports (Dictionary, Analysis or Translations)"
 
-  If (Not importDict) And (Not importAna) And (Not importTrans) Then
+  If (Not importDict) And (Not importAna) And (Not importTrans) And (Not importChoi) And (Not importExp) Then
     MsgBox IMPORT_OPTIONS_WARNING, vbExclamation + vbOKOnly
     WriteInfo IMPORT_OPTIONS_WARNING
     Exit Sub
@@ -140,45 +136,87 @@ Private Sub Check(ByVal importDict As Boolean, _
     WriteInfo NO_FILE_WB
     Exit Sub
   End If
-
-  CheckSheet wb, "Dictionary"
-  CheckSheet wb, "Choices"
-  CheckSheet wb, "Analysis"
-  CheckSheet wb, "Exports"
-  CheckSheet wb, "Translations"
-
-  wb.Close saveChanges:=False
-  NotBusyApp
+  wb.Close savechanges:=False
 End Sub
 
 
-Private Sub ImportTheDictionary(ByVal pass As ILLPasswords)
-  Dim part As Object
-  Dim wb As Workbook
+Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
+
+  'curr is for current (meaning in this workbook)
+  'imp is for imported (meaning in the imported workbook)
+
+  Dim impwb As Workbook
+  Dim currwb As Workbook
   Dim sheetName As String
+  Dim impsh As Worksheet
+  Dim currsh As Worksheet
+  Dim impLo As ListObject
+  Dim currLo As ListObject
+  Dim impTab As ICustomTable
+  Dim currTab As ICustomTable
+  Dim counter As Long
+  Dim progCounter As Long
+  Dim writeCounter As Long
+
+  BusyApp
+
+  Set impwb = ImportWkb()
+  Set currwb = ThisWorkbook
+
+  progCounter = Round(100 / sheetsList.Length, 0)
+  writeCounter = 0
+
+  For counter = sheetsList.LowerBound To sheetsList.UpperBound
+    sheetName = sheetsList.Item(counter)
+    If sheetExists(impwb, sheetName) And sheetExists(currwb, sheetName) Then
+
+      pass.UnProtect sheetName
+
+      Set impsh = impwb.Worksheets(sheetName)
+      Set currsh = currwb.Worksheets(sheetName)
+
+      For Each impLo In impsh.ListObjects
+        'Test if the listObject is Present in current Sheet before proceeding
+        If LoExists(currsh, impLo.Name) Then
+          Set currLo = currsh.ListObjects(impLo.Name)
+          On Error Resume Next
+          currLo.DataBodyRange.Cells.ClearContents
+          On Error GoTo 0
+          Set impTab = CustomTable.Create(impLo)
+          Set currTab = CustomTable.Create(currLo)
+          'Import the custom table in the current sheet
+          currTab.Import impTab
+        End If
+      Next
+
+      pass.Protect sheetName
+    End If
+  Next
+
+  impwb.Close savechanges:=False
+End Sub
+
+
+
+'Check if a sheet Exists in a workbook
+Private Function sheetExists(ByVal wb As Workbook, sheetName As String) As Boolean
+  If wb Is Nothing Then Exit Function
   Dim sh As Worksheet
-  Dim shImp As Worksheet
+  On Error Resume Next
+  Set sh = wb.Worksheets(sheetName)
+  On Error GoTo 0
+  sheetExists = (Not (sh Is Nothing))
+End Function
 
-  'Import the dictionary
-  Set wb = ImportWkb()
-  sheetName = "Dictionary"
-  Set sh = ThisWorkbook.Worksheets(sheetName)
-  Set part = LLdictionary.Create(sh, 4, 1)
-  Set shImp = wb.Worksheets(sheetName)
+Private Function LoExists(ByVal sh As Worksheet, ByVal loName As String) As Boolean
+  If sh Is Nothing Then Exit Function
+  Dim Lo As ListObject
+  On Error Resume Next
+    Set Lo = sh.ListObjects(loName)
+  On Error GoTo 0
+  LoExists = (Not (Lo Is Nothing))
+End Function
 
-  part.Import shImp, pass
-  'Import the choices
-
-  'Import the exports
-
-End Sub
-
-'Import button
-Private Sub Import(ByVal pass As IPasswords, ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
-
-  If dict Then ImportTheDictionary pass
-
-End Sub
 
 'Errors
 'Errors and checkings
@@ -186,26 +224,15 @@ Private Sub ThrowError(ByVal errorMessage As String)
     Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
-'Check if a sheet with a given name is present in the provided workbook
-Private Sub CheckSheet(ByVal wb As Workbook, sheetName As String)
-  Dim sh As Worksheet
-
-  On Error Resume Next
-  Set sh = wb.Worksheets(sheetName)
-  On Error GoTo 0
-
-  'Inform the user the sheet is not present
-  If (sh Is Nothing) Then
-    MsgBox "Error: the sheet " & sheetName & "is not present in the setup to import", vbOKOnly + vbExclamation
-    WriteInfo "Error: the sheet " & sheetName & " is not present in the setup to import"
-    Exit Sub
-  End If
-End Sub
 '-------- INTERFACE
-Public Sub ISetupImport_Check(ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
-  CheckType dict, ana, trans
+Public Sub ISetupImport_Check(ByVal impDict As Boolean, _
+                              ByVal impChoi As Boolean, _
+                              ByVal impExp As Boolean, _
+                              ByVal impAna As Boolean, _
+                              ByVal impTrans As Boolean)
+  Check impDict, impChoi, impExp, impAna, impTrans
 End Sub
 
-Public Sub ISetupImport_Import(ByVal pass As IPasswords, ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean)
-  Import pass, dict, ana, trans
+Public Sub ISetupImport_Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
+  Import pass, sheetsList
 End Sub

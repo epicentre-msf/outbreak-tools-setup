@@ -17,4 +17,10 @@ Option Explicit
 
 'Exposed methods
 
-Public Sub Check(ByVal dict As Boolean, ByVal ana As Boolean, ByVal trans As Boolean): End Sub
+Public Sub Check(ByVal impDict As Boolean, _
+  ByVal impChoi As Boolean, _
+  ByVal impExp As Boolean, _
+  ByVal impAna As Boolean, _
+  ByVal impTrans As Boolean): End Sub
+
+Public Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray): End Sub

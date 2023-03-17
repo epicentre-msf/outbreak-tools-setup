@@ -9,7 +9,7 @@ Option Explicit
 Private dropArray As BetterArray
 Private drop As IDropdownLists
 Private wb As Workbook
-Private currSh As Worksheet
+Private currsh As Worksheet
 Private currTab As ICustomTable
 Private currLo As ListObject
 Private currUp As IUpdatedValues
@@ -42,7 +42,7 @@ Private Sub Initialize()
 End Sub
 
 Private Sub MoveToSheet(ByVal sheetName As String)
-    Set currSh = wb.Worksheets(sheetName)
+    Set currsh = wb.Worksheets(sheetName)
 End Sub
 
 Private Sub MoveToUp(ByVal upName As String)
@@ -50,7 +50,7 @@ Private Sub MoveToUp(ByVal upName As String)
 End Sub
 
 Private Sub MoveToTable(ByVal tabName As String)
-    Set currLo = currSh.ListObjects(tabName)
+    Set currLo = currsh.ListObjects(tabName)
     Set currTab = CustomTable.Create(currLo)
 End Sub
 
@@ -227,7 +227,7 @@ Private Sub AddValidationsAndUpdates()
     BusyApp
 
     'add validation on select table
-    drop.SetValidation cellRng:=currSh.Range("RNG_SelectTable"), _
+    drop.SetValidation cellRng:=currsh.Range("RNG_SelectTable"), _
                        listName:="__swicth_tables", alertType:="error"
 
     'Global summary table

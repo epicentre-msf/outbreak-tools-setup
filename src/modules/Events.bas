@@ -174,16 +174,22 @@ Public Sub EnterAnalysis()
     If upObj.IsUpdated("control_details") Or upObj.IsUpdated("variable_name") Then
         'Update geo vars
         Set lst = dict.GeoVars()
+        On Error Resume Next
         drop.Update lst, "__geo_vars"
+        On Error GoTo 0
         'Update choices vars
         Set lst = dict.ChoicesVars()
+        On Error Resume Next
         drop.Update lst, "__choice_vars"
+        On Error GoTo 0
     End If
 
     If upObj.IsUpdated("variable_type") Or upObj.IsUpdated("variable_name") Then
         'Update time vars
         Set lst = dict.TimeVars()
+        On Error Resume Next
         drop.Update lst, "__time_vars"
+        On Error GoTo 0
     End If
 
     NotBusyApp

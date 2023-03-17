@@ -220,6 +220,12 @@ Private Property Get DataRange(ByVal colName As String, Optional ByVal includeHe
   End If
 End Property
 
+Private Property Get HeaderRange() As Range
+  Dim Lo As ListObject
+  Set Lo = Table()
+  Set HeaderRange = Lo.HeaderRowRange()
+End Property
+
 Private Property Get CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
   Dim cellPos As Long
   Dim rng As Range
@@ -254,6 +260,55 @@ Private Property Get Value(ByVal colName As String, ByVal keyName As String) As 
   If TypeName(formValue) = "String" Then Value = formValue
 End Property
 
+Private Property Get Name() As String
+  Name = Table.Name
+End Property
+
+'Import another custom table to this one
+
+Private Sub Import(ByVal impTab As ICustomTable)
+
+  Dim imphRng As Range
+  Dim headerValue As String
+  Dim counter As Long
+  Dim nbImpRows As Long
+  Dim impDataRng As Range
+  Dim currDataRng As Range
+  Dim rng As Range
+  Dim sh As Worksheet
+
+  'Test if the custom tables have the same name, otherwise exit.
+  If Name() <> impTab.Name() Then Exit Sub
+
+  Set imphRng = impTab.HeaderRange()
+  Set sh = Wksh()
+
+  For counter = 1 To imphRng.Columns.Count
+    headerValue = imphRng.Cells(1, counter).Value
+    If ColumnExists(headerValue) Then
+      Set impDataRng = impTab.DataRange(headerValue)
+      Set currDataRng = DataRange(headerValue)
+      nbImpRows = impDataRng.Rows.Count
+      'Resize to fit the number of required rows
+      Do While (nbImpRows > currDataRng.Rows.Count)
+        Resize AddRows:=True
+        Set currDataRng = DataRange(headerValue)
+      Loop
+      'Add values if the range does not contains formulas. If the range contains formulas, do nothing
+      Set rng = sh.Range(currDataRng.Cells(1, 1), currDataRng.Cells(nbImpRows, 1))
+
+      Debug.Print Name() & "-" & headerValue
+      Debug.Print "Formula: " & rng.Cells(1, 1).Formula
+
+      If (rng.Cells(1, 1).Formula = vbNullString) And _
+      (rng.Cells(1, 1).FormulaArray = vbNullString) Then
+        currDataRng.Cells.ClearContents
+        rng.Value = impDataRng.Value
+      End If
+    End If
+  Next
+End Sub
+
 Public Sub ICustomTable_AddRows()
   Resize AddRows:=True
 End Sub
@@ -279,6 +334,17 @@ Public Property Get ICustomTable_CellRange(ByVal colName As String, ByVal lineNu
   Set ICustomTable_CellRange = CellRange(colName, lineNum)
 End Property
 
+Public Sub ICustomTable_Import(ByVal impTab As ICustomTable)
+  Import impTab
+End Sub
+
+Public Property Get ICustomTable_HeaderRange() As Range
+  Set ICustomTable_HeaderRange = HeaderRange()
+End Property
+
+Public Property Get ICustomTable_Name() As String
+  ICustomTable_Name = Name()
+End Property
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
