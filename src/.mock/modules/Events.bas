@@ -2,22 +2,35 @@ Attribute VB_Name = "Events"
 
 Option Explicit
 
-'Import from another setup
-Public Sub clickImport()
+'Callback for btnAdd onAction
+Sub clickAddRows(control As IRibbonControl)
 End Sub
 
-'add rows to listObject
-Public Sub clickAddRows()
+'Callback for btnRes onAction
+Sub clickResize(control As IRibbonControl)
 End Sub
 
-'resize the current listObject
-Public Sub clickResize()
+'Callback for editLang onChange
+Sub clickAddLang(control As IRibbonControl, text As String)
 End Sub
 
-'clear data in the current setup
-Public Sub clickClearSetup()
+'Callback for btnTransAdd onAction
+Sub clickAddTrans(control As IRibbonControl)
 End Sub
 
-'check the current setup for incoherences
-Public Sub clickCheck()
+'Callback for btnTransUp onAction
+Sub clickUpdateTranslate(control As IRibbonControl)
 End Sub
+
+'Callback for btnChk onAction
+Sub clickCheck(control As IRibbonControl)
+End Sub
+
+'Callback for btnImp onAction
+Sub clickImport(control As IRibbonControl)
+End Sub
+
+'Callback for btnClear onAction
+Sub clickClearSetup(control As IRibbonControl)
+End Sub
+

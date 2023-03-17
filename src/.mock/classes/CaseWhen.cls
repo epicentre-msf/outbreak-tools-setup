@@ -78,10 +78,10 @@ Private Property Get CaseWhenTable() As BetterArray
         formula = Left(formula, Len(formula) - 1) 'Removed the closing parenthesis
         For counter = 1 To Len(formula)
             'Manage parenthesis and quotes,
-            If Mid(formula, counter, 1) = Chr(34) Then OpenedQuotes = Not OpenedQuotes 'Opened quotes or parenthesis
+            If Mid(formula, counter, 1) = chr(34) Then OpenedQuotes = Not OpenedQuotes 'Opened quotes or parenthesis
             'Parenthesis not within quotes are not expressions
-            If Mid(formula, counter, 1) = Chr(40) And Not OpenedQuotes Then NbOpened = NbOpened + 1
-            If Mid(formula, counter, 1) = Chr(41) And Not OpenedQuotes Then NbClosed = NbClosed + 1
+            If Mid(formula, counter, 1) = chr(40) And Not OpenedQuotes Then NbOpened = NbOpened + 1
+            If Mid(formula, counter, 1) = chr(41) And Not OpenedQuotes Then NbClosed = NbClosed + 1
             OpenedParenthesis = (NbOpened <> NbClosed)
             'Opened parenthesis will allow excel formulas within a  case_when
             If Not OpenedQuotes And Not OpenedParenthesis And Mid(formula, counter, 1) = "," Then
@@ -123,7 +123,7 @@ Private Function parsedFormula() As String
             formula = formula & parsingTable.Items(counter) & parenthesis
         Else
             'even number of conditions, there is no default
-            formula = formula & Chr(34) & Chr(34) & parenthesis
+            formula = formula & chr(34) & chr(34) & parenthesis
         End If
     Else
         'Trace log here
@@ -145,12 +145,12 @@ Private Function Categories() As BetterArray
         Set parsingTable = CaseWhenTable()
         Do While counter <= parsingTable.Length
 
-            If Mid(parsingTable.Item(counter), 1, 1) = Chr(34) Then
+            If Mid(parsingTable.Item(counter), 1, 1) = chr(34) Then
                 'Quoted character, is a level
-                Level = Replace(parsingTable.Item(counter), Chr(34), vbNullString)
+                Level = Replace(parsingTable.Item(counter), chr(34), vbNullString)
             Else
                 'Not Quoted character, the user should not use case_when in analysis
-                Level = Chr(34) & parsingTable.Item(counter) & Chr(34)
+                Level = chr(34) & parsingTable.Item(counter) & chr(34)
             End If
             If Level <> vbNullString Then categoriesTable.Push Level
             counter = counter + 2

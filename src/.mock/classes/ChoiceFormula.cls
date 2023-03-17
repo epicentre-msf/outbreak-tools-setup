@@ -62,7 +62,7 @@ Private Property Get casewhenObject() As ICaseWhen
   convertedFormula = Application.WorksheetFunction.Trim(Replace(formula, Split(formula, ",")(0) & ",", ""))
   convertedFormula = "CASE_WHEN(" & convertedFormula
   convertedFormula = Left(convertedFormula, Len(convertedFormula) - 1)
-  convertedFormula = convertedFormula & ", " & Chr(34) & Chr(34) & ")"
+  convertedFormula = convertedFormula & ", " & chr(34) & chr(34) & ")"
 
   Set casewhenObject = CaseWhen.Create(convertedFormula)
   
