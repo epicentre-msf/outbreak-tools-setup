@@ -2,34 +2,55 @@ Attribute VB_Name = "Events"
 
 Option Explicit
 
-'Module for all the events - related actions in the setup file
+'Module for all the events - related actions in the setup file as
+'well as buttons on the Ribbon menu
 
-'Import from another setup
-Public Sub clickImport(ByRef Control As Office.IRibbonControl)
-    [Imports].Show
-End Sub
-
-'add rows to listObject
-Public Sub clickAddRows(ByRef Control As Office.IRibbonControl)
-    Dim sheetName As String
-    sheetName = ActiveSheet.Name
-    ManageRows sheetName:=sheetName, del:=False
-End Sub
-
-'resize the current listObject
-Public Sub clickResize(ByRef Control As Office.IRibbonControl)
+'Callback for btnRes onAction
+Sub clickResize(control As IRibbonControl)
     Dim sheetName As String
     sheetName = ActiveSheet.Name
     ManageRows sheetName:=sheetName, del:=True
 End Sub
 
-Public Sub clickUpdateTranslate(ByRef Control As Office.IRibbonControl)
+'Callback for editLang onChange
+Sub clickAddLang(control As IRibbonControl, text As String)
+End Sub
+
+'Callback for btnTransAdd onAction
+Sub clickAddTrans(control As IRibbonControl)
+End Sub
+
+'Callback for btnTransUp onAction
+Sub clickUpdateTranslate(control As IRibbonControl)
     'remove update columns and add new columns to watch
     BusyApp
     CleanUpdateColumns
     UpdatedWatchedValues
     NotBusyApp
     MsgBox "Done!"
+End Sub
+
+'Callback for btnChk onAction
+Sub clickCheck(control As IRibbonControl)
+End Sub
+
+'Callback for btnImp onAction
+Sub clickImport(control As IRibbonControl)
+    PrepareForm cleanSetup:=False
+    [Imports].Show
+End Sub
+
+'Callback for btnClear onAction
+Sub clickClearSetup(control As IRibbonControl)
+    PrepareForm cleanSetup:=True
+    [Imports].Show
+End Sub
+
+'add rows to listObject
+Public Sub clickAddRows(ByRef control As Office.IRibbonControl)
+    Dim sheetName As String
+    sheetName = ActiveSheet.Name
+    ManageRows sheetName:=sheetName, del:=False
 End Sub
 
 'Clear the names of the columns to update
@@ -90,13 +111,6 @@ Private Sub writeUpdateStatus(sh As Worksheet)
     Next
 End Sub
 
-'clear data in the current setup
-Public Sub clickClearSetup(ByRef Control As Office.IRibbonControl)
-End Sub
-
-'check the current setup for incoherences
-Public Sub clickCheck(ByRef Control As Office.IRibbonControl)
-End Sub
 
 'speed app
 Private Sub BusyApp()
@@ -341,3 +355,6 @@ Public Sub CalculateAnalysis(ByVal sh As Worksheet)
 
     NotBusyApp
 End Sub
+
+
+'Prepare the form for Either setup cleaning or setup import

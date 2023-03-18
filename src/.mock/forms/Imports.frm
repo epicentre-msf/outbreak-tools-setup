@@ -22,9 +22,9 @@ Private Sub DictionaryCheck_Click()
     ExportsCheck.Value = DictionaryCheck.Value
 End Sub
 
-Private Sub ImportButton_Click()
+Private Sub DoButton_Click()
     'Check if everything is fine with the setup and import one
-    ImportSetup
+    ImportOrCleanSetup
 End Sub
 
 Private Sub LoadButton_Click()
@@ -33,6 +33,10 @@ Private Sub LoadButton_Click()
 End Sub
 
 Private Sub Quit_Click()
+    [Imports].LabProgress.Caption = ""
     Me.Hide
 End Sub
 
+Private Sub UserForm_Click()
+
+End Sub

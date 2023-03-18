@@ -169,7 +169,7 @@ End Function
 
 'Test if a sheet contains a type of control (list_auto by default)
 Private Function ContainsControl(ByVal sheetName As String, _
-                                 Optional ByVal Control As String = "list_auto") As Boolean
+                                 Optional ByVal control As String = "list_auto") As Boolean
     'Check if a sheet contains a list auto
     Dim controlVar As BetterArray
     Dim varData As BetterArray
@@ -184,7 +184,7 @@ Private Function ContainsControl(ByVal sheetName As String, _
 
     exist = False
 
-    Set controlVar = dict.Data.FilterData("control", Control, "variable name")
+    Set controlVar = dict.Data.FilterData("control", control, "variable name")
     Set varData = Varlist(sheetName)
 
     If controlVar.Length <> 0 Then
@@ -267,8 +267,8 @@ Public Function ILLSheets_DataBounds(ByVal sheetName As String, _
     ILLSheets_DataBounds = DataBounds(sheetName, Bound)
 End Function
 
-Public Function ILLSheets_ContainsControl(ByVal sheetName As String, Optional ByVal Control As String = "list_auto") As Boolean
-    ILLSheets_ContainsControl = ContainsControl(sheetName, Control)
+Public Function ILLSheets_ContainsControl(ByVal sheetName As String, Optional ByVal control As String = "list_auto") As Boolean
+    ILLSheets_ContainsControl = ContainsControl(sheetName, control)
 End Function
 
 'Variable Address

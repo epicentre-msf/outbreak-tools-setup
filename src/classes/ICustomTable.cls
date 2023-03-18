@@ -38,3 +38,4 @@ End Property
 Public Property Get Value(ByVal colName As String, ByVal keyName As String) As String
 End Property
 Public Sub Import(ByVal impTab As ICustomTable): End Sub
+Public Sub Clean(): End Sub

@@ -101,10 +101,12 @@ Private Sub Check(ByVal importDict As Boolean, _
                   ByVal importChoi As Boolean, _
                   ByVal importExp As Boolean, _
                   ByVal importAna As Boolean, _
-                  ByVal importTrans As Boolean)
+                  ByVal importTrans As Boolean, _
+                  Optional ByVal cleanSetup As Boolean = False)
 
   Dim wb As Workbook
   Dim filePath As String
+  Dim testFilePath As String
 
   Const NO_FILE_WARNING As String = "Error : no setup file was founded at the provided path"
   Const NO_FILE_WB As String = "Error : the specified file is not an excel workbook, or is broken, unable to open it."
@@ -116,10 +118,16 @@ Private Sub Check(ByVal importDict As Boolean, _
     Exit Sub
   End If
 
+  If cleanSetup Then Exit Sub
+
   filePath = Path()
 
+  On Error Resume Next
+  testFilePath = Dir(filePath)
+  On Error GoTo 0
+
   'Test if the file exists
-  If Dir(filePath) = vbNullString Then
+  If testFilePath = vbNullString Then
     MsgBox NO_FILE_WARNING, vbExclamation + vbOKOnly
     WriteInfo NO_FILE_WARNING
     Exit Sub
@@ -136,9 +144,32 @@ Private Sub Check(ByVal importDict As Boolean, _
     WriteInfo NO_FILE_WB
     Exit Sub
   End If
+
+  On Error Resume Next
   wb.Close savechanges:=False
+  On Error GoTo 0
 End Sub
 
+Private Sub Clean(ByVal pass As IPassWords, ByVal sheetsList As BetterArray)
+  Dim wb As Workbook
+  Dim Lo As ListObject
+  Dim sh As Worksheet
+  Dim counter As Long
+  Dim sheetName As String
+  Dim csTab As ICustomTable
+
+  Set wb = ThisWorkbook
+  For counter = sheetsList.LowerBound To sheetsList.UpperBound
+    sheetName = sheetsList.Item(counter)
+    Set sh = wb.Worksheets(sheetName)
+    pass.UnProtect sheetName
+    For Each Lo In sh.ListObjects
+      Set csTab = CustomTable.Create(Lo)
+      csTab.Clean
+    Next
+    pass.Protect sheetName
+  Next
+End Sub
 
 Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
 
@@ -179,9 +210,6 @@ Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
         'Test if the listObject is Present in current Sheet before proceeding
         If LoExists(currsh, impLo.Name) Then
           Set currLo = currsh.ListObjects(impLo.Name)
-          On Error Resume Next
-          currLo.DataBodyRange.Cells.ClearContents
-          On Error GoTo 0
           Set impTab = CustomTable.Create(impLo)
           Set currTab = CustomTable.Create(currLo)
           'Import the custom table in the current sheet
@@ -229,10 +257,15 @@ Public Sub ISetupImport_Check(ByVal impDict As Boolean, _
                               ByVal impChoi As Boolean, _
                               ByVal impExp As Boolean, _
                               ByVal impAna As Boolean, _
-                              ByVal impTrans As Boolean)
-  Check impDict, impChoi, impExp, impAna, impTrans
+                              ByVal impTrans As Boolean, _
+                              Optional ByVal cleanSetup As Boolean = False)
+  Check impDict, impChoi, impExp, impAna, impTrans, cleanSetup
 End Sub
 
 Public Sub ISetupImport_Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
   Import pass, sheetsList
+End Sub
+
+Public Sub ISetupImport_Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
+  Clean pass, sheetsList
 End Sub

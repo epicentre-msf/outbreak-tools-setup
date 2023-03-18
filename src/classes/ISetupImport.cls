@@ -21,6 +21,8 @@ Public Sub Check(ByVal impDict As Boolean, _
   ByVal impChoi As Boolean, _
   ByVal impExp As Boolean, _
   ByVal impAna As Boolean, _
-  ByVal impTrans As Boolean): End Sub
+  ByVal impTrans As Boolean, _
+  Optional ByVal cleanSetup As Boolean = False): End Sub
 
 Public Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray): End Sub
+Public Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray): End Sub

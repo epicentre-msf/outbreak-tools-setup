@@ -264,6 +264,32 @@ Private Property Get Name() As String
   Name = Table.Name
 End Property
 
+'Clean every columns of the listObject and avoid formula columns
+Private Sub Clean()
+  Dim rng As Range
+  Dim hRng As Range
+  Dim Lo As ListObject
+  Dim headerValue As String
+  Dim counter As Long
+  Dim toClear As Boolean
+
+  Set Lo = Table()
+  Set hRng = Lo.HeaderRowRange
+
+  For counter = 1 To hRng.Columns.Count
+    headerValue = hRng.Cells(1, counter).Value
+    Set rng = DataRange(headerValue)
+    toClear = False
+    On Error Resume Next
+    toClear = (Cstr(rng.Cells(1, 1).Formula) = Cstr(rng.Cells(1, 1).Value))
+    On Error GoTo 0
+    If toClear Then rng.ClearContents
+  Next
+
+  'Now resize the listObject
+  If Name() <> "Tab_Export" Then Resize AddRows:=False
+End Sub
+
 'Import another custom table to this one
 
 Private Sub Import(ByVal impTab As ICustomTable)
@@ -276,6 +302,7 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Dim currDataRng As Range
   Dim rng As Range
   Dim sh As Worksheet
+  Dim toClear As Boolean
 
   'Test if the custom tables have the same name, otherwise exit.
   If Name() <> impTab.Name() Then Exit Sub
@@ -296,12 +323,13 @@ Private Sub Import(ByVal impTab As ICustomTable)
       Loop
       'Add values if the range does not contains formulas. If the range contains formulas, do nothing
       Set rng = sh.Range(currDataRng.Cells(1, 1), currDataRng.Cells(nbImpRows, 1))
+      toClear = False
 
-      Debug.Print Name() & "-" & headerValue
-      Debug.Print "Formula: " & rng.Cells(1, 1).Formula
+      On Error Resume Next
+      toClear = (Cstr(rng.Cells(1, 1).Formula) = Cstr(rng.Cells(1, 1).Value))
+      On Error GoTo 0
 
-      If (rng.Cells(1, 1).Formula = vbNullString) And _
-      (rng.Cells(1, 1).FormulaArray = vbNullString) Then
+      If toClear Then
         currDataRng.Cells.ClearContents
         rng.Value = impDataRng.Value
       End If
@@ -345,6 +373,10 @@ End Property
 Public Property Get ICustomTable_Name() As String
   ICustomTable_Name = Name()
 End Property
+
+Public Sub ICustomTable_Clean()
+  Clean
+End Sub
 
 'Errors and checkings
 Private Sub ThrowError(ByVal errorMessage As String)
