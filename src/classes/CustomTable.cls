@@ -281,7 +281,7 @@ Private Sub Clean()
     Set rng = DataRange(headerValue)
     toClear = False
     On Error Resume Next
-    toClear = (Cstr(rng.Cells(1, 1).Formula) = Cstr(rng.Cells(1, 1).Value))
+    toClear = (CStr(rng.Cells(1, 1).formula) = CStr(rng.Cells(1, 1).Value))
     On Error GoTo 0
     If toClear Then rng.ClearContents
   Next
@@ -326,7 +326,7 @@ Private Sub Import(ByVal impTab As ICustomTable)
       toClear = False
 
       On Error Resume Next
-      toClear = (Cstr(rng.Cells(1, 1).Formula) = Cstr(rng.Cells(1, 1).Value))
+      toClear = (CStr(rng.Cells(1, 1).formula) = CStr(rng.Cells(1, 1).Value))
       On Error GoTo 0
 
       If toClear Then

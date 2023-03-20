@@ -88,7 +88,7 @@ Public Sub ImportOrCleanSetup()
                  vbYesNo, "Confirmation") = vbYes Then
             importObj.Clean pass, sheetsList
             infoText = "Setup cleared!"
-        End if
+        End If
     End Select
 
     MsgBox infoText

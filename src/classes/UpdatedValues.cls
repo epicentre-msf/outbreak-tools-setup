@@ -95,11 +95,11 @@ Private Property Get IsUpdated(ByVal checkColName As String) As Boolean
   Dim rng As Range
   Dim cellRng As Range
   Dim rngName As String
-  
+
   Set upLo = Table()
-  
+
   rngName = "RNG_" & LCase(Application.WorksheetFunction.Trim(Replace(checkColName, " ", "_"))) & "_" & ID()
-  
+
   Set rng = upLo.ListColumns("rngname").Range
   Set cellRng = rng.Find(What:=rngName, lookAt:=xlWhole, MatchCase:=True)
   If cellRng Is Nothing Then Exit Property
@@ -140,13 +140,13 @@ Private Sub AddColumns(ByVal Lo As ListObject)
       If (idRng.Find(What:=idName, lookAt:=xlWhole, MatchCase:=True) Is Nothing) Then
           Set sh = Wksh()
           Set wb = sh.Parent
-    
+
           'Now add values and names to the workbook
           rngName = "RNG_" & idName & "_" & ID()
           On Error Resume Next
               wb.Names(rngName).Delete
           On Error GoTo 0
-    
+
           wb.Names.Add Name:=rngName, RefersToR1C1:="=" & Lo.Name & "[" & colName & "]"
           'Write values to the listObject of the update
           WriteValues Lo.Name & "-" & colName, rngName, headerName
@@ -254,12 +254,12 @@ End Property
 'Test if a listobject exists in a sheet
 Public Function Exists(ByVal listName As String) As Boolean
     Dim Lo As ListObject
-    Dim loName As String
+    Dim loname As String
     Dim sh As Worksheet
     Set sh = Wksh()
-    loName = CurrentLoName(listName)
+    loname = CurrentLoName(listName)
     On Error Resume Next
-    Set Lo = sh.ListObjects(loName)
+    Set Lo = sh.ListObjects(loname)
     On Error GoTo 0
     Exists = (Not Lo Is Nothing)
 End Function

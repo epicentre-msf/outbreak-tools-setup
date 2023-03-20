@@ -113,7 +113,7 @@ Private Sub Check(ByVal importDict As Boolean, _
   Const IMPORT_OPTIONS_WARNING As String = "Error: Please select at least one option for imports (Dictionary, Analysis or Translations)"
 
   If (Not importDict) And (Not importAna) And (Not importTrans) And (Not importChoi) And (Not importExp) Then
-    MsgBox IMPORT_OPTIONS_WARNING, vbExclamation + vbOKOnly
+    MsgBox IMPORT_OPTIONS_WARNING, vbExclamation + vbOkOnly
     WriteInfo IMPORT_OPTIONS_WARNING
     Exit Sub
   End If
@@ -128,7 +128,7 @@ Private Sub Check(ByVal importDict As Boolean, _
 
   'Test if the file exists
   If testFilePath = vbNullString Then
-    MsgBox NO_FILE_WARNING, vbExclamation + vbOKOnly
+    MsgBox NO_FILE_WARNING, vbExclamation + vbOkOnly
     WriteInfo NO_FILE_WARNING
     Exit Sub
   End If
@@ -140,7 +140,7 @@ Private Sub Check(ByVal importDict As Boolean, _
   On Error GoTo 0
 
   If wb Is Nothing Then
-    MsgBox NO_FILE_WB, vbExclamation + vbOKOnly
+    MsgBox NO_FILE_WB, vbExclamation + vbOkOnly
     WriteInfo NO_FILE_WB
     Exit Sub
   End If
@@ -150,7 +150,7 @@ Private Sub Check(ByVal importDict As Boolean, _
   On Error GoTo 0
 End Sub
 
-Private Sub Clean(ByVal pass As IPassWords, ByVal sheetsList As BetterArray)
+Private Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
   Dim wb As Workbook
   Dim Lo As ListObject
   Dim sh As Worksheet
@@ -236,11 +236,11 @@ Private Function sheetExists(ByVal wb As Workbook, sheetName As String) As Boole
   sheetExists = (Not (sh Is Nothing))
 End Function
 
-Private Function LoExists(ByVal sh As Worksheet, ByVal loName As String) As Boolean
+Private Function LoExists(ByVal sh As Worksheet, ByVal loname As String) As Boolean
   If sh Is Nothing Then Exit Function
   Dim Lo As ListObject
   On Error Resume Next
-    Set Lo = sh.ListObjects(loName)
+    Set Lo = sh.ListObjects(loname)
   On Error GoTo 0
   LoExists = (Not (Lo Is Nothing))
 End Function

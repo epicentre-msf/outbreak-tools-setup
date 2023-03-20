@@ -64,7 +64,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
   Dim tabl As ICustomTable
   Dim listLoNames As BetterArray
 
-  Dim loName As String
+  Dim loname As String
   Dim prefName As String
   Dim idColName As String
   Dim counter As Long
@@ -102,9 +102,9 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
   End Select
 
   For counter = listLoNames.LowerBound To listLoNames.UpperBound
-    loName = listLoNames.Item(counter)
+    loname = listLoNames.Item(counter)
 
-    Select Case loName
+    Select Case loname
 
     Case TIMESERIES
       prefName = "Series"
@@ -125,7 +125,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     End Select
 
     On Error Resume Next
-      Set Lo = sh.ListObjects(loName)
+      Set Lo = sh.ListObjects(loname)
       If Lo Is Nothing Then Exit Sub
     On Error GoTo 0
     Set tabl = CustomTable.Create(Lo, idColName, prefName)
@@ -142,7 +142,7 @@ Private Sub CheckTablesRequirements()
   Dim loTable As BetterArray
   Dim counter As Long
   Dim Lo As ListObject
-  Dim loName As String
+  Dim loname As String
 
   Set loTable = New BetterArray
 
@@ -150,11 +150,11 @@ Private Sub CheckTablesRequirements()
                GRAPHTIMESERIES, TITLEGRAPHTIMESERIES, SPATIAL, SPATIOTEMPORAL
 
   For counter = loTable.LowerBound To loTable.UpperBound
-      loName = loTable.Items(counter)
+      loname = loTable.Items(counter)
       On Error Resume Next
-      Set Lo = Wksh.ListObjects(loName)
+      Set Lo = Wksh.ListObjects(loname)
       If Lo Is Nothing Then _
-       ThrowError " Listobject " & loName _
+       ThrowError " Listobject " & loname _
         & " does not exist in analysis worksheet "
       On Error GoTo 0
   Next

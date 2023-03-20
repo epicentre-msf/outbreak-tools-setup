@@ -83,9 +83,8 @@ Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByV
         pwd = Password()
         sh.Protect Password:=pwd, DrawingObjects:=False, Contents:=True, Scenarios:=True, _
                    AllowInsertingRows:=(Not strictProtect), AllowSorting:=True, AllowFiltering:=True, _
-                   AllowFormattingCells:=(Not strictProtect), AllowDeletingRows:=(Not strictProtect), _
-                   AllowFormattingColumns:=(Not strictProtect), _
-                   AllowFormattingRows:=True
+                   AllowFormattingCells:=True, AllowDeletingRows:=(Not strictProtect), _
+                   AllowFormattingColumns:=True, AllowFormattingRows:=True
     End If
 
 End Sub
@@ -149,12 +148,12 @@ Private Sub RangeExists(ByVal rngName As String, ByVal sh As Worksheet)
     If rng Is Nothing Then ThrowError "Range " & rngName & " does not exists in worksheet " & sh.Name
 End Sub
 
-Private Sub LoExists(ByVal loName As String, sh As Worksheet)
+Private Sub LoExists(ByVal loname As String, sh As Worksheet)
     Dim Lo As ListObject
     On Error Resume Next
-    Set Lo = sh.ListObjects(loName)
+    Set Lo = sh.ListObjects(loname)
     On Error GoTo 0
-    If Lo Is Nothing Then ThrowError "Table " & loName & " does not exists in Worksheet " & sh.Name
+    If Lo Is Nothing Then ThrowError "Table " & loname & " does not exists in Worksheet " & sh.Name
 End Sub
 
 'Error

@@ -14,10 +14,70 @@ End Sub
 
 'Callback for editLang onChange
 Sub clickAddLang(control As IRibbonControl, text As String)
+    Const TRADSHEETNAME As String = "Translations"
+    Const PASSSHEETNAME As String = "__pass"
+
+    Dim pass As IPasswords
+    Dim Lo As ListObject
+    Dim trads As ITranslations
+    Dim wb As Workbook
+    Dim sh As Worksheet
+    Dim askFirst As Long
+
+    If text = vbNullString Then Exit Sub
+    BusyApp
+
+    'Ask before proceeding
+    askFirst = MsgBox("Do you really want to add language(s) " & _
+                      text & " to translations?", _
+                      vbYesNo, "Confirm")
+
+    If (askFirst = vbNo) Then Exit Sub
+
+    Set wb = ThisWorkbook
+    Set sh = wb.Worksheets(TRADSHEETNAME)
+    Set Lo = sh.ListObjects(1)
+    Set pass = Passwords.Create(wb.Worksheets(PASSSHEETNAME))
+    Set trads = Translations.Create(Lo)
+
+    pass.UnProtect TRADSHEETNAME
+    trads.AddTransLang text
+    pass.Protect TRADSHEETNAME, True
+
+    NotBusyApp
 End Sub
 
 'Callback for btnTransAdd onAction
 Sub clickAddTrans(control As IRibbonControl)
+    Const TRADSHEETNAME As String = "Translations"
+    Const PASSSHEETNAME As String = "__pass"
+    Const UPDATEDSHEETNAME As String = "__updated"
+
+    Dim pass As IPasswords
+    Dim trads As ITranslations
+    Dim wb As Workbook
+    Dim tradsh As Worksheet
+    Dim upsh As Worksheet
+    Dim askFirst As Long
+
+    BusyApp
+
+    'Ask before proceeding
+    askFirst = MsgBox("Do you want to update the translation sheet?", vbYesNo, "Confirm")
+
+    If (askFirst = vbNo) Then Exit Sub
+
+    Set wb = ThisWorkbook
+    Set tradsh = wb.Worksheets(TRADSHEETNAME)
+    Set upsh = wb.Worksheets(UPDATEDSHEETNAME)
+    Set pass = Passwords.Create(wb.Worksheets(PASSSHEETNAME))
+    Set trads = Translations.Create(tradsh, "Tab_Translations")
+
+    pass.UnProtect TRADSHEETNAME
+    trads.UpdateTrans upsh
+    pass.Protect TRADSHEETNAME, True
+
+    NotBusyApp
 End Sub
 
 'Callback for btnTransUp onAction
@@ -56,16 +116,16 @@ End Sub
 'Clear the names of the columns to update
 Private Sub CleanUpdateColumns()
     'Clear the update sheet
-    Dim upSh As Worksheet
+    Dim upsh As Worksheet
     Dim Lo As ListObject
     Dim wb As Workbook
     Dim namesRng As Range
     Dim counter As Long
     Set wb = ThisWorkbook
-    Set upSh = wb.Worksheets("__updated")
+    Set upsh = wb.Worksheets("__updated")
 
     'Unlist all listObjects in the worksheet and delete all names
-    For Each Lo In upSh.ListObjects
+    For Each Lo In upsh.ListObjects
         Set namesRng = Lo.ListColumns("rngname").Range
         For counter = 1 To namesRng.Rows.Count
             On Error Resume Next
@@ -74,7 +134,7 @@ Private Sub CleanUpdateColumns()
         Next
         Lo.Unlist
     Next
-    upSh.Cells.Clear
+    upsh.Cells.Clear
 End Sub
 
 'Update the translation values
@@ -96,17 +156,17 @@ End Sub
 
 'Update status of columns to watch
 Private Sub writeUpdateStatus(sh As Worksheet)
-    Dim upSh As Worksheet
+    Dim upsh As Worksheet
     Dim upId As String
     Dim upObj As IUpdatedValues
     Dim Lo As ListObject
 
-    Set upSh = ThisWorkbook.Worksheets("__updated")
+    Set upsh = ThisWorkbook.Worksheets("__updated")
     upId = LCase(Left(sh.Name, 4))
     For Each Lo In sh.ListObjects
         If sh.Name = "Analysis" Then _
         upId = LCase(Replace(Lo.Name, "Tab_", ""))
-        Set upObj = UpdatedValues.Create(upSh, upId)
+        Set upObj = UpdatedValues.Create(upsh, upId)
         upObj.AddColumns Lo
     Next
 End Sub
@@ -310,23 +370,23 @@ End Sub
 
 'Check update status when something changes in a range
 Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
-    Dim upSh As Worksheet
+    Dim upsh As Worksheet
     Dim upObj As IUpdatedValues
     Dim upId As String
     Dim Lo As ListObject
 
     BusyApp
 
-    Set upSh = ThisWorkbook.Worksheets("__updated")
+    Set upsh = ThisWorkbook.Worksheets("__updated")
     upId = LCase(Left(sh.Name, 4))
     If sh.Name = "Analysis" Then
         For Each Lo In sh.ListObjects
             upId = upId & "_" & LCase(Replace(Lo.Name, "Tab_", ""))
-            Set upObj = UpdatedValues.Create(upSh, upId)
+            Set upObj = UpdatedValues.Create(upsh, upId)
             upObj.CheckUpdate sh, Target
         Next
     Else
-        Set upObj = UpdatedValues.Create(upSh, upId)
+        Set upObj = UpdatedValues.Create(upsh, upId)
         upObj.CheckUpdate sh, Target
     End If
 

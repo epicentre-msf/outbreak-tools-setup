@@ -16,5 +16,5 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'Exposed methods
-Public Sub UpdateValues(): End Sub
+Public Sub UpdateTrans(ByVal rngSh As Worksheet): End Sub
 Public Sub AddTransLang(ByVal langVal As String): End Sub

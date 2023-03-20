@@ -72,12 +72,12 @@ End Property
 'Test if a listobject exists in a sheet
 Public Function Exists(ByVal listName As String) As Boolean
     Dim Lo As ListObject
-    Dim loName As String
+    Dim loname As String
     Dim sh As Worksheet
     Set sh = Wksh()
-    loName = CurrentLoName(listName)
+    loname = CurrentLoName(listName)
     On Error Resume Next
-    Set Lo = sh.ListObjects(loName)
+    Set Lo = sh.ListObjects(loname)
     On Error GoTo 0
     Exists = (Not Lo Is Nothing)
 End Function
@@ -88,13 +88,13 @@ Private Sub Add(ByVal listValues As BetterArray, ByVal listName As String)
     Dim sh As Worksheet
     Dim colIndex As Long
     Dim headerName As String                     'header Name
-    Dim loName As String                         'List object name
+    Dim loname As String                         'List object name
     Dim rng As Range
     Dim Wkb As Workbook
 
 
     If (Not Exists(listName)) Then
-        loName = CurrentLoName(listName)
+        loname = CurrentLoName(listName)
         headerName = CurrentHeaderName(listName)
         colIndex = LastColumn()
         Set sh = Wksh()
@@ -105,11 +105,11 @@ Private Sub Add(ByVal listValues As BetterArray, ByVal listName As String)
             Set rng = .Range(.Cells(1, colIndex), .Cells(listValues.Length + 1, colIndex))
 
             'Add A list object table
-            .ListObjects.Add(xlSrcRange, rng, , xlYes).Name = loName
+            .ListObjects.Add(xlSrcRange, rng, , xlYes).Name = loname
             Set Wkb = .Parent
         End With
 
-        Wkb.Names.Add Name:=headerName, RefersToR1C1:="=" & loName & "[" & headerName & "]"
+        Wkb.Names.Add Name:=headerName, RefersToR1C1:="=" & loname & "[" & headerName & "]"
     End If
 End Sub
 
@@ -118,16 +118,16 @@ Private Sub Remove(ByVal listName As String)
     Dim sh As Worksheet
     Dim Wkb As Workbook
     Dim rng As Range
-    Dim loName As String
+    Dim loname As String
     Dim headerName As String
 
     If Exists(listName) Then
 
-        loName = CurrentLoName(listName)
+        loname = CurrentLoName(listName)
         headerName = CurrentHeaderName(listName)
 
         Set sh = Wksh()
-        Set rng = sh.ListObjects(loName).Range
+        Set rng = sh.ListObjects(loname).Range
         Set Wkb = sh.Parent
 
         Wkb.Names(headerName).Delete
@@ -152,13 +152,13 @@ Private Sub Update(ByVal UpdateData As BetterArray, ByVal listName As String)
     Dim sh As Worksheet
     Dim cellRng As Range
     Dim rng As Range
-    Dim loName As String
+    Dim loname As String
     Dim Lo As ListObject
 
     If Not Exists(listName) Then Exit Sub
     Set sh = Wksh()
-    loName = CurrentLoName(listName)
-    Set Lo = sh.ListObjects(loName)
+    loname = CurrentLoName(listName)
+    Set Lo = sh.ListObjects(loname)
     Set cellRng = Lo.Range.Cells(2, 1)
 
     'put the new data in the range
