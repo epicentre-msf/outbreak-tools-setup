@@ -36,9 +36,8 @@ Sub clickAddLang(control As IRibbonControl, text As String)
 
     Set wb = ThisWorkbook
     Set sh = wb.Worksheets(TRADSHEETNAME)
-    Set Lo = sh.ListObjects(1)
     Set pass = Passwords.Create(wb.Worksheets(PASSSHEETNAME))
-    Set trads = Translations.Create(Lo)
+    Set trads = Translations.Create(sh, "Tab_Translations")
 
     pass.UnProtect TRADSHEETNAME
     trads.AddTransLang text

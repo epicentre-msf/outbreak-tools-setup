@@ -265,9 +265,13 @@ End Sub
 Private Sub FormatTable()
   Dim Lo As ListObject
   Dim hRng As Range
+  Dim loRng As Range
+  Dim sh As Worksheet
 
   Set Lo = Table()
   Set hRng = Lo.HeaderRowRange()
+  Set loRng = Lo.Range
+  Set sh = Wksh()
 
   Lo.Range.Interior.Color = vbWhite
   Lo.Range.Font.Color = vbBlack
@@ -275,39 +279,43 @@ Private Sub FormatTable()
 
   hRng.Font.Color = RGB(34, 96, 162)
   hRng.Interior.Color = RGB(221, 235, 247)
+  hRng.Locked = False
 
   With Lo.Range
-        With .Borders(xlEdgeTop)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
-        With .Borders(xlEdgeBottom)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
-        With .Borders(xlEdgeRight)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
-        With .Borders(xlEdgeLeft)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
-        With .Borders(xlInsideHorizontal)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
-        With .Borders(xlInsideVertical)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .Color = RGB(34, 96, 162)
-        End With
+    With .Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
     End With
+    With .Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
+    End With
+    With .Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
+    End With
+    With .Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
+    End With
+    With .Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
+    End With
+    With .Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .Weight = xlHairline
+        .Color = RGB(34, 96, 162)
+    End With
+  End With
+
+  'Unlock range for other languages
+  sh.Range(hRng.Cells(2, 2), LoRng.Cells(loRng.Rows.Count, hRng.Columns.Count)).Locked = False
 End Sub
 
 'Message with the number of missing values
