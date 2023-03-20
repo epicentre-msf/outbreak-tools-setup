@@ -198,7 +198,7 @@ Private Sub AddValidationsAndUpdates()
     BusyApp
     pass.UnProtect "Exports"
     BusyApp
-    MoveToTable "Tab_Exports"
+    MoveToTable "Tab_Export"
 
     currTab.SetValidation colName:="password", dropName:="__yesno", _
                         drop:=drop, alertType:="error"
@@ -214,7 +214,7 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="error"
 
     'Add Watchers on columns
-    MoveToUp "exp"
+    MoveToUp "expo"
     currUp.AddColumns currLo
     BusyApp
     pass.Protect "Exports"
@@ -236,7 +236,7 @@ Private Sub AddValidationsAndUpdates()
                           alertType:="info"
 
     'columns to watch on global summary
-    MoveToUp "ana_gs"
+    MoveToUp "global_summary"
     currUp.AddColumns currLo
 
     'Univariate analysis table
@@ -257,7 +257,7 @@ Private Sub AddValidationsAndUpdates()
                           alertType:="error"
 
     'add columns
-    MoveToUp "ana_ua"
+    MoveToUp "univariate_analysis"
     currUp.AddColumns currLo
 
     'Bivariate analysis table
@@ -281,7 +281,7 @@ Private Sub AddValidationsAndUpdates()
                           alertType:="error"
 
     'add columns on bivariate analysis to watcher
-    MoveToUp "ana_ba"
+    MoveToUp "bivariate_analysis"
     currUp.AddColumns currLo
 
     'Time Series analysis table
@@ -302,12 +302,12 @@ Private Sub AddValidationsAndUpdates()
                           alertType:="info"
 
     'add column on time series analysis to watcher
-    MoveToUp "ana_ts"
+    MoveToUp "timeseries_analysis"
     currUp.AddColumns currLo
 
     'add columns on graph on time series labels
     MoveToTable "Tab_Label_TSGraph"
-    MoveToUp "ana_tsgrlab"
+    MoveToUp "label_tsgraph"
     currUp.AddColumns currLo
 
     'Graph on time series
@@ -319,7 +319,7 @@ Private Sub AddValidationsAndUpdates()
                           drop:=drop, alertType:="info"
     currTab.SetValidation colName:="y-axis", dropName:="__axis_pos", _
                           drop:=drop, alertType:="error"
-    MoveToUp "ana_tsgr"
+    MoveToUp "graph_timeseries"
     currUp.AddColumns currLo
 
     'graph title and series title
@@ -342,7 +342,7 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                         alertType:="info"
 
-    MoveToUp "ana_sp"
+    MoveToUp "spatial_analysis"
     currUp.AddColumns currLo
 
     'Spatio-Temporal Analysis

@@ -1,5 +1,4 @@
-Attribute VB_Name = "EventsGobal"
-
+Attribute VB_Name = "EventsGlobal"
 Option Explicit
 
 'Module for all the global events: At the Workbook level
@@ -84,7 +83,7 @@ Public Sub SetAllUpdatedTo(ByVal value As String)
 
     For Each Lo in sh.ListObjects
         Set rng = Lo.ListColumns("updated").Range
-        For counter = 1 To rng.Rows.Count
+        For counter = 2 To rng.Rows.Count
             rng.Cells(counter, 1).Value = value
         Next
     Next
