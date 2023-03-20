@@ -45,7 +45,7 @@ Public Sub ImportOrCleanSetup()
     Dim pass As IPasswords
 
     BusyApp
-    On Error GoTo ErrHand
+    On Error GoTo errHand
     Set actsh = ActiveSheet
     importDict = [Imports].DictionaryCheck.Value
     importChoi = [Imports].ChoiceCheck.Value
@@ -84,7 +84,7 @@ Public Sub ImportOrCleanSetup()
         End If
         infoText = "Import Done!"
     Case "Clear"
-        If MsgBox("Do you really want to clean the setup?", _
+        If MsgBox("Do you really want to clear the setup?", _
                  vbYesNo, "Confirmation") = vbYes Then
             importObj.Clean pass, sheetsList
             infoText = "Setup cleared!"
@@ -94,59 +94,9 @@ Public Sub ImportOrCleanSetup()
     MsgBox infoText
     progObj.Caption = infoText
     actsh.Activate
-ErrHand:
+
+    SetAllUpdatedTo "yes"
+errHand:
     NotBusyApp
-End Sub
-
-Public Sub PrepareForm(Optional ByVal cleanSetup As Boolean = False)
-    If cleanSetup Then
-        [Imports].LoadButton.Visible = False
-        [Imports].LabPath.Visible = False
-        [Imports].InfoChoice.Caption = "Select what to Clear"
-        [Imports].DictionaryCheck.Caption = "Clear Dictionary"
-        [Imports].ChoiceCheck.Caption = "Clear Choices"
-        [Imports].ExportsCheck.Caption = "Clear Exports"
-        [Imports].AnalysisCheck.Caption = "Clear Analysis"
-        [Imports].TranslationsCheck.Caption = "Clear Translation"
-        [Imports].ConformityCheck.Visible = False
-        [Imports].DoButton.Caption = "Clear"
-
-        'Resize and change position of elements
-        [Imports].Height = 400
-        [Imports].InfoChoice.Top = 20
-        [Imports].DictionaryCheck.Top = 50
-        [Imports].ChoiceCheck.Top = 80
-        [Imports].ExportsCheck.Top = 110
-        [Imports].AnalysisCheck.Top = 140
-        [Imports].TranslationsCheck.Top = 170
-        [Imports].LabProgress.Top = 200
-        [Imports].DoButton.Top = 270
-        [Imports].Quit.Top = 310
-    Else
-        [Imports].InfoChoice.Caption = "Select what to Import"
-        [Imports].DictionaryCheck.Caption = "Import Dictionary"
-        [Imports].ChoiceCheck.Caption = "Import Choices"
-        [Imports].ExportsCheck.Caption = "Import Exports"
-        [Imports].AnalysisCheck.Caption = "Import Analysis"
-        [Imports].TranslationsCheck.Caption = "Import Translation"
-        [Imports].ConformityCheck.Visible = True
-        [Imports].LoadButton.Visible = True
-        [Imports].LabPath.Visible = True
-        [Imports].DoButton.Caption = "Import"
-
-        'resize the worksheet and position of elements
-        [Imports].Height = 500
-        [Imports].LoadButton.Top = 10
-        [Imports].LabPath.Top = 55
-        [Imports].InfoChoice.Top = 135
-        [Imports].DictionaryCheck.Top = 170
-        [Imports].ChoiceCheck.Top = 200
-        [Imports].ExportsCheck.Top = 230
-        [Imports].AnalysisCheck.Top = 260
-        [Imports].TranslationsCheck.Top = 290
-        [Imports].DoButton.Top = 350
-        [Imports].LabProgress.Top = 390
-        [Imports].Quit.Top = 440
-    End If
 End Sub
 

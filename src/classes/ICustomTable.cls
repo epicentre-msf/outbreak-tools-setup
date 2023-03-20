@@ -26,7 +26,8 @@ Public Sub SetValidation(ByVal colName As String, _
                          Optional ByVal alertType As String = "info")
 End Sub
 
-Public Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
+Public Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False, _
+                              Optional ByVal strictSearch As Boolean = False) As Range
 End Property
 
 Public Property Get HeaderRange() As Range: End Property

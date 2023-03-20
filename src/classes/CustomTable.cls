@@ -177,45 +177,56 @@ End Sub
 
 
 'Column Range and column Index of a custom table
-Private Function ColumnExists(ByVal colName As String) As Boolean
+Private Function ColumnExists(ByVal colName As String, _
+                              Optional ByVal strictSearch As Boolean = False) As Boolean
     Dim exist As Boolean
     Dim hRng As Range
     Set hRng = HeaderRowRange
     exist = False
     On Error Resume Next
-    exist = (Not hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False) Is Nothing)
+    exist = (Not hRng.Find(What:=colName, _
+                           lookAt:=IIf(strictSearch, xlWhole, xlPart), _
+                           MatchCase:=strictSearch, _
+                           After:=hRng.Cells(1, hRng.Columns.Count)) Is Nothing)
     On Error GoTo 0
     ColumnExists = exist
 End Function
 
-Private Function ColumnIndex(ByVal colName) As Long
+Private Function ColumnIndex(ByVal colName As String, _
+                             Optional ByVal strictSearch As Boolean = False) As Long
     Dim Index As Long
     Dim hRng As Range
 
     Set hRng = HeaderRowRange()
     If ColumnExists(colName) Then
-        Index = hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
+        Index = hRng.Find(What:=colName, _
+                         lookAt:=IIf(strictSearch, xlWhole, xlPart), _
+                         MatchCase:=strictSearch, _
+                         After:=hRng.Cells(1, hRng.Columns.Count) _
+                         ).Column - hRng.Column + 1
     Else
         Index = -1
     End If
     ColumnIndex = Index
 End Function
 
-Private Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
+Private Property Get DataRange(ByVal colName As String, _
+                               Optional ByVal includeHeaders As Boolean = False, _
+                               Optional ByVal strictSearch As Boolean = False) As Range
   Dim Lo As ListObject
   Set Lo = Table()
   Dim rng As Range
 
-  If Not ColumnExists(colName) Then Exit Property
+  If Not ColumnExists(colName, strictSearch) Then Exit Property
   If includeHeaders Then
-    Set rng = Lo.ListColumns(ColumnIndex(colName)).Range
+    Set rng = Lo.ListColumns(ColumnIndex(colName, strictSearch)).Range
   Else
     'DataBody range could be Nothing
     On Error Resume Next
-    Set rng = Lo.ListColumns(ColumnIndex(colName)).DataBodyRange
+    Set rng = Lo.ListColumns(ColumnIndex(colName, strictSearch)).DataBodyRange
     On Error GoTo 0
     'You can test here if it is Nothing, in that case the table is Empty, just return the second line
-    If rng Is Nothing Then Set rng = Lo.ListColumns(ColumnIndex(colName)).Range.Cells(2, 1)
+    If rng Is Nothing Then Set rng = Lo.ListColumns(ColumnIndex(colName, strictSearch)).Range.Cells(2, 1)
     Set DataRange = rng
   End If
 End Property
@@ -272,9 +283,11 @@ Private Sub Clean()
   Dim headerValue As String
   Dim counter As Long
   Dim toClear As Boolean
+  Dim totalCount As Long
 
   Set Lo = Table()
   Set hRng = Lo.HeaderRowRange
+  totalCount = 0
 
   For counter = 1 To hRng.Columns.Count
     headerValue = hRng.Cells(1, counter).Value
@@ -286,8 +299,14 @@ Private Sub Clean()
     If toClear Then rng.ClearContents
   Next
 
+  If Name() = "Tab_Translations" Then
+    On Error Resume Next
+    Lo.DataBodyRange.ClearContents
+    On Error GoTo 0
+    totalCount = 1
+  End If
   'Now resize the listObject
-  If Name() <> "Tab_Export" Then Resize AddRows:=False
+  If Name() <> "Tab_Export" Then Resize AddRows:=False, totalRowCount:=totalCount
 End Sub
 
 'Import another custom table to this one
@@ -296,6 +315,7 @@ Private Sub Import(ByVal impTab As ICustomTable)
 
   Dim imphRng As Range
   Dim headerValue As String
+  Dim newHeaderValue As String
   Dim counter As Long
   Dim nbImpRows As Long
   Dim impDataRng As Range
@@ -312,14 +332,20 @@ Private Sub Import(ByVal impTab As ICustomTable)
 
   For counter = 1 To imphRng.Columns.Count
     headerValue = imphRng.Cells(1, counter).Value
-    If ColumnExists(headerValue) Then
-      Set impDataRng = impTab.DataRange(headerValue)
-      Set currDataRng = DataRange(headerValue)
+    'Add code for some header values for importing from old setup
+    newHeaderValue = Switch(headerValue = "Type", "Variable Type", _
+                         headerValue = "Format", "Variable Format", _
+                         headerValue = "Export", "Export Number", _
+                         True, headerValue)
+
+    If ColumnExists(newHeaderValue) Then
+      Set impDataRng = impTab.DataRange(colName:=headerValue, strictSearch:=True)
+      Set currDataRng = DataRange(newHeaderValue)
       nbImpRows = impDataRng.Rows.Count
       'Resize to fit the number of required rows
       Do While (nbImpRows > currDataRng.Rows.Count)
         Resize AddRows:=True
-        Set currDataRng = DataRange(headerValue)
+        Set currDataRng = DataRange(newHeaderValue)
       Loop
       'Add values if the range does not contains formulas. If the range contains formulas, do nothing
       Set rng = sh.Range(currDataRng.Cells(1, 1), currDataRng.Cells(nbImpRows, 1))
@@ -350,8 +376,10 @@ Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDr
     SetValidation colName, drop, dropName, alertType
 End Sub
 
-Public Property Get ICustomTable_DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False) As Range
-  Set ICustomTable_DataRange = DataRange(colName, includeHeaders)
+Public Property Get ICustomTable_DataRange(ByVal colName As String, _
+                                          Optional ByVal includeHeaders As Boolean = False, _
+                                          Optional ByVal strictSearch As Boolean = False) As Range
+  Set ICustomTable_DataRange = DataRange(colName, includeHeaders, strictSearch)
 End Property
 
 Public Property Get ICustomTable_Value(ByVal colName As String, ByVal keyName As String) As String

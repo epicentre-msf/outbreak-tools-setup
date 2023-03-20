@@ -20,7 +20,9 @@ Public Property Get Password() As String: End Property
 
 Public Sub UnProtect(Optional ByVal sheetName As String = "_active"): End Sub
 
-Public Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByVal strictProtect As Boolean = False)
+Public Sub Protect(Optional ByVal sheetName As String = "_active", _
+                   Optional ByVal strictProtect As Boolean = False, _
+                   Optional ByVal deleteColumns As Boolean = False)
 End Sub
 
 'Public Sub EnterDebugMode(): End Sub

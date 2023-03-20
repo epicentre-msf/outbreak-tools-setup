@@ -60,7 +60,9 @@ Private Property Get InDebugMode() As Boolean
 End Property
 
 'protect
-Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByVal strictProtect As Boolean = False)
+Private Sub Protect(Optional ByVal sheetName As String = "_active", _
+                    Optional ByVal strictProtect As Boolean = False, _
+                    Optional ByVal deleteColumns As Boolean = False)
 
     'Strict protect restricts from deleting / inserting rows and formatting columns
     'and cells.
@@ -84,7 +86,8 @@ Private Sub Protect(Optional ByVal sheetName As String = "_active", Optional ByV
         sh.Protect Password:=pwd, DrawingObjects:=False, Contents:=True, Scenarios:=True, _
                    AllowInsertingRows:=(Not strictProtect), AllowSorting:=True, AllowFiltering:=True, _
                    AllowFormattingCells:=True, AllowDeletingRows:=(Not strictProtect), _
-                   AllowFormattingColumns:=True, AllowFormattingRows:=True
+                   AllowFormattingColumns:=True, AllowFormattingRows:=True, _
+                   AllowDeletingColumns:=deleteColumns
     End If
 
 End Sub
@@ -169,8 +172,10 @@ Public Sub IPasswords_UnProtect(Optional ByVal sheetName As String = "_active")
     UnProtect sheetName
 End Sub
 
-Public Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", Optional ByVal strictProtect As Boolean = False)
-    Protect sheetName, strictProtect
+Public Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", _
+                              Optional ByVal strictProtect As Boolean = False, _
+                              Optional ByVal deleteColumns As Boolean = False)
+    Protect sheetName, strictProtect, deleteColumns
 End Sub
 
     'Protect and unprotect the workbook to avoid sheet name changes

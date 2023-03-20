@@ -267,6 +267,7 @@ Private Sub FormatTable()
   Dim hRng As Range
   Dim loRng As Range
   Dim sh As Worksheet
+  Dim csTab As ICustomTable
 
   Set Lo = Table()
   Set hRng = Lo.HeaderRowRange()
@@ -315,7 +316,14 @@ Private Sub FormatTable()
   End With
 
   'Unlock range for other languages
-  sh.Range(hRng.Cells(2, 2), LoRng.Cells(loRng.Rows.Count, hRng.Columns.Count)).Locked = False
+  sh.Range(hRng.Cells(2, 2), loRng.Cells(loRng.Rows.Count, hRng.Columns.Count)).Locked = False
+
+  'resize the current table in the worksheet
+  On Error Resume Next
+  Set csTab = CustomTable.Create(Lo)
+  csTab.RemoveRows totalCount:=1
+  On Error GoTo 0
+
 End Sub
 
 'Message with the number of missing values

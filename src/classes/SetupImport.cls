@@ -217,7 +217,9 @@ Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
         End If
       Next
 
-      pass.Protect sheetName
+      'Translations And Analysis need strict protection (avoid deleting rows)
+      pass.Protect sheetName, (sheetName = "Translations" Or sheetName = "Analysis"), _
+                  (sheetName = "Translations")
     End If
   Next
 
