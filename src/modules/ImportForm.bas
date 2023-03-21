@@ -43,10 +43,12 @@ Public Sub ImportOrCleanSetup()
     Dim infoText As String
     Dim doLabel As String
     Dim pass As IPasswords
+    Dim wb As Workbook
 
     BusyApp
     On Error GoTo errHand
     Set actsh = ActiveSheet
+    Set wb = ThisWorkbook
     importDict = [Imports].DictionaryCheck.Value
     importChoi = [Imports].ChoiceCheck.Value
     importExp = [Imports].ExportsCheck.Value
@@ -94,8 +96,8 @@ Public Sub ImportOrCleanSetup()
     MsgBox infoText
     progObj.Caption = infoText
     actsh.Activate
-
     SetAllUpdatedTo "yes"
+    wb.Worksheets("Analysis").Calculate
 errHand:
     NotBusyApp
 End Sub

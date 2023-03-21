@@ -1,37 +1,3 @@
-
-
-# create a function to save the current setup
-
-update_setup  <- function(update_stable = 0) {
-    #move previous version of my designer
-   file.copy(from = "./src/bin/setup_aky.xlsb",
-             to = "./Rscripts/", overwrite = TRUE)
-    # move back and overwrite
-    file.copy(from = "./Rscripts/setup_aky.xlsb",
-             to = "./src/bin/setup_dev.xlsb", overwrite = TRUE)
-    # update the stable version if needed
-    if (update_stable == 1) {
-       # previous stable version
-         file.copy(from = "./setup.xlsb",
-             to = "./Rscripts/setup_prev.xlsb", overwrite = TRUE)
-       # update the new stable version
-         file.copy(from = "./Rscripts/setup_aky.xlsb",
-             to = "./setup.xlsb", overwrite = TRUE)
-    }
-
-    # revert back previous stable designer due to corrupt files.
-    if (update_stable == 2) {
-         file.copy(from = "./Rscripts/setup_prev.xlsb",
-             to = "./setup.xlsb", overwrite = TRUE)
-         file.copy(from = "./Rscripts/setup_prev.xlsb",
-                 to = "./src/bin/setup_dev.xlsb", overwrite = TRUE)
-         file.copy(from = "./Rscripts/setup_prev.xlsb",
-                 to = "./setup_aky.xlsb", overwrite = TRUE)
-    }
-}
-
-
-
 # create en empty file for creating an interface for each of the class
 
 class_header  <- function(class_name, description = "", module_description = "",
@@ -122,3 +88,7 @@ create_class  <- function(class_name, description = "", module_description = "")
         cat(class_test_header,
         file = glue::glue("./src/modules/Test{class_name}.bas"))
 }
+
+
+
+#create_class("classname") #nolint
