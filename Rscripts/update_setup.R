@@ -35,5 +35,8 @@ update_setup  <- function(update_status = 0) {
     }
 }
 
-# update_setup(update_status = 1) #nolint
+#update the dev file in bin
+update_setup(update_status = 0) #nolint
+#update the file on root setup
+update_setup(update_status = 1) #nolint
 update_setup(update_status = 3) #nolint
