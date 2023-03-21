@@ -167,7 +167,8 @@ Private Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
       Set csTab = CustomTable.Create(Lo)
       csTab.Clean
     Next
-    pass.Protect sheetName
+    pass.Protect sheetName, (sheetName = "Translations" Or sheetName = "Analysis"), _
+    (sheetName = "Translations")
   Next
 End Sub
 

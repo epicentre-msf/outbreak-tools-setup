@@ -168,6 +168,10 @@ Private Sub AddValidationsAndUpdates()
     'variable control
     currTab.SetValidation colName:="control", dropName:="__var_control", _
                         drop:=drop, alertType:="info"
+
+    'print variable (add the variable to a print sheet)
+    currTab.SetValidation colName:="print variable", dropName:="__yesno", _
+                         drop:=drop, alertType:="info"
     'variable should be unique
     currTab.SetValidation colName:="unique", dropName:="__yesno", _
                         drop:=drop, alertType:="error"
@@ -358,4 +362,43 @@ Public Sub ConfigureSetup()
     CreateDropdowns 'Create dropdowns for the setup
     AddValidationsAndUpdates  'Add the validations to each parts of the setup
     MsgBox "Done!"
+End Sub
+
+'Prepare the setup for production
+Public Sub PrepareForProd()
+    Dim wb As Workbook
+    Dim pass As IPasswords
+    Dim pwd As String
+    Dim sh As Worksheet
+
+    Set wb = ThisWorkbook
+    'First write the password to the password sheet
+    pwd = wb.Worksheets("Dev").Range("RNG_DevPasswd").Value
+    wb.Worksheets("__pass").Range("RNG_DebuggingPassword").Value = pwd
+
+    'Protect the worksheets
+    Set sh = wb.Worksheets("__pass")
+    Set pass = Passwords.Create(sh)
+    'As Dictionary
+    pass.Protect "Dictionary"
+    'Choices
+    pass.Protect "Choices"
+    'Translations
+    pass.Protect "Translations", True, True
+    'Analysis
+    pass.Protect "Analysis", True
+    'Exports
+    pass.Protect "Exports"
+    'Hide some worksheeets
+    pass.UnProtectWkb wb
+    wb.Worksheets("__updated").Visible = xlSheetHidden
+    wb.Worksheets("__pass").Visible = xlSheetHidden
+    wb.Worksheets("__variables").Visible = xlSheetHidden
+    wb.Worksheets("Dev").Visible = xlSheetHidden
+
+    'Protect the workbook
+    pass.ProtectWkb wb
+
+    'Protect the project
+
 End Sub
