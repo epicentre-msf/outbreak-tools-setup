@@ -363,6 +363,87 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Next
 End Sub
 
+'Sort a listObject on one column (on first element found)
+Private Sub SortOnFirst(ByVal colName As String)
+
+  Dim numRng As Range 'Number range
+  Dim colRng As Range 'Colum range to sort on
+  Dim loRng As Range 'ListObject Range
+  Dim hRng As Range 'Header Range of the list Object
+  Dim counter As Long
+  Dim trackData As BetterArray
+  Dim sh As Worksheet
+  Dim sortedValue As String
+  Dim num As Long
+  Dim numData As BetterArray
+  Dim resRng As Range
+
+  'Sort on values only If there is data
+  Set Lo = Table()
+  Set loRng = Lo.DataBodyRange
+  Set colRng = DataRange(colName)
+
+  If (loRng Is Nothing) Or IsEmpty(loRng) Or (colRng Is Nothing) Or _
+     (IsEmpty(colRng)) Then Exit Sub
+
+  Set trackData = New BetterArray
+  Set numData = New BetterArray
+  Set sh = Wksh()
+  Set hRng = Lo.HeaderRowRange
+
+  'Test values progressively
+  'If the trackData does not contains the values,
+  'Update the number (where you will sort)
+  hRng.Cells(1, hRng.Cells.Count + 1).Value = "__number"
+  Set numRng = Lo.ListColumns(hRng.Cells.Count + 1).DataBodyRange
+  'Seems like sometimes the databodyrange of a new column could be empty in that case exit
+  If numRng Is Nothing Then
+    Lo.ListColumns(hRng.Cells.Count + 1).Delete
+    Exit Sub
+  End If
+  num = 1 'Number to sort later on
+  'Resize the listObject to be sure it includes the number added
+  With sh
+      Set resRng = .Range(hRng.Cells(1, 1), loRng.Cells(loRng.Rows.Count, loRng.Columns.Count + 1))
+      Lo.Resize resRng
+  End With
+
+  For counter = 1 To colRng.Cells.Count
+     sortedValue = colRng.Cells(counter, 1).Value
+    If Not trackData.Includes(sortedValue) Then
+      trackData.Push sortedValue
+      numData.Push num
+      numRng.Cells(counter, 1).Value = num
+      num = num + 1
+    Else
+      numRng.Cells(counter, 1) = numData.Items(trackData.IndexOf(sortedValue))
+    End If
+  Next
+  'Now sort the listObject on the __number column
+  resRng.Sort key1:=numRng, order1:=xlAscending, header:=xlYes
+  'Remove the __number column
+  Lo.ListColumns(hRng.Cells.Count + 1).Delete
+End Sub
+
+'Sucessively sort the listObject on multiple elements (in a BetterArray with colname values)
+Private Sub SortElements(ByVal els As Variant)
+  Dim colName As String
+  Dim counter As Long
+
+  If (TypeName(els) <> "String") And (TypeName(els) <> "BetterArray") Then Exit Sub
+
+  If (TypeName(els) = "String") Then
+    colName = els
+    SortOnFirst colName
+    Exit Sub
+  End If
+
+  For counter = els.LowerBound To els.UpperBound
+    colName = els.Item(counter)
+    SortOnFirst colName
+  Next
+End Sub
+
 Public Sub ICustomTable_AddRows()
   Resize AddRows:=True
 End Sub
@@ -404,6 +485,10 @@ End Property
 
 Public Sub ICustomTable_Clean()
   Clean
+End Sub
+
+Public Sub ICustomTable_Sort(ByVal els As Variant)
+  SortElements els
 End Sub
 
 'Errors and checkings

@@ -92,7 +92,7 @@ End Property
 Public Property Get Prepared() As Boolean
     Dim dictWksh As Worksheet
     Set dictWksh = Wksh()
-    Prepared = (dictWksh.Cells(DictEndRow + 1, StartColumn).Font.Color = vbBlue) And _
+    Prepared = (dictWksh.Cells(DictEndRow + 1, StartColumn).Font.color = vbBlue) And _
                                                                                  ColumnExists("table name") And ColumnExists("column index") And _
                                                                                  ColumnExists("visibility") And _
                                                                                  (Not ColumnExists("main section sort")) And (Not ColumnExists("main section index"))
@@ -387,7 +387,7 @@ Private Sub Export(ByVal Wkb As Workbook, Optional ByVal exportType As String = 
     With sh
         .ListObjects.Add(xlSrcRange, rng, , xlYes).Name = "o" & LCase(sheetName)
         'prepare the dictionary
-        .Cells(DictEndRow + 1, StartColumn).Font.Color = vbBlue
+        .Cells(DictEndRow + 1, StartColumn).Font.color = vbBlue
     End With
 End Sub
 

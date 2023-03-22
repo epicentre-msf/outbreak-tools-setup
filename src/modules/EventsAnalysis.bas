@@ -178,7 +178,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
 End Sub
 
 Private Sub FormatLockCell(ByVal cellRng As Range, Optional ByVal Locked = True)
-    cellRng.Font.Color = IIf(Locked, RGB(51, 142, 202), vbBlack)
+    cellRng.Font.color = IIf(Locked, RGB(51, 142, 202), vbBlack)
     cellRng.Font.Italic = Locked
     cellRng.Locked = Locked
 End Sub

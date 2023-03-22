@@ -56,10 +56,10 @@ End Sub
 
 
 'Function to add Elements to the dropdown list
-Private Sub AddElements(ByVal dropdownName As String, ParamArray Els() As Variant)
+Private Sub AddElements(ByVal dropdownName As String, ParamArray els() As Variant)
     Dim nbEls As Integer
-    For nbEls = 0 To UBound(Els())
-        dropArray.Push Els(nbEls)
+    For nbEls = 0 To UBound(els())
+        dropArray.Push els(nbEls)
     Next
     drop.Add dropArray, dropdownName
     dropArray.Clear

@@ -29,7 +29,8 @@ End Type
 Private this As TChecking
 
 'Exposed methods
-Public Function Create(ByVal titleName As String, Optional ByVal subtitleName As String = vbNullString) As IChecking
+Public Function Create(ByVal titleName As String, _
+                       Optional ByVal subtitleName As String = vbNullString) As IChecking
   If titleName = vbNullString Then ThrowError "Checkings should have a title"
   With New Checking
     .CheckingTitle = titleName
@@ -38,25 +39,24 @@ Public Function Create(ByVal titleName As String, Optional ByVal subtitleName As
   End With
 End Function
 
-
 Public Property Get Self() As IChecking
   Set Self = Me
 End Property
 
 'title and subTitle
-Private Property Get CheckingTitle() As String
+Public Property Get CheckingTitle() As String
   CheckingTitle = this.title
 End Property
 
-Private Property Get CheckingSubTitle() As String
+Public Property Get CheckingSubTitle() As String
   CheckingSubTitle = this.subTitle
 End Property
 
-Private Property Let CheckingTitle(ByVal titleName As String)
+Public Property Let CheckingTitle(ByVal titleName As String)
   this.title = titleName
 End Property
 
-Private Property Let CheckingSubTitle(ByVal subtitleName As String)
+Public Property Let CheckingSubTitle(ByVal subtitleName As String)
   this.subTitle = subtitleName
 End Property
 
@@ -118,7 +118,9 @@ Private Sub Add(ByVal keyName As String, ByVal LABEL As String, _
   this.labelsTable.Push LABEL
 End Sub
 
-
+'Get either the label or the type of one key in the checkings
+'The checking value could be either the checking label,
+'(the text) or the checking color or the checkingType (Note, warning, info Or Error)
 Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As CheckingValue = 1) As String
   Dim indexValue As Long
   Dim returnedValue As String
@@ -127,18 +129,14 @@ Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedVa
   If (Not keyExists(keyName)) Then ThrowError keyName & " does not exists in this checking"
 
   indexValue = this.keysTable.IndexOf(keyName)
-  actualScope = this.scopesTable.IndexOf(keyName)
+  actualScope = this.scopesTable.Item(indexValue)
 
   Select Case retrievedValue
 
     Case checkingLabel
-
       returnedValue = this.labelsTable.Item(indexValue)
-
     Case checkingType
-
       Select Case actualScope
-
         Case checkingNote
           returnedValue = "Note"
         Case checkingError
@@ -148,11 +146,8 @@ Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedVa
         Case checkingInfo
           returnedValue = "Info"
       End Select
-
     Case checkingColor
-
       Select Case actualScope
-
         Case checkingNote
           returnedValue = "blue"
         Case checkingError
@@ -163,7 +158,7 @@ Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedVa
           returnedValue = "gray"
       End Select
   End Select
-
+  ValueOf = returnedValue
 End Property
 
 
@@ -176,6 +171,7 @@ End Sub
 'Exposed methods
 Public Sub IChecking_Add(ByVal keyName As String, ByVal LABEL As String, _
                 Optional ByVal scope As CheckingScope = checkingNote)
+    Add keyName, LABEL, scope
 End Sub
 Public Property Get IChecking_ListOfKeys() As BetterArray
   Set IChecking_ListOfKeys = ListOfKeys()
@@ -188,5 +184,5 @@ End Property
 
 'You can retrieve the label, the scope or the color
 Public Property Get IChecking_ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As CheckingValue = 1) As String
-  IChecking_ValueOf = ValueOf(keyName, retriedValue)
+  IChecking_ValueOf = ValueOf(keyName, retrievedValue)
 End Property

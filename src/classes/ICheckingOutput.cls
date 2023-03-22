@@ -17,4 +17,4 @@ Option Explicit
 
 'Exposed methods
 
-Public Sub PrintOutput(): End Sub
+Public Sub PrintOutput(ByVal checkTable As BetterArray): End Sub

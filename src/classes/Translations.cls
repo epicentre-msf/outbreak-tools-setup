@@ -274,44 +274,44 @@ Private Sub FormatTable()
   Set loRng = Lo.Range
   Set sh = Wksh()
 
-  Lo.Range.Interior.Color = vbWhite
-  Lo.Range.Font.Color = vbBlack
+  Lo.Range.Interior.color = vbWhite
+  Lo.Range.Font.color = vbBlack
   Lo.Range.EntireRow.RowHeight = 30
 
-  hRng.Font.Color = RGB(34, 96, 162)
-  hRng.Interior.Color = RGB(221, 235, 247)
+  hRng.Font.color = RGB(34, 96, 162)
+  hRng.Interior.color = RGB(221, 235, 247)
   hRng.Locked = False
 
   With Lo.Range
     With .Borders(xlEdgeTop)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
     With .Borders(xlEdgeBottom)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
     With .Borders(xlEdgeRight)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
     With .Borders(xlEdgeLeft)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
     With .Borders(xlInsideHorizontal)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
     With .Borders(xlInsideVertical)
         .LineStyle = xlContinuous
         .Weight = xlHairline
-        .Color = RGB(34, 96, 162)
+        .color = RGB(34, 96, 162)
     End With
   End With
 

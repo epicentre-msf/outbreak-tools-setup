@@ -71,7 +71,7 @@ Public Sub OpenedWorkbook()
     Application.CalculateBeforeSave = False
 End Sub
 
-Public Sub SetAllUpdatedTo(ByVal value As String)
+Public Sub SetAllUpdatedTo(ByVal Value As String)
     Dim wb As Workbook
     Dim sh As Worksheet
     Dim Lo As ListObject
@@ -81,10 +81,10 @@ Public Sub SetAllUpdatedTo(ByVal value As String)
     Set wb = ThisWorkbook
     Set sh = wb.Worksheets(UPDATEDSHEETNAME)
 
-    For Each Lo in sh.ListObjects
+    For Each Lo In sh.ListObjects
         Set rng = Lo.ListColumns("updated").Range
         For counter = 2 To rng.Rows.Count
-            rng.Cells(counter, 1).Value = value
+            rng.Cells(counter, 1).Value = Value
         Next
     Next
 End Sub
