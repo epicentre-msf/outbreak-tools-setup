@@ -1,5 +1,5 @@
 {
-    "editor.fontSize": 12,
+    "editor.fontSize": 14,
     "typescript.workspaceSymbols.scope": "currentProject",
     "files.exclude": {
         "**/.mock": true

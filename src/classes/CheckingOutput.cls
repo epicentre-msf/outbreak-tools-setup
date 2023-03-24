@@ -54,7 +54,7 @@ Private Property Get WritingCell() As Range
   Dim cellRng As Range
   Set sh = Wksh()
   With sh
-    Set WritingCell = .Cells(.Cells(.Rows.Count, 2).End(xlUp).Row, 2).Offset(2)
+    Set WritingCell = .Cells(.Cells(.Rows.Count, 2).End(xlUp).Row, 2).Offset(3)
   End With
 End Property
 
@@ -66,6 +66,9 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
   Dim intCol As Long
   Dim sh As Worksheet
   Dim cellRng As Range
+  Dim counter As Integer
+
+  Set sh = Wksh()
   Set cellRng = WritingCell()
   If level = 2 Then Set cellRng = cellRng.Offset(-1)
   If level = 3 Then Set cellRng = cellRng.Offset(-2)
@@ -88,15 +91,31 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
       intCol = vbWhite
   End Select
 
+  On Error Resume Next
+    'If there is no -- The split can be just one character (not important though)
+    cellRng.Cells(1, 1).Value = Split(textValue, "--")(0)
+    cellRng.Cells(1, 2).Value = Split(textValue, "--")(1)
+    cellRng.Cells(1, 3).Value = Split(textValue, "--")(2)
+  On Error GoTo 0
+
+  Set cellRng = sh.Range(cellRng.Cells(1, 1), cellRng.Cells(1, 3))
+
   With cellRng
-    .Value = textValue
-    .Font.Size = Switch(level = 1, 18, level = 2, 16, level = 3, 11)
+    .Font.Size = Switch(level = 1, 14, level = 2, 12, level = 3, 10)
     .Interior.color = intCol
     .Font.color = fontCol
     .Font.Bold = (level <> 3)
+    .EntireColumn.AutoFit
     On Error Resume Next
-    .Font.Name = "Consolas"
+    .Font.Name = "Tahoma"
     On Error GoTo 0
+    For counter = 7 To 12
+        With .Borders(counter)
+            .LineStyle = xlContinuous
+            .Weight = xlHairline
+            .color = RGB(117, 113, 113)
+        End With
+    Next
   End With
 End Sub
 
@@ -116,34 +135,38 @@ Private Sub WriteChecking(ByVal Check As IChecking)
   Set sh = Wksh()
   title = Check.Heading()
   subTitle = Check.Heading(subTitle:=True)
-  If subTitle <> vbNullString Then
-    'Check if the title exists
-    If Not (sh.Cells.Find(What:=title, lookAt:=xlWhole, MatchCase:=True) Is Nothing) Then
-      'Write only the subtitle
-      WriteValue level:=2, textValue:=subTitle
-    Else
-      'Write the title and the subtitle
-      WriteValue level:=1, textValue:=title
-      WriteValue level:=2, textValue:=subTitle
-    End If
+
+  'Write the title if needed
+  If (sh.Cells.Find(What:=Split(title, "--")(0), lookAt:=xlWhole, MatchCase:=True) Is Nothing) Then
+    WriteValue level:=1, textValue:=title
   End If
+
+  'write the subtitle if needed
+  If subTitle <> vbNullString Then WriteValue level:=2, textValue:=subTitle
 
   For counter = keysList.LowerBound To keysList.UpperBound
     keyName = keysList.Item(counter)
     keyColor = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingColor)
     keyLabel = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingLabel)
     keyType = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingType)
-    keyLabel = keyType & " - " & keyLabel
+    keyLabel = keyType & "--" & keyLabel
     WriteValue level:=3, textValue:=keyLabel, color:=keyColor
   Next
 End Sub
+
+
 
 'Write multiple checkings
 'This will write a list of multiple checkings
 Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
   Dim Check As IChecking
   Dim counter As Long
-
+  Dim sh As Worksheet
+  
+  
+  Set sh = Wksh()
+  sh.Cells.Clear
+  
   For counter = checkTable.LowerBound To checkTable.UpperBound
     If TypeName(checkTable.Item(counter)) <> "Checking" Then _
     ThrowError _

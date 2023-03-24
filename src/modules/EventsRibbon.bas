@@ -120,6 +120,10 @@ End Sub
 
 'Callback for btnChk onAction
 Public Sub clickCheck(control As IRibbonControl)
+    Dim askFirst As Long
+    askFirst = MsgBox("Do you really want to check the current setup?", vbYesNo, "Confirmation")
+    If askFirst = vbYes Then CheckTheSetup
+    ThisWorkbook.Worksheets("__checkRep").Activate
 End Sub
 
 'Callback for btnImp onAction
