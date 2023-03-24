@@ -26,49 +26,69 @@ Private Sub CheckDictionary()
     Dim Check As IChecking
     Dim Lo As ListObject
     Dim csTab As ICustomTable
-    Dim rng As Range
+    Dim varRng As Range
+    Dim sheetRng As Range
     Dim FUN As WorksheetFunction
-    Dim rngValue As String
+    Dim varValue As String
+    Dim sheetValue As String
     Dim sh As Worksheet
     Dim infoMessage As String
     Dim keyName As String
     Dim cellRng As Range
+    Dim sortCols As BetterArray
 
     Set sh = wb.Worksheets(DICTSHEETNAME)
     Set Lo = sh.ListObjects(1)
     Set Check = Checking.Create(titleName:="Dictionary incoherences Type--Concerned Sheet--Incoherences")
     Set csTab = CustomTable.Create(Lo, idCol:="Variable Name")
-    pass.UnProtect DICTSHEETNAME
-
     Set FUN = Application.WorksheetFunction
+    Set sortCols = New BetterArray
 
     'Resize the dictionary table
+    pass.UnProtect DICTSHEETNAME
     csTab.RemoveRows
+    csTab.Sort "Sheet Name"
 
-    'Errors on variables
-    Set rng = csTab.DataRange("Variable Name")
-    Set cellRng = rng.Cells(rng.Rows.Count, 1)
+    Set varRng = csTab.DataRange("Variable Name")
+    Set sheetRng = csTab.DataRange("Sheet Name")
+    Set cellRng = varRng.Cells(varRng.Rows.Count, 1)
 
-    'Errors on variable columns
-    Do While cellRng.Row >= rng.Row
-        rngValue = FUN.Trim(cellRng.Value)
+    'Errors on columns
+    Do While cellRng.Row >= varRng.Row
+
+        varValue = FUN.Trim(cellRng.Value)
+
         'Duplicates variable names
-        If FUN.COUNTIF(rng, rngValue) > 1 Then
+        If FUN.COUNTIF(varRng, varValue) > 1 Then
             keyName = "dict-var-unique"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
-            infoMessage = Replace(infoMessage, "{$$}", rngValue)
+            infoMessage = Replace(infoMessage, "{$$}", varValue)
             infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
             Check.Add keyName & cellRng.Row, infoMessage, checkingError
         End If
 
         'Variabel lenths < 4
-        If Len(rngValue) < 4 Then
+        If Len(varValue) < 4 Then
             keyName = "dict-var-length"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
-            infoMessage = Replace(infoMessage, "{$$}", rngValue)
+            infoMessage = Replace(infoMessage, "{$$}", varValue)
             infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
             Check.Add keyName & cellRng.Row, infoMessage, checkingError
         End If
+
+        sheetValue = sh.Cells(cellRng.Row, sheetRng.Column)
+        
+        'Empty sheet names
+        If sheetValue = vbNullString Then
+            keyName = "dict-empty-sheet"
+            infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
+            infoMessage = Replace(infoMessage, "{$$$}", cellRng.Row)
+            infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
+            'Var value
+            infoMessage = Replace(infoMessage, "{$$}", varValue)
+            Check.Add keyName & cellRng.Row, infoMessage, checkingError
+        End If
+
         Set cellRng = cellRng.Offset(-1)
     Loop
 

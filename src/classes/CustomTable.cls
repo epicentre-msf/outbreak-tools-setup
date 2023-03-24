@@ -377,6 +377,7 @@ Private Sub SortOnFirst(ByVal colName As String)
   Dim num As Long
   Dim numData As BetterArray
   Dim resRng As Range
+  Dim Lo As ListObject
 
   'Sort on values only If there is data
   Set Lo = Table()
