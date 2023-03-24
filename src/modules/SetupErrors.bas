@@ -77,7 +77,7 @@ Private Sub CheckDictionary()
         End If
 
         sheetValue = sh.Cells(cellRng.Row, sheetRng.Column)
-        
+
         'Empty sheet names
         If sheetValue = vbNullString Then
             keyName = "dict-empty-sheet"
