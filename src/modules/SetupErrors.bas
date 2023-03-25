@@ -22,6 +22,7 @@ End Sub
 
 Private Sub CheckDictionary()
     Const DICTSHEETNAME As String = "Dictionary"
+    Const FORMULASHEETNAME As String = "__formula"
 
     Dim Check As IChecking
     Dim Lo As ListObject
@@ -32,17 +33,27 @@ Private Sub CheckDictionary()
     Dim varValue As String
     Dim sheetValue As String
     Dim sh As Worksheet
+    Dim shform As Worksheet
     Dim infoMessage As String
     Dim keyName As String
     Dim cellRng As Range
     Dim sortCols As BetterArray
+    Dim dict As ILLdictionary
+    Dim formData As IFormulaData
+    Dim controlDetailsValue As String
+    Dim controlValue As String
+    Dim setupForm As IFormulas
+    Dim counter As Long 'Counter As 0 for each variable
 
     Set sh = wb.Worksheets(DICTSHEETNAME)
+    Set shform = wb.Worksheets(FORMULASHEETNAME)
     Set Lo = sh.ListObjects(1)
     Set Check = Checking.Create(titleName:="Dictionary incoherences Type--Concerned Sheet--Incoherences")
     Set csTab = CustomTable.Create(Lo, idCol:="Variable Name")
+    Set dict = LLdictionary.Create(sh, 5, 1)
     Set FUN = Application.WorksheetFunction
     Set sortCols = New BetterArray
+    Set formData = FormulaData.Create(shform)
 
     'Resize the dictionary table
     pass.UnProtect DICTSHEETNAME
@@ -55,38 +66,60 @@ Private Sub CheckDictionary()
 
     'Errors on columns
     Do While cellRng.Row >= varRng.Row
-
+        counter = 0
         varValue = FUN.Trim(cellRng.Value)
 
         'Duplicates variable names
         If FUN.COUNTIF(varRng, varValue) > 1 Then
+            counter = counter + 1
             keyName = "dict-var-unique"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
             infoMessage = Replace(infoMessage, "{$$}", varValue)
             infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
-            Check.Add keyName & cellRng.Row, infoMessage, checkingError
+            Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingError
         End If
 
         'Variabel lenths < 4
         If Len(varValue) < 4 Then
+            counter = counter + 1
             keyName = "dict-var-length"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
             infoMessage = Replace(infoMessage, "{$$}", varValue)
             infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
-            Check.Add keyName & cellRng.Row, infoMessage, checkingError
+            Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingError
         End If
 
         sheetValue = sh.Cells(cellRng.Row, sheetRng.Column)
 
         'Empty sheet names
         If sheetValue = vbNullString Then
+            counter = counter + 1
             keyName = "dict-empty-sheet"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
             infoMessage = Replace(infoMessage, "{$$$}", cellRng.Row)
             infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
             'Var value
             infoMessage = Replace(infoMessage, "{$$}", varValue)
-            Check.Add keyName & cellRng.Row, infoMessage, checkingError
+            Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingError
+        End If
+
+        'Incorrect formulas
+        controlValue = csTab.Value("Control", varValue)
+        controlDetailsValue = csTab.Value("Control Details", varValue)
+
+        If (controlValue = "formula") Then
+            counter = counter + 1
+            Set setupForm = Formulas.Create(dict, formData, controlDetailsValue)
+            If Not setupForm.Valid(formulaType = "linelist") Then
+                keyName = "dict-incor-form"
+                infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
+                infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
+                infoMessage = Replace(infoMessage, "{$$}", controlDetailsValue)
+                infoMessage = Replace(infoMessage, "{$$$}", varValue)
+                infoMessage = Replace(infoMessage, "{$$$$}", setupForm.Reason())
+
+                Check.Add keyName & cellRng.Row & "-" counter, infoMessage, checkingError
+            End If
         End If
 
         Set cellRng = cellRng.Offset(-1)
