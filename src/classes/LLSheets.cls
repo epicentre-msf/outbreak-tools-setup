@@ -28,6 +28,9 @@ Private Const SHEETTYPEHORIZONTAL As String = "hlist2D"
 Private Const SHEETTYPEVERTICAL As String = "vlist1D"
 Private Const CLASSNAME As String = "LLSheets"
 Private Const SHEETHORIZONTALNBROWS As Long = 201
+Private Const SHEETNAMECOLUMN As String = "Sheet Name"
+Private Const SHEETTYPECOLUMN As String = "Sheet Type"
+Private Const TABLENAMECOLUMN As String = "Table Name"
 
 Private Enum SHEETSTART
     SHEETSTARTCOLHORIZONTAL = 1
@@ -38,8 +41,8 @@ End Enum
 
 Public Function Create(ByVal dict As ILLdictionary) As ILLSheets
 
-    If (Not dict.ColumnExists("sheet name")) Or (Not dict.ColumnExists("sheet type")) Then ThrowErrorUnableInstanciateNoSheetName
-    If Not dict.Prepared Then ThrowErrorUnableInstanciateNotPrepared
+    If (Not dict.ColumnExists(SHEETNAMECOLUMN)) Or (Not dict.ColumnExists(SHEETTYPECOLUMN)) Then _
+        ThrowErrorUnableInstanciateNoSheetName
 
     With New LLSheets
         Set .Dictionary = dict
@@ -57,7 +60,7 @@ End Property
 
 Public Property Set Dictionary(ByVal dict As ILLdictionary)
     Set this.dict = dict
-    Set this.sheetRng = dict.DataRange("sheet name", includeHeaders:=True)
+    Set this.sheetRng = dict.DataRange(SHEETNAMECOLUMN, includeHeaders:=True)
 End Property
 
 Public Property Get SheetRange() As Range
@@ -70,7 +73,7 @@ Private Function Contains(ByVal sheetName As String) As Boolean
     Dim Exists As Boolean
 
     Set sheetRng = SheetRange()
-    If sheetName = vbNullString Or sheetName = "sheet name" Then
+    If sheetName = vbNullString Or sheetName = SHEETNAMECOLUMN Then
         Exists = False
     Else
         Exists = Not (sheetRng.Find(What:=sheetName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
@@ -106,9 +109,9 @@ Public Function SheetInfo(ByVal sheetName As String, Optional ByVal info As Byte
     If Not Contains(sheetName) Then Exit Function
 
     If (info = 1) Then
-        sheetInfoIndex = dict.Data.ColumnIndex("sheet type")
+        sheetInfoIndex = dict.Data.ColumnIndex(SHEETTYPECOLUMN)
     ElseIf (info = 2) Then
-        sheetInfoIndex = dict.Data.ColumnIndex("table name")
+        sheetInfoIndex = dict.Data.ColumnIndex(TABLENAMECOLUMN)
     Else
         Exit Function
     End If
@@ -125,7 +128,7 @@ Private Function Varlist(ByVal sheetName As String) As BetterArray
 
     Set dict = Dictionary
     Set varlistData = New BetterArray
-    If Contains(sheetName) Then Set varlistData = dict.Data.FilterData("sheet name", sheetName, "variable name")
+    If Contains(sheetName) Then Set varlistData = dict.Data.FilterData(SHEETNAMECOLUMN, sheetName, "Variable Name")
 
     'return the variable list
     Set Varlist = varlistData.Clone()
@@ -184,7 +187,7 @@ Private Function ContainsControl(ByVal sheetName As String, _
 
     exist = False
 
-    Set controlVar = dict.Data.FilterData("control", control, "variable name")
+    Set controlVar = dict.Data.FilterData("Control", control, "Variable Name")
     Set varData = Varlist(sheetName)
 
     If controlVar.Length <> 0 Then
@@ -217,7 +220,7 @@ Private Function VariableAddress(ByVal varName As String, Optional ByVal onSheet
     Set vars = LLVariables.Create(dict)
 
     varIndex = vars.Index(varName)
-    sheetName = vars.Value(colName:="sheet name", varName:=varName)
+    sheetName = vars.Value(colName:=SHEETNAMECOLUMN, varName:=varName)
 
     prefix = vbNullString
     
@@ -242,11 +245,11 @@ End Function
 
 'Errors
 Private Sub ThrowErrorUnableInstanciateNoSheetName()
-    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class variable, sheet name and sheet types columns do not exists"
+    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the LLSheets variable, sheet name and sheet types columns do not exists"
 End Sub
 
 Private Sub ThrowErrorUnableInstanciateNotPrepared()
-    Err.Raise VBA.vbObjectError + 514, CLASSNAME, "Unable to create an instance of the class variable: The dictionary is not prepared"
+    Err.Raise VBA.vbObjectError + 514, CLASSNAME, "Unable to create an instance of the LLSheets variable: The dictionary is not prepared"
 End Sub
 
 'Interface ---------------------------------------------------------------------

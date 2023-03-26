@@ -110,7 +110,7 @@ Private Sub CheckDictionary()
         If (controlValue = "formula") Then
             counter = counter + 1
             Set setupForm = Formulas.Create(dict, formData, controlDetailsValue)
-            If Not setupForm.Valid(formulaType = "linelist") Then
+            If Not setupForm.Valid(formulaType:="linelist") Then
                 keyName = "dict-incor-form"
                 infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
                 infoMessage = Replace(infoMessage, "{$}", cellRng.Row)
@@ -118,7 +118,7 @@ Private Sub CheckDictionary()
                 infoMessage = Replace(infoMessage, "{$$$}", varValue)
                 infoMessage = Replace(infoMessage, "{$$$$}", setupForm.Reason())
 
-                Check.Add keyName & cellRng.Row & "-" counter, infoMessage, checkingError
+                Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingError
             End If
         End If
 
