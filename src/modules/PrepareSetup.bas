@@ -385,6 +385,7 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     Dim sh As Worksheet
 
     BusyApp
+    
     Set wb = ThisWorkbook
     'First write the password to the password sheet
     pwd = wb.Worksheets("Dev").Range("RNG_DevPasswd").Value
@@ -408,6 +409,7 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     wb.Worksheets("__updated").Visible = xlSheetHidden
     wb.Worksheets("__pass").Visible = xlSheetHidden
     wb.Worksheets("__variables").Visible = xlSheetHidden
+     wb.Worksheets("__formula").Visible = xlSheetHidden
     wb.Worksheets("Dev").Visible = xlSheetHidden
 
     'Protect the workbook

@@ -114,7 +114,7 @@ Attribute clickAddTrans.VB_Description = "Callback for btnTransAdd onAction: Imp
 
 errHand:
     Application.Cursor = xlDefault
-    MsgBox "An internal error occured", vbCritical + vbOkOnly
+    MsgBox "An internal error occured, contact the developper", vbCritical + vbOkOnly
     NotBusyApp
 End Sub
 
