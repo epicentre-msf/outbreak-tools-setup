@@ -75,7 +75,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
   Set listLoNames = New BetterArray
 
   selectedTable = Replace(LCase(sh.Cells(1, 1).Value), _
-                          "add or remove rows of", "")
+                          "add or remove rows of", vbNullString)
   selectedTable = Application.WorksheetFunction.Trim(selectedTable)
 
   Select Case selectedTable

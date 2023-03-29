@@ -194,9 +194,9 @@ Private Sub SetValidation(ByVal cellRng As Range, ByVal listName As String, _
 
         .ignoreBlank = ignoreBlank
         .InCellDropdown = True
-        .InputTitle = ""
-        .errorTitle = ""
-        .InputMessage = ""
+        .InputTitle = vbNullString
+        .errorTitle = vbNullString
+        .InputMessage = vbNullString
         .errorMessage = message
         .ShowInput = True
         .ShowError = True

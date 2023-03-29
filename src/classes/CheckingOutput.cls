@@ -9,8 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-'@Folder("Dictionary")
-'@ModuleDescription("")
+'@Folder("Checkings")
+'@ModuleDescription("How to write the output of all checks")
 '@IgnoreModule
 
 Option Explicit

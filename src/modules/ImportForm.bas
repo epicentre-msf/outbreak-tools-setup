@@ -55,7 +55,7 @@ Public Sub ImportOrCleanSetup()
     importAna = [Imports].AnalysisCheck.Value
     importTrans = [Imports].TranslationsCheck.Value
     importPath = Application.WorksheetFunction.Trim( _
-                Replace([Imports].LabPath, "Path: ", ""))
+                Replace([Imports].LabPath, "Path: ", vbNullString))
 
     Set progObj = [Imports].LabProgress
     Set pass = Passwords.Create(ThisWorkbook.Worksheets("__pass"))
@@ -81,9 +81,7 @@ Public Sub ImportOrCleanSetup()
     Case "Import"
         importObj.Import pass, sheetsList
          'Check the conformity of current setup file for errors
-        If [Imports].ConformityCheck.Value Then
-            'Check conformity of the current setup
-        End If
+        If [Imports].ConformityCheck.Value Then CheckTheSetup
         infoText = "Import Done!"
     Case "Clear"
         If MsgBox("Do you really want to clear the setup?", _

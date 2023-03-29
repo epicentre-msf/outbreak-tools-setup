@@ -3,9 +3,11 @@ Attribute VB_Name = "CustomFunctions"
 Option Explicit
 'Custom functions for the setup
 
-'Get the headers for the time series
+'@Description("Get the headers for the time series")
+'@EntryPoint : Time series headers are used in the analysis worksheet
 Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal grpVar As String, _
                                  ByVal sumLab As String) As String
+Attribute TimeSeriesHeader.VB_Description = "Get the headers for the time series"
     Application.Volatile
 
     Dim sh As Worksheet
@@ -29,9 +31,10 @@ Public Function TimeSeriesHeader(ByVal timeVar As String, ByVal grpVar As String
     TimeSeriesHeader = header
 End Function
 
-'Graph Id, series Id and Graph order, Time variable, group by variable
-
+'@Description("Get a graph value from the label on graph table")
+'@EntryPoint : The function GraphValue is used only on analysis sheet/graph table
 Public Function GraphValue(ByVal graphTitle As String, Optional ByVal graphCol As String = "Graph ID") As String
+Attribute GraphValue.VB_Description = "Get a graph value from the label on graph table"
     Application.Volatile
 
     Const LOBJNAME As String = "Tab_Label_TSGraph"
@@ -44,7 +47,10 @@ Public Function GraphValue(ByVal graphTitle As String, Optional ByVal graphCol A
 End Function
 
 
+'@Description("Get a time series value from the time series table")
+'@EntryPoint : TSValue is used only on analysis sheet/ graph table
 Public Function TSValue(ByVal tsTitle As String, Optional ByVal tsCol As String = "Series ID") As String
+Attribute TSValue.VB_Description = "Get a time series value from the time series table"
     Application.Volatile
 
     Const LOBJNAME As String = "Tab_TimeSeries_Analysis"

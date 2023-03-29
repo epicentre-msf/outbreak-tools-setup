@@ -37,7 +37,6 @@ Private Sub CheckDictionary()
     Dim infoMessage As String
     Dim keyName As String
     Dim cellRng As Range
-    Dim sortCols As BetterArray
     Dim dict As ILLdictionary
     Dim formData As IFormulaData
     Dim controlDetailsValue As String
@@ -52,7 +51,6 @@ Private Sub CheckDictionary()
     Set csTab = CustomTable.Create(Lo, idCol:="Variable Name")
     Set dict = LLdictionary.Create(sh, 5, 1)
     Set FUN = Application.WorksheetFunction
-    Set sortCols = New BetterArray
     Set formData = FormulaData.Create(shform)
 
     'Resize the dictionary table
@@ -131,6 +129,41 @@ End Sub
 
 
 Private Sub CheckChoice()
+    ' Const DICTSHEETNAME As String = "Dictionary"
+    ' Const FORMULASHEETNAME As String = "__formula"
+    ' Const CHOICESHEETNAME As String = "Choices"
+
+    ' Dim Check As IChecking
+    ' Dim csTabdict As ICustomTable
+    ' Dim csTab
+    ' Dim varRng As Range
+    ' Dim FUN As WorksheetFunction
+    ' Dim varValue As String
+    ' Dim sheetValue As String
+    ' Dim shdict As Worksheet
+    ' Dim shchoi As Worksheet
+    ' Dim shform As Worksheet
+    ' Dim infoMessage As String
+    ' Dim keyName As String
+    ' Dim cellRng As Range
+    ' Dim sortCols As BetterArray
+    ' Dim dict As ILLdictionary
+    ' Dim formData As IFormulaData
+    ' Dim controlDetailsValue As String
+    ' Dim controlValue As String
+    ' Dim setupForm As IFormulas
+    ' Dim counter As Long 'Counter As 0 for each variable
+
+    ' Set shdict = wb.Worksheets(DICTSHEETNAME)
+    ' Set shform = wb.Worksheets(FORMULASHEETNAME)
+    ' Set shchoi = wb.Worksheets(CHOICESHEETNAME)
+    ' Set Check = Checking.Create(titleName:="Choices incoherences Type--Concerned Sheet--Incoherences")
+    ' Set csTabdict = CustomTable.Create(Lo, idCol:="Variable Name")
+    ' Set dict = LLdictionary.Create(sh, 5, 1)
+    ' Set FUN = Application.WorksheetFunction
+    ' Set sortCols = New BetterArray
+    ' Set formData = FormulaData.Create(shform)
+
 
 End Sub
 

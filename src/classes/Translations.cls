@@ -9,8 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-'@Folder("Dictionary")
-'@ModuleDescription("")
+'@Folder("Global")
+'@ModuleDescription("Manage translations of the current setup")
 '@IgnoreModule
 
 Option Explicit
@@ -133,7 +133,7 @@ Private Sub AddFormulaChunk(ByVal lab As String, ByVal rngTag As String)
   Dim counter As Long
 
   'remove all empty strings in the formula
-  cleanedFormula = Replace(lab, Chr(34) & Chr(34), "")
+  cleanedFormula = Replace(lab, Chr(34) & Chr(34), vbNullString)
 
   'If you enconter a character string, extract the text within
   If InStr(1, cleanedFormula, Chr(34), 1) > 0 Then
@@ -392,7 +392,7 @@ Private Property Get chunkRange(ByVal lab As String) As Range
   Dim langRng As Range
   Set langRng = KeyLangRange()
   Set chunkRange = langRng.Find(What:=lab, lookAt:=xlWhole, MatchCase:=True)
-End Sub
+End Property
 
 'Add a new language to the worksheet
 Private Sub AddTransLang(Optional ByVal langVal As String = vbNullString)

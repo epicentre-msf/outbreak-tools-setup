@@ -3,11 +3,8 @@ Option Explicit
 
 'Module for all the global events: At the Workbook level
 Private Const UPDATEDSHEETNAME As String = "__updated"
-Private Const PASSSHEETNAME As String = "__pass"
-Private Const DICTIONARYSHEET As String = "Dictionary"
-Private Const DROPDOWNSHEET As String = "__variables"
-Private Const CHOICESHEET As String = "Choices"
 Private Const ANALYSISSHEET As String = "Analysis"
+Private Const TRANSLATIONSHEET As String = "Translations"
 
 'speed app
 Private Sub BusyApp()
@@ -39,7 +36,7 @@ Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
     upId = LCase(Left(sh.Name, 4))
     If sh.Name = "Analysis" Then
         For Each Lo In sh.ListObjects
-            upId = LCase(Replace(Lo.Name, "Tab_", ""))
+            upId = LCase(Replace(Lo.Name, "Tab_", vbNullString))
             Set upObj = UpdatedValues.Create(upsh, upId)
             upObj.CheckUpdate sh, Target
         Next
@@ -62,7 +59,7 @@ Public Sub OpenedWorkbook()
     Set sh = wb.Worksheets(ANALYSISSHEET)
     sh.Calculate
     On Error Resume Next
-    Set rng = Range("RNG_NbTimesTrans")
+    Set rng = wb.Worksheets(TRANSLATIONSHEET).Range("RNG_NbTimesTrans")
     rng.Value = 0
     On Error GoTo 0
     NotBusyApp

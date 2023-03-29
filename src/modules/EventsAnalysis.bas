@@ -44,6 +44,7 @@ Public Sub CalculateAnalysis()
     csTab.DataRange("graph order").Calculate
     csTab.DataRange("row").Calculate
     csTab.DataRange("column").Calculate
+    On Error GoTo 0
     NotBusyApp
 End Sub
 
@@ -177,7 +178,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     NotBusyApp
 End Sub
 
-Private Sub FormatLockCell(ByVal cellRng As Range, Optional ByVal Locked = True)
+Private Sub FormatLockCell(ByVal cellRng As Range, Optional ByVal Locked As Boolean = True)
     cellRng.Font.color = IIf(Locked, RGB(51, 142, 202), vbBlack)
     cellRng.Font.Italic = Locked
     cellRng.Locked = Locked

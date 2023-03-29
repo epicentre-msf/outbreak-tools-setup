@@ -2,6 +2,8 @@ Attribute VB_Name = "EventsRibbon"
 
 Option Explicit
 
+'@IgnoreModule ParameterNotUsed : some parameters of controls are not used
+
 'Private constants for Ribbon Events
 Private Const TRADSHEETNAME As String = "Translations"
 Private Const TABTRANSLATION As String = "Tab_Translations"
@@ -22,22 +24,28 @@ Private Sub NotBusyApp()
     Application.EnableAnimations = True
 End Sub
 
-'Resize the listObjects in the current sheet
+'@Description("Resize the listObjects in the current sheet")
+'@EntryPoint
 Public Sub clickResize(control As IRibbonControl)
+Attribute clickResize.VB_Description = "Resize the listObjects in the current sheet"
     Dim sheetName As String
     sheetName = ActiveSheet.Name
     ManageRows sheetName:=sheetName, del:=True
 End Sub
 
-'add rows to listObject
+'@Description("add rows to listObject")
+'@EntryPoint
 Public Sub clickAddRows(ByRef control As Office.IRibbonControl)
+Attribute clickAddRows.VB_Description = "add rows to listObject"
     Dim sheetName As String
     sheetName = ActiveSheet.Name
     ManageRows sheetName:=sheetName, del:=False
 End Sub
 
-'Callback for editLang onChange
+'@Description("Callback for editLang onChange: Add a language to translation table")
+'@EntryPoint
 Public Sub clickAddLang(control As IRibbonControl, text As String)
+Attribute clickAddLang.VB_Description = "Callback for editLang onChange: Add a language to translation table"
 
     Dim pass As IPasswords
     Dim trads As ITranslations
@@ -68,8 +76,10 @@ Public Sub clickAddLang(control As IRibbonControl, text As String)
     NotBusyApp
 End Sub
 
-'Callback for btnTransAdd onAction
+'@Description("Callback for btnTransAdd onAction: Import all words to be translated")
+'@EntryPoint
 Public Sub clickAddTrans(control As IRibbonControl)
+Attribute clickAddTrans.VB_Description = "Callback for btnTransAdd onAction: Import all words to be translated"
     Dim pass As IPasswords
     Dim trads As ITranslations
     Dim wb As Workbook
@@ -84,7 +94,7 @@ Public Sub clickAddTrans(control As IRibbonControl)
     If (askFirst = vbNo) Then Exit Sub
 
     Application.Cursor = xlWait
-    'On Error GoTo errHand
+    On Error GoTo errHand
 
     Set wb = ThisWorkbook
     Set tradsh = wb.Worksheets(TRADSHEETNAME)
@@ -108,8 +118,10 @@ errHand:
     NotBusyApp
 End Sub
 
-'Callback for btnTransUp onAction
+'@Description("Callback for btnTransUp onAction: Update columns to be translated")
+'@EntryPoint
 Public Sub clickUpdateTranslate(control As IRibbonControl)
+Attribute clickUpdateTranslate.VB_Description = "Callback for btnTransUp onAction: Update columns to be translated"
     'remove update columns and add new columns to watch
     BusyApp
     CleanUpdateColumns
@@ -118,8 +130,10 @@ Public Sub clickUpdateTranslate(control As IRibbonControl)
     MsgBox "Done!"
 End Sub
 
-'Callback for btnChk onAction
+'@Description("Callback for btnChk onAction: Check the setup for eventual errors")
+'@EntryPoint
 Public Sub clickCheck(control As IRibbonControl)
+Attribute clickCheck.VB_Description = "Callback for btnChk onAction: Check the setup for eventual errors"
     BusyApp
     Dim askFirst As Long
     askFirst = MsgBox("Do you really want to check the current setup?", vbYesNo, "Confirmation")
@@ -128,14 +142,18 @@ Public Sub clickCheck(control As IRibbonControl)
     NotBusyApp
 End Sub
 
-'Callback for btnImp onAction
+'@Description("Callback for btnImp onAction: Import elements from another setup")
+'@EntryPoint
 Public Sub clickImport(control As IRibbonControl)
+Attribute clickImport.VB_Description = "Callback for btnImp onAction: Import elements from another setup"
     PrepareForm cleanSetup:=False
     [Imports].Show
 End Sub
 
-'Callback for btnClear onAction
+'@Description("Callback for btnClear onAction: clean the setup")
+'@EntryPoint
 Public Sub clickClearSetup(control As IRibbonControl)
+Attribute clickClearSetup.VB_Description = "Callback for btnClear onAction: clean the setup"
     PrepareForm cleanSetup:=True
     [Imports].Show
 End Sub
@@ -238,7 +256,7 @@ Private Sub writeUpdateStatus(sh As Worksheet)
     upId = LCase(Left(sh.Name, 4))
     For Each Lo In sh.ListObjects
         If sh.Name = "Analysis" Then _
-        upId = LCase(Replace(Lo.Name, "Tab_", ""))
+        upId = LCase(Replace(Lo.Name, "Tab_", vbNullString))
         Set upObj = UpdatedValues.Create(upsh, upId)
         upObj.AddColumns Lo
     Next

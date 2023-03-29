@@ -58,6 +58,7 @@ End Sub
 'Function to add Elements to the dropdown list
 Private Sub AddElements(ByVal dropdownName As String, ParamArray els() As Variant)
     Dim nbEls As Integer
+    '@Ignore DefaultMemberRequired
     For nbEls = 0 To UBound(els())
         dropArray.Push els(nbEls)
     Next
@@ -77,7 +78,7 @@ Private Sub CreateDropdowns()
     AddElements "__formats", "integer", "round0", "round1", _
                 "round2", "round3", "percentage0", "percentage1", _
                 "percentage2", "percentage3", "text", "euros", "dollars", _
-                "dd/mm/yyyy", "d-mmm-yyyy", ""
+                "dd/mm/yyyy", "d-mmm-yyyy", vbNullString
 
     'DICTIONARY ----------------------------------------------------------------
     ' - variable status
@@ -90,14 +91,16 @@ Private Sub CreateDropdowns()
     AddElements "__var_control", "choice_manual", _
                  "choice_formula", "formula", "geo", "hf", "custom", _
                  "list_auto", "case_when"
+    'print variable
+    AddElements "__var_print", "visible, horizontal", "visible, vertical", "hidden"
     '- alert
     AddElements "__var_alert", "error", "warning", "info"
     '- geo_variables
-    AddElements "__geo_vars", "", ""
+    AddElements "__geo_vars", vbNullString, vbNullString
     '- choices_variables
-    AddElements "__choice_vars", "", ""
+    AddElements "__choice_vars", vbNullString, vbNullString
     '- time_variables
-    AddElements "__time_vars", "", ""
+    AddElements "__time_vars", vbNullString, vbNullString
 
     'EXPORTS ------------------------------------------ -------------------------
     '- export_status
@@ -134,8 +137,8 @@ Private Sub CreateDropdowns()
 
 
     'Series and graphs titles
-    AddElements "__graphs_titles", "", ""
-    AddElements "__series_titles", "", ""
+    AddElements "__graphs_titles", vbNullString, vbNullString
+    AddElements "__series_titles", vbNullString, vbNullString
 
 End Sub
 
@@ -170,7 +173,7 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="info"
 
     'print variable (add the variable to a print sheet)
-    currTab.SetValidation colName:="print variable", dropName:="__yesno", _
+    currTab.SetValidation colName:="print variable", dropName:="__var_print", _
                          drop:=drop, alertType:="info"
     'variable should be unique
     currTab.SetValidation colName:="unique", dropName:="__yesno", _
@@ -350,27 +353,38 @@ Private Sub AddValidationsAndUpdates()
     currUp.AddColumns currLo
 
     'Spatio-Temporal Analysis
+
+    MoveToUp "spatiotemporal_analysis"
+    currUp.AddColumns currLo
+
     BusyApp
     pass.Protect "Analysis"
     BusyApp
 End Sub
 
+'@Description("Configure the setup for codes")
+'@EntryPoint
 Public Sub ConfigureSetup()
+Attribute ConfigureSetup.VB_Description = "Configure the setup for codes"
     'Initialize elements
     BusyApp
     Initialize
     CreateDropdowns 'Create dropdowns for the setup
     AddValidationsAndUpdates  'Add the validations to each parts of the setup
     MsgBox "Done!"
+    NotBusyApp
 End Sub
 
-'Prepare the setup for production
+'@Description("Prepare the setup for production")
+'@EntryPoint
 Public Sub PrepareForProd()
+Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     Dim wb As Workbook
     Dim pass As IPasswords
     Dim pwd As String
     Dim sh As Worksheet
 
+    BusyApp
     Set wb = ThisWorkbook
     'First write the password to the password sheet
     pwd = wb.Worksheets("Dev").Range("RNG_DevPasswd").Value
@@ -400,5 +414,5 @@ Public Sub PrepareForProd()
     pass.ProtectWkb wb
 
     'Protect the project
-
+    NotBusyApp
 End Sub

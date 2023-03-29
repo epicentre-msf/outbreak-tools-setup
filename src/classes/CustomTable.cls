@@ -9,8 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-'@Folder("Dictionary")
-'@ModuleDescription("")
+'@Folder("Global")
+'@ModuleDescription("A wrapper of listObject to deal with custom tables")
 '@IgnoreModule
 
 Option Explicit
