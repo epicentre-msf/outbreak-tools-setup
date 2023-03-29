@@ -102,7 +102,7 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
 
   With cellRng
     .Font.Size = Switch(level = 1, 14, level = 2, 12, level = 3, 10)
-    .Interior.color = intCol
+    '.Interior.color = intCol
     .Font.color = fontCol
     .Font.Bold = (level <> 3)
     .EntireColumn.AutoFit

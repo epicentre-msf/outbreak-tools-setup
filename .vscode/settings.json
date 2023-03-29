@@ -3,5 +3,6 @@
     "typescript.workspaceSymbols.scope": "currentProject",
     "files.exclude": {
         "**/.mock": true
-    }
+    },
+    "editor.lineNumbers": "off"
 }

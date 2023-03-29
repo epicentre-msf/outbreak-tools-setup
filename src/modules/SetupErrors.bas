@@ -118,7 +118,7 @@ Private Sub CheckDictionary()
                 infoMessage = Replace(infoMessage, "{$$$}", varValue)
                 infoMessage = Replace(infoMessage, "{$$$$}", setupForm.Reason())
 
-                Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingError
+                Check.Add keyName & cellRng.Row & "-" & counter, infoMessage, checkingWarning
             End If
         End If
 
