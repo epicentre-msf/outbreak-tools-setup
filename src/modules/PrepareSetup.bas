@@ -12,7 +12,6 @@ Private wb As Workbook
 Private currsh As Worksheet
 Private currTab As ICustomTable
 Private currLo As ListObject
-Private currUp As IUpdatedValues
 Private pass As IPasswords
 
 Private Sub BusyApp()
@@ -43,10 +42,6 @@ End Sub
 
 Private Sub MoveToSheet(ByVal sheetName As String)
     Set currsh = wb.Worksheets(sheetName)
-End Sub
-
-Private Sub MoveToUp(ByVal upName As String)
-    Set currUp = UpdatedValues.Create(wb.Worksheets("__updated"), upName)
 End Sub
 
 Private Sub MoveToTable(ByVal tabName As String)
@@ -148,7 +143,6 @@ Private Sub AddValidationsAndUpdates()
     MoveToSheet "Dictionary"
     BusyApp
     pass.UnProtect "Dictionary"
-    BusyApp
     MoveToTable "Tab_Dictionary"
 
     'Set validation on dictionary colnames elements
@@ -187,24 +181,12 @@ Private Sub AddValidationsAndUpdates()
 
 
     'Add watchers on columns
-    MoveToUp "dict"
-    currUp.AddColumns currLo
-    BusyApp
     pass.Protect "Dictionary"
-    BusyApp
-
-    'Choices worksheet -----------------------------------------------------------------------------------------
-
-    MoveToSheet "Choices"
-    MoveToTable "Tab_Choices"
-    MoveToUp "choi"
-    currUp.AddColumns currLo
 
     'Exports dropdowns -----------------------------------------------------------------------------------------
     MoveToSheet "Exports"
     BusyApp
     pass.UnProtect "Exports"
-    BusyApp
     MoveToTable "Tab_Export"
 
     currTab.SetValidation colName:="password", dropName:="__yesno", _
@@ -221,17 +203,13 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="error"
 
     'Add Watchers on columns
-    MoveToUp "expo"
-    currUp.AddColumns currLo
     BusyApp
     pass.Protect "Exports"
-    BusyApp
 
     'Analysis dropdowns ------------------------------------------------------------------------------------
     MoveToSheet "Analysis"
     BusyApp
     pass.UnProtect "Analysis"
-    BusyApp
 
     'add validation on select table
     drop.SetValidation cellRng:=currsh.Range("RNG_SelectTable"), _
@@ -242,9 +220,6 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                           alertType:="info"
 
-    'columns to watch on global summary
-    MoveToUp "global_summary"
-    currUp.AddColumns currLo
 
     'Univariate analysis table
     MoveToTable "Tab_Univariate_Analysis"
@@ -262,10 +237,6 @@ Private Sub AddValidationsAndUpdates()
     'Group_by variable
     currTab.SetValidation colName:="row", dropName:="__choice_vars", drop:=drop, _
                           alertType:="error"
-
-    'add columns
-    MoveToUp "univariate_analysis"
-    currUp.AddColumns currLo
 
     'Bivariate analysis table
     MoveToTable "Tab_Bivariate_Analysis"
@@ -287,10 +258,6 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
                           alertType:="error"
 
-    'add columns on bivariate analysis to watcher
-    MoveToUp "bivariate_analysis"
-    currUp.AddColumns currLo
-
     'Time Series analysis table
     MoveToTable "Tab_TimeSeries_Analysis"
     currTab.SetValidation colName:="add missing data", dropName:="__yesno", _
@@ -308,15 +275,6 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="column", dropName:="__choice_vars", drop:=drop, _
                           alertType:="info"
 
-    'add column on time series analysis to watcher
-    MoveToUp "timeseries_analysis"
-    currUp.AddColumns currLo
-
-    'add columns on graph on time series labels
-    MoveToTable "Tab_Label_TSGraph"
-    MoveToUp "label_tsgraph"
-    currUp.AddColumns currLo
-
     'Graph on time series
     MoveToTable "Tab_Graph_TimeSeries"
     currTab.SetValidation colName:="plot values or percentages", _
@@ -326,8 +284,6 @@ Private Sub AddValidationsAndUpdates()
                           drop:=drop, alertType:="info"
     currTab.SetValidation colName:="y-axis", dropName:="__axis_pos", _
                           drop:=drop, alertType:="error"
-    MoveToUp "graph_timeseries"
-    currUp.AddColumns currLo
 
     'graph title and series title
     'Spatial Analysis
@@ -348,18 +304,8 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="error"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                         alertType:="info"
-
-    MoveToUp "spatial_analysis"
-    currUp.AddColumns currLo
-
-    'Spatio-Temporal Analysis
-
-    MoveToUp "spatiotemporal_analysis"
-    currUp.AddColumns currLo
-
     BusyApp
     pass.Protect "Analysis"
-    BusyApp
 End Sub
 
 '@Description("Configure the setup for codes")
@@ -371,6 +317,9 @@ Attribute ConfigureSetup.VB_Description = "Configure the setup for codes"
     Initialize
     CreateDropdowns 'Create dropdowns for the setup
     AddValidationsAndUpdates  'Add the validations to each parts of the setup
+    EventsRibbon.UpdatedWatchedValues 'Update columns to be translated (in EventsRibbon)
+    'Transfer codes to all the worksheets
+    TransferCodeWksh 'Transfer all the codes to the worksheets
     MsgBox "Done!"
     NotBusyApp
 End Sub
@@ -385,7 +334,7 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     Dim sh As Worksheet
 
     BusyApp
-    
+
     Set wb = ThisWorkbook
     'First write the password to the password sheet
     pwd = wb.Worksheets("Dev").Range("RNG_DevPasswd").Value
@@ -409,7 +358,7 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     wb.Worksheets("__updated").Visible = xlSheetHidden
     wb.Worksheets("__pass").Visible = xlSheetHidden
     wb.Worksheets("__variables").Visible = xlSheetHidden
-     wb.Worksheets("__formula").Visible = xlSheetHidden
+    wb.Worksheets("__formula").Visible = xlSheetHidden
     wb.Worksheets("Dev").Visible = xlSheetHidden
 
     'Protect the workbook
@@ -417,4 +366,42 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
 
     'Protect the project
     NotBusyApp
+End Sub
+
+Private Sub TransferCodeWksh()
+
+   Const CHANGEMODULENAME As String = "EventsSheetChange"
+
+   Dim sheetsList As BetterArray                'List of sheets where to transfer the code
+   Dim codeContent As String                    'a string to contain code to add
+   Dim vbProj As Object                         'component, project and modules
+   Dim vbComp As Object
+   Dim codeMod As Object
+   Dim sheetName As String
+   Dim counter As Long
+   Dim wb As Workbook
+
+   Set sheetsList = New BetterArray
+   Set wb = ThisWorkbook
+   sheetsList.Push "Dictionary", "Choices", "Exports", "Analysis"
+
+   For counter = sheetsList.LowerBound To sheetsList.UpperBound
+        sheetName = sheetsList.Item(counter)
+        'save the code module in the string sNouvCode
+        With wb.VBProject.VBComponents(CHANGEMODULENAME).CodeModule
+            codeContent = .Lines(1, .CountOfLines)
+        End With
+
+        With wb
+            Set vbProj = .VBProject
+            Set vbComp = vbProj.VBComponents(.Sheets(sheetName).codeName)
+            Set codeMod = vbComp.CodeModule
+        End With
+
+        'Adding the code
+        With codeMod
+            .DeleteLines 1, .CountOfLines
+            .AddFromString codeContent
+        End With
+    Next
 End Sub

@@ -229,7 +229,8 @@ Private Sub CleanUpdateColumns()
 End Sub
 
 'Update the translation values
-Private Sub UpdatedWatchedValues()
+'@EntryPoint
+Public Sub UpdatedWatchedValues()
     Dim sh As Worksheet
     Dim sheetsList As BetterArray
     Dim counter As Long

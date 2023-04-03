@@ -4,5 +4,5 @@
     "files.exclude": {
         "**/.mock": true
     },
-    "editor.lineNumbers": "off"
+    "editor.lineNumbers": "on"
 }
