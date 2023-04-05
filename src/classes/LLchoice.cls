@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Linelist choice class"
+'@PredeclaredId
 
 
 '@Folder("Dictionary")
-'@ModuleDescription("Linelist choice Class")
-'@IgnoreModule
+'@ModuleDescription("Linelist choice class")
 
 Option Explicit
 Implements ILLchoice
@@ -52,14 +53,14 @@ Public Property Get Wksh() As Worksheet
 End Property
 
 'StartRow
-Public Property Get StartRow() As Long
+Private Property Get StartRow() As Long
     Dim dataObject As IDataSheet
     Set dataObject = ChoiceData
     StartRow = dataObject.StartRow()
 End Property
 
 'StartColumn
-Public Property Get StartColumn() As Long
+Private Property Get StartColumn() As Long
     Dim dataObject As IDataSheet
     Set dataObject = ChoiceData
     StartColumn = dataObject.StartColumn()
@@ -69,31 +70,51 @@ Private Property Get ChoiceData() As IDataSheet
     Set ChoiceData = this.choiceDataSheet
 End Property
 
-Friend Property Set ChoiceData(ByVal customDataSheet As IDataSheet)
+Public Property Set ChoiceData(ByVal customDataSheet As IDataSheet)
     Set this.choiceDataSheet = customDataSheet
 End Property
 
 'Get the data range
-Public Property Get DataRange(Optional ByVal colName As String = "__all__", Optional ByVal includeHeaders = True) As Range
+Private Property Get DataRange(Optional ByVal colName As String = "__all__", Optional ByVal includeHeaders As Boolean = True) As Range
     Dim dataObject As IDataSheet
     Set dataObject = ChoiceData
 
     Set DataRange = dataObject.DataRange(colName, includeHeaders)
 End Property
 
+'Test if a choice Exists in the choice sheet
+Private Property Get ChoiceExists(ByVal choiceName As String) As Boolean
+    Dim listRng As Range
+    Dim exist As Boolean
+    Dim dataObject As IDataSheet
+
+    exist = False
+
+    Set dataObject = ChoiceData
+    If dataObject.ColumnExists(listName) Then
+        Set listRng = DataRange(listName, includeHeaders:=False)
+        exist = Not (listRng.Find(What:=choiceName, lookAt:=xlWhole, _
+                                  MatchCase:=True, After:=listRng.Cells(listRng.Rows.Count, 1)) Is Nothing)
+    End If
+    ChoiceExists = exist
+End Property
+
 'Get the categories
-Public Property Get Categories(ByVal choiceName As String) As BetterArray
+Private Property Get Categories(ByVal choiceName As String) As BetterArray
     Dim counter As Long
     Dim rngName As Range
     Dim rngLabel As Range
     Dim lst As BetterArray
     Set lst = New BetterArray
-    Set rngName = DataRange(listName, includeHeaders:=False)
-    Set rngLabel = DataRange(LABEL, includeHeaders:=False)
-    For counter = 1 To rngName.Rows.Count
-        If rngName.Cells(counter, 1).Value = choiceName Then _
-         lst.Push rngLabel.Cells(counter, 1).Value
-    Next
+
+    If ChoiceExists(choiceName) Then
+        Set rngName = DataRange(listName, includeHeaders:=False)
+        Set rngLabel = DataRange(LABEL, includeHeaders:=False)
+        For counter = 1 To rngName.Rows.Count
+            If rngName.Cells(counter, 1).Value = choiceName Then _
+             lst.Push rngLabel.Cells(counter, 1).Value
+        Next
+    End If
     Set Categories = lst.Clone()
 End Property
 
@@ -135,7 +156,6 @@ Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As Better
     Set checkCategories = Categories(choiceName)
     If checkCategories.Length > 0 Then Exit Sub  'Will probably trace log.
 
-
     Set listRng = DataRange(listName)
     Set labelRng = DataRange(LABEL)
     Set orderRng = DataRange(ORDER)
@@ -144,7 +164,6 @@ Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As Better
     EndRow = StartRow + listRng.Rows.Count
     endRowlabel = StartRow + labelRng.Rows.Count
 
-
     With choicewksh
         If (EndRow = endRowlabel) Then
             CategoriesData.ToExcelRange .Cells(EndRow, labelRng.Column)
@@ -152,24 +171,8 @@ Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As Better
                 .Cells(EndRow + counter, listRng.Column).Value = choiceName
                 .Cells(EndRow + counter, orderRng.Column).Value = counter + 1
             Next
-        Else
-            'Do something (trace log)
-
         End If
     End With
-End Sub
-
-'Import and export Sub
-Private Sub Export(Wkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden)
-    Dim choiData As IDataSheet
-    Set choiData = ChoiceData()
-    ChoiceData.Export Wkb, Hide:=Hide
-End Sub
-
-Private Sub Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
-    Dim choiData As IDataSheet
-    Set choiData = ChoiceData()
-    choiData.Import fromWksh, fromStartRow, fromStartcol
 End Sub
 
 'Add / Remove Rows
@@ -193,57 +196,48 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     End If
 End Sub
 
-
 'Properties
-Public Property Get ILLchoice_Wksh() As Worksheet
+Private Property Get ILLchoice_Wksh() As Worksheet
     Set ILLchoice_Wksh = Wksh()
 End Property
 
-Public Property Get ILLchoice_StartRow() As Long
+Private Property Get ILLchoice_StartRow() As Long
     ILLchoice_StartRow = StartRow()
 End Property
 
-Public Property Get ILLchoice_StartColumn() As Long
+Private Property Get ILLchoice_StartColumn() As Long
     ILLchoice_StartColumn = StartColumn()
 End Property
 
-Public Property Get ILLchoice_ChoiceData() As IDataSheet
+Private Property Get ILLchoice_ChoiceData() As IDataSheet
     Set ILLchoice_ChoiceData = ChoiceData
 End Property
 
-Public Property Get ILLchoice_DataRange(Optional ByVal colName As String = "__all__", Optional ByVal includeHeaders = True) As Range
+Private Property Get ILLchoice_DataRange(Optional ByVal colName As String = "__all__", Optional ByVal includeHeaders As Boolean = True) As Range
     Set ILLchoice_DataRange = DataRange(colName, includeHeaders)
 End Property
 
-Public Property Get ILLchoice_Categories(ByVal choiceName As String) As BetterArray
+Private Property Get ILLchoice_Categories(ByVal choiceName As String) As BetterArray
     Set ILLchoice_Categories = Categories(choiceName)
 End Property
 
+Private Property Get ILLChoice_ChoiceExists(ByVal choiceName As String) As Boolean
+    ILLChoice_ChoiceExists = ChoiceExists(choiceName)
+End Property
+
 'Void methods
-Public Sub ILLchoice_Sort()
+Private Sub ILLchoice_Sort()
     Sort
 End Sub
 
-Public Sub ILLchoice_AddChoice(ByVal choiceName As String, ByVal CategoriesData As BetterArray)
+Private Sub ILLchoice_AddChoice(ByVal choiceName As String, ByVal CategoriesData As BetterArray)
     AddChoice choiceName:=choiceName, CategoriesData:=CategoriesData
 End Sub
 
-'Export and Import
-Public Sub ILLchoice_Export(ByVal toWkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden)
-    Export toWkb, Hide:=Hide
-End Sub
-
-Public Sub ILLchoice_Import(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
-    Import fromWksh, fromStartRow, fromStartcol
-End Sub
-
-
-Public Sub ILLchoice_AddRows()
+Private Sub ILLchoice_AddRows()
     ManageRows
 End Sub
 
-Public Sub ILLchoice_RemoveRows()
+Private Sub ILLchoice_RemoveRows()
     ManageRows del:=True
 End Sub
-
-

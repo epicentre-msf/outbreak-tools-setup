@@ -49,6 +49,7 @@ Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
 End Sub
 
 'Fire this event when the workbook is opened
+'@EntryPoint
 Public Sub OpenedWorkbook()
     Dim wb As Workbook
     Dim sh As Worksheet

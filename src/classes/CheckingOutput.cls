@@ -84,7 +84,7 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
       fontCol = RGB(128, 96, 0)
       intCol = RGB(255, 242, 204)
     Case "grey"
-      fontCol = RGB(166, 166, 166)
+      fontCol = RGB(117, 113, 113)
       intCol = RGB(242, 242, 242)
     Case Else
       fontCol = vbBlack
@@ -162,11 +162,10 @@ Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
   Dim Check As IChecking
   Dim counter As Long
   Dim sh As Worksheet
-  
-  
+
   Set sh = Wksh()
   sh.Cells.Clear
-  
+
   For counter = checkTable.LowerBound To checkTable.UpperBound
     If TypeName(checkTable.Item(counter)) <> "Checking" Then _
     ThrowError _

@@ -394,7 +394,7 @@ Private Sub TransferCodeWksh()
 
         With wb
             Set vbProj = .VBProject
-            Set vbComp = vbProj.VBComponents(.Sheets(sheetName).codeName)
+            Set vbComp = vbProj.VBComponents(.sheets(sheetName).codeName)
             Set codeMod = vbComp.CodeModule
         End With
 

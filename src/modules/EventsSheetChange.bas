@@ -1,4 +1,5 @@
 Attribute VB_Name = "EventsSheetChange"
+Attribute VB_Description = "Events for changes in a worksheet"
 Option Explicit
 
 '@ModuleDescription("Events for changes in a worksheet")

@@ -151,7 +151,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
 
         'get the cell Range for choices
         Set cellRng = csTab.CellRange("choice", Target.Row)
-        cellRng.Value = ""
+        cellRng.Value = vbNullString
         drop.SetValidation cellRng, choiceName & "__", ignoreBlank:=False
         FormatLockCell cellRng, False
 

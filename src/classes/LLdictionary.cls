@@ -71,9 +71,10 @@ Private Sub ClassArraysInitialize()
     Set DICTIONARYCOLUMNS = New BetterArray
 
     'colnames of the dictionary
-    DICTIONARYCOLUMNS.Push "variable name", "main label", "sub label", "note", "sheet name", _
+    DICTIONARYCOLUMNS.Push "variable name", "main label", "sub label", "note", _
+                           "sheet name", _
                            "sheet type", "main section", "sub section", "status", "personal identifier", "type", "format", _
-                            "control", "control details", "unique", _
+                           "control", "control details", "unique", _
                            "export 1", "export 2", "export 3", "export 4", "export 5", "min", "max", "alert", "message", "table name", "column index", _
                            "list auto", "visibility"
 End Sub
@@ -103,7 +104,7 @@ Private Function ColumnExists(ByVal colName As String, Optional ByVal checkValid
 End Function
 
 'Check Existence of a variable
-Private Function VariableExists(varName As String) As Boolean
+Private Function VariableExists(ByVal varName As String) As Boolean
     Dim varRng As Range
     Set varRng = DataRange("variable name")
 

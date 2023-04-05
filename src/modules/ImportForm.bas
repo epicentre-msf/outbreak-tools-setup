@@ -61,7 +61,7 @@ Public Sub ImportOrCleanSetup()
     Set pass = Passwords.Create(ThisWorkbook.Worksheets("__pass"))
     doLabel = [Imports].DoButton.Caption
     'freeze the pane for modifications
-    progObj.Caption = ""
+    progObj.Caption = vbNullString
     Set importObj = SetupImport.Create(importPath, progObj)
 
     'Check import to be sure everything is fine (At least one import has to be made
@@ -99,4 +99,5 @@ Public Sub ImportOrCleanSetup()
 errHand:
     NotBusyApp
 End Sub
+
 
