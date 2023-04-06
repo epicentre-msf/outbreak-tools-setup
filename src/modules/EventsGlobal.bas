@@ -87,3 +87,31 @@ Public Sub SetAllUpdatedTo(ByVal Value As String)
     Next
 End Sub
 
+'Filter the checking worksheet on some of the checkings (Error, Warning, Notes, etcs)
+Public Sub FilterCheckingsSheet(ByVal Target As Range)
+    Dim wb As Workbook
+    Dim sh As Worksheet
+    Dim filterValue As String
+    Dim sheetRng As Range 'used range in the worksheet
+    Dim cellRng As Range 'corresponding cellRange
+
+    Set wb = ThisWorkbook
+    Set sh = wb.Worksheets("__checkRep")
+    Set sheetRng = sh.UsedRange
+    If InterSect(Target, sh.Range("RNG_CheckingFilter")) Is Nothing Then Exit Sub
+    filterValue = Target.Value
+
+    If filterValue = vbNullString Then Exit Sub
+    sh.Cells.EntireRow.Hidden = False
+
+    If filterValue <> "All" Then
+        Set cellRng = sheetRng.Cells(sheetRng.Rows.Count, 1)
+        Do While cellRng.Row > sheetRng.Row
+            'Hide cells with values corresponding to those selected (keeping headers)
+            If (cellRng.Value <> filterValue) And (Not cellRng.Font.Size = 14) _
+             And (Not cellRng.Value = vbNullString) Then cellRng.EntireRow.Hidden = True
+            Set cellRng = cellRng.Offset(-1)
+        Loop
+    End If
+End Sub
+

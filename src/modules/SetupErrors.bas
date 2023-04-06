@@ -295,7 +295,7 @@ Private Sub CheckChoice()
     choiTab.RemoveRows
 
     Set Check = Checking.Create(titleName:="Choices incoherences Type--Where?--Details")
-    
+
     Set dictTab = CustomTable.Create(shdict.ListObjects(1))
     Set choiLst = choi.AllChoices()
     Set cntrlDetLst = New BetterArray
@@ -474,14 +474,26 @@ End Sub
 
 Private Sub PrintReport()
     Const CHECKSHEETNAME As String = "__checkRep"
+    Const DROPSHEETNAME As String = "__variables"
+    'Initilialize the dropdown array and list
 
     Dim checKout As ICheckingOutput
     Dim sh As Worksheet
+    Dim drop As IDropdownLists
+    Dim formatRng As Range
 
     Set sh = wb.Worksheets(CHECKSHEETNAME)
     Set checKout = CheckingOutput.Create(sh)
+    Set drop = DropdownLists.Create(wb.Worksheets(DROPSHEETNAME))
 
     checKout.PrintOutput CheckTables
+    'Set validation for filtering
+    drop.SetValidation sh.Range("RNG_CheckingFilter"), "__checking_types", "error"
+    With sh
+        Set formatRng = .Range(.Cells(1, 2), .Cells(1, 3))
+        formatRng.Font.color = RGB(21, 133, 255)
+        formatRng.Font.Bold = True
+    End With
 End Sub
 
 

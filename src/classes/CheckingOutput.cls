@@ -112,8 +112,8 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
     For counter = 7 To 12
         With .Borders(counter)
             .LineStyle = xlDashDotDot
-            .Weight = xlThin
-            .color = RGB(110, 110, 110)
+            .Weight = xlHairline
+            .color = RGB(10, 15, 100)
         End With
     Next
   End With
@@ -165,6 +165,7 @@ Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
 
   Set sh = Wksh()
   sh.Cells.Clear
+  sh.Cells(1, 2).Value = "Show only:"
 
   For counter = checkTable.LowerBound To checkTable.UpperBound
     If TypeName(checkTable.Item(counter)) <> "Checking" Then _

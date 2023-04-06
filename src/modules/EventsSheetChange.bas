@@ -8,7 +8,11 @@ Option Explicit
 Private Sub Worksheet_Change(ByVal Target As Range)
     Application.EnableEvents = False
     Application.Cursor = xlNorthwestArrow
-    checkUpdateStatus Me, Target
+    If Me.Name <> "__checkRep" Then
+        checkUpdateStatus Me, Target
+    Else
+        FilterCheckingsSheet Target
+    End If
     'Only for analysis
     If Me.Name = "Analysis" Then
         CalculateAnalysis

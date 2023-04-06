@@ -134,7 +134,8 @@ Private Sub CreateDropdowns()
     'Series and graphs titles
     AddElements "__graphs_titles", vbNullString, vbNullString
     AddElements "__series_titles", vbNullString, vbNullString
-
+    'CHECKINGS ----------------------------------------------------------------
+    AddElements "__checking_types", "Error", "Warning", "Note", "Info", "All"
 End Sub
 
 Private Sub AddValidationsAndUpdates()
@@ -306,6 +307,10 @@ Private Sub AddValidationsAndUpdates()
                         alertType:="info"
     BusyApp
     pass.Protect "Analysis"
+
+    'on checking worksheet, add dropdown on filters
+    MoveToSheet "__checkRep"
+    drop.SetValidation currsh.Range("RNG_CheckingFilter"), "__checking_types", "error"
 End Sub
 
 '@Description("Configure the setup for codes")
@@ -383,7 +388,7 @@ Private Sub TransferCodeWksh()
 
    Set sheetsList = New BetterArray
    Set wb = ThisWorkbook
-   sheetsList.Push "Dictionary", "Choices", "Exports", "Analysis"
+   sheetsList.Push "Dictionary", "Choices", "Exports", "Analysis", "__checkRep"
 
    For counter = sheetsList.LowerBound To sheetsList.UpperBound
         sheetName = sheetsList.Item(counter)
