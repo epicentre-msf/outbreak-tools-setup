@@ -80,7 +80,7 @@ Private Sub ClassArraysInitialize()
 End Sub
 
 'Dictionary data Range
-Public Property Get DataRange(Optional colName As String = "__all__", Optional includeHeaders As Boolean = False) As Range
+Public Property Get DataRange(Optional ByVal colName As String = "__all__", Optional includeHeaders As Boolean = False) As Range
     Dim customDataSheet As IDataSheet
     Set customDataSheet = Data()
     Set DataRange = customDataSheet.DataRange(colName, includeHeaders)

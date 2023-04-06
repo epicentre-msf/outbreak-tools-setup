@@ -2,7 +2,7 @@ Attribute VB_Name = "EventsRibbon"
 
 Option Explicit
 
-'@IgnoreModule ParameterNotUsed : some parameters of controls are not used
+'@IgnoreModule SheetAccessedUsingString, ParameterCanBeByVal, ParameterNotUsed : some parameters of controls are not used
 
 'Private constants for Ribbon Events
 Private Const TRADSHEETNAME As String = "Translations"
@@ -26,7 +26,7 @@ End Sub
 
 '@Description("Resize the listObjects in the current sheet")
 '@EntryPoint
-Public Sub clickResize(control As IRibbonControl)
+Public Sub clickResize(ByRef control As IRibbonControl)
 Attribute clickResize.VB_Description = "Resize the listObjects in the current sheet"
     Dim sheetName As String
     sheetName = ActiveSheet.Name
@@ -44,7 +44,7 @@ End Sub
 
 '@Description("Callback for editLang onChange: Add a language to translation table")
 '@EntryPoint
-Public Sub clickAddLang(control As IRibbonControl, text As String)
+Public Sub clickAddLang(ByRef control As IRibbonControl, ByRef text As String)
 Attribute clickAddLang.VB_Description = "Callback for editLang onChange: Add a language to translation table"
 
     Dim pass As IPasswords
@@ -78,7 +78,7 @@ End Sub
 
 '@Description("Callback for btnTransAdd onAction: Import all words to be translated")
 '@EntryPoint
-Public Sub clickAddTrans(control As IRibbonControl)
+Public Sub clickAddTrans(ByRef control As IRibbonControl)
 Attribute clickAddTrans.VB_Description = "Callback for btnTransAdd onAction: Import all words to be translated"
     Dim pass As IPasswords
     Dim trads As ITranslations
@@ -120,7 +120,7 @@ End Sub
 
 '@Description("Callback for btnTransUp onAction: Update columns to be translated")
 '@EntryPoint
-Public Sub clickUpdateTranslate(control As IRibbonControl)
+Public Sub clickUpdateTranslate(ByRef control As IRibbonControl)
 Attribute clickUpdateTranslate.VB_Description = "Callback for btnTransUp onAction: Update columns to be translated"
     'remove update columns and add new columns to watch
     BusyApp
@@ -132,7 +132,7 @@ End Sub
 
 '@Description("Callback for btnChk onAction: Check the setup for eventual errors")
 '@EntryPoint
-Public Sub clickCheck(control As IRibbonControl)
+Public Sub clickCheck(ByRef control As IRibbonControl)
 Attribute clickCheck.VB_Description = "Callback for btnChk onAction: Check the setup for eventual errors"
     BusyApp
     Dim askFirst As Long
@@ -144,7 +144,7 @@ End Sub
 
 '@Description("Callback for btnImp onAction: Import elements from another setup")
 '@EntryPoint
-Public Sub clickImport(control As IRibbonControl)
+Public Sub clickImport(ByRef control As IRibbonControl)
 Attribute clickImport.VB_Description = "Callback for btnImp onAction: Import elements from another setup"
     PrepareForm cleanSetup:=False
     [Imports].Show
@@ -152,7 +152,7 @@ End Sub
 
 '@Description("Callback for btnClear onAction: clean the setup")
 '@EntryPoint
-Public Sub clickClearSetup(control As IRibbonControl)
+Public Sub clickClearSetup(ByRef control As IRibbonControl)
 Attribute clickClearSetup.VB_Description = "Callback for btnClear onAction: clean the setup"
     PrepareForm cleanSetup:=True
     [Imports].Show

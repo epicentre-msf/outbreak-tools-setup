@@ -1,4 +1,5 @@
 Attribute VB_Name = "CustomFunctions"
+'@IgnoreModule SheetAccessedUsingString
 
 Option Explicit
 'Custom functions for the setup

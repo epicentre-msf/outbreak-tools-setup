@@ -155,7 +155,7 @@ Private Property Get ValueOf(ByVal keyName As String, Optional ByVal retrievedVa
         Case checkingWarning
           returnedValue = "orange"
         Case checkingInfo
-          returnedValue = "gray"
+          returnedValue = "grey"
       End Select
   End Select
   ValueOf = returnedValue

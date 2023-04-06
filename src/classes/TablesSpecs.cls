@@ -439,5 +439,3 @@ End Property
 Public Property Get ITablesSpecs_SpatialTableTypes() As String
     ITablesSpecs_SpatialTableTypes = SpatialTableTypes()
 End Property
-
-

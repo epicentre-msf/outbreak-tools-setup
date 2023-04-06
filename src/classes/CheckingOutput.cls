@@ -84,11 +84,11 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
       fontCol = RGB(128, 96, 0)
       intCol = RGB(255, 242, 204)
     Case "grey"
-      fontCol = RGB(117, 113, 113)
-      intCol = RGB(242, 242, 242)
+      fontCol = RGB(160, 160, 160)
+      intCol = RGB(250, 250, 250)
     Case Else
       fontCol = vbBlack
-      intCol = vbWhite
+      intCol = RGB(208, 206, 206)
   End Select
 
   On Error Resume Next
@@ -102,18 +102,18 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
 
   With cellRng
     .Font.Size = Switch(level = 1, 14, level = 2, 12, level = 3, 10)
-    '.Interior.color = intCol
+    .Interior.color = intCol
     .Font.color = fontCol
-    .Font.Bold = (level <> 3)
+    .Font.Bold = False
     .EntireColumn.AutoFit
     On Error Resume Next
     .Font.Name = "Tahoma"
     On Error GoTo 0
     For counter = 7 To 12
         With .Borders(counter)
-            .LineStyle = xlContinuous
-            .Weight = xlHairline
-            .color = RGB(117, 113, 113)
+            .LineStyle = xlDashDotDot
+            .Weight = xlThin
+            .color = RGB(110, 110, 110)
         End With
     Next
   End With

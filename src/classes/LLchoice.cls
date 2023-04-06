@@ -137,6 +137,21 @@ Private Sub Sort()
     End If
 End Sub
 
+Private Property Get AllChoices() As BetterArray
+    Dim lstChoi As BetterArray
+    Dim lstRng As Range
+    Dim counter As Long 'counter for the number of rows of one range
+
+    Set lstChoi = New BetterArray
+    Set lstRng = DataRange(listName, includeHeaders:=False)
+    For counter = 1 To lstRng.Rows.Count
+        If Not lstChoi.Includes(lstRng.Cells(counter, 1).Value) Then _
+            lstChoi.Push lstRng.Cells(counter, 1).Value
+    Next
+    
+    Set AllChoices = lstChoi.Clone()
+End Property
+
 'Add New Categories
 Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As BetterArray)
 
@@ -241,3 +256,7 @@ End Sub
 Private Sub ILLchoice_RemoveRows()
     ManageRows del:=True
 End Sub
+
+Private Property Get ILLchoice_AllChoices() As BetterArray
+    Set ILLchoice_AllChoices = AllChoices()
+End Property
