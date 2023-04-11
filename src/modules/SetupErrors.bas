@@ -469,6 +469,13 @@ End Sub
 'adding checks for analysis
 Private Sub CheckAnalysis()
 
+    Dim gsTab As ICustomTable
+    Dim uaTab As ICustomTable
+    Dim baTab As ICustomTable
+    Dim tsTab As ICustomTable
+
+    
+
 
 End Sub
 

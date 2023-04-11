@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 
 
 '@Folder("Analysis")
-'@ModuleDescription("analysis tables specifications")
+'@ModuleDescription("analysis tables specifications (univariate, bivariate, time series and spatial)")
 '@IgnoreModule
 
 Option Explicit
@@ -19,27 +19,27 @@ Implements ITablesSpecs
 Private Type TTablesSpecs
     hRng As Range
     tRng As Range
-    lData As ILinelistSpecs
-    tType As AnalysisTablesType
+    dict As ILLdictionary
+    choi As ILLchoice
 End Type
 
 Private this As TTablesSpecs
 Private Const CLASSNAME As String = "TableSpecs"
 
 'Instanciation
+'headerRange is the headerRange of the listObject
+'tableRange is the range of one line of the table, corresponding to the
+'specifications of one table in the analysis. (rowvar, colvar, etc.)
+Public Function Create(ByVal headerRng As Range, ByVal tableSpecsRng As Range, _
+                       ByVal dict As ILLdictionary, ByVal choi As ILLChoice) As ITablesSpecs
 
-Public Function Create(headerRng As Range, tableSpecsRng As Range, linelistData As ILinelistSpecs) As ITablesSpecs
-    If headerRng Is Nothing Then ThrowErrorUnableInstanciate "Header range not defined"
-    If tableSpecsRng Is Nothing Then ThrowErrorUnableInstanciate "Table range not defined"
-    If linelistData Is Nothing Then ThrowErrorUnableInstanciate "Linelist specifications not defined"
-    If headerRng.Columns.Count <> tableSpecsRng.Columns.Count Then ThrowErrorUnableInstanciate "Header range and sepicification range don't have same length"
-    If headerRng.Row > tableSpecsRng.Row Then ThrowErrorUnableInstanciate "Seems like header comes range after specification range. Maybe you reversed the order? "
-    If headerRng.Row < 1 Then ThrowErrorUnableInstanciate "Header range should be at row > 1"
+    CheckRequirements headerRng, tableSpecsRng, dict, choi
 
     With New TablesSpecs
         Set .HeaderRange = headerRng
         Set .TableRange = tableSpecsRng
-        Set .LinelistSpecifications = linelistData
+        Set .Dictionary = dict
+        Set .Choice = choi
         Set Create = .Self
     End With
 End Function
@@ -49,31 +49,45 @@ Public Property Get HeaderRange() As Range
     Set HeaderRange = this.hRng
 End Property
 
-Public Property Get TableRange() As Range
-    Set TableRange = this.tRng
-End Property
-
-Public Property Get LinelistSpecifications() As ILinelistSpecs
-    Set LinelistSpecifications = this.lData
-End Property
-
 Public Property Set HeaderRange(ByVal hRng As Range)
     Set this.hRng = hRng
+End Property
+
+Public Property Get TableRange() As Range
+    Set TableRange = this.tRng
 End Property
 
 Public Property Set TableRange(ByVal tRng As Range)
     Set this.tRng = tRng
 End Property
 
-Public Property Set LinelistSpecifications(ByVal lData As ILinelistSpecs)
-    Set this.lData = lData
+Public Property Get Choice() As ILLchoice
+    Set Choice = this.choi
 End Property
 
-Public Property Get TableType() As AnalysisTablesType
+Public Property Set Choice(ByVal choi As ILLchoice)
+    Set this.choi = choi
+End Property
+
+Public Property Get Dictionary() As ILLdictionary
+    Set Dictionary = this.dict
+End Property
+
+Public Property Set Dictionary(ByVal dict As ILLdictionary)
+    Set this.dict = dict
+End Property
+
+Public Property Get Self() As ITablesSpecs
+    Set Self = Me
+End Property
+
+'------------------------ private properties and methods
+'Get the table type of the one table
+Private Property Get TableType() As AnalysisTablesType
     Dim hRng As Range
     Dim tType As AnalysisTablesType
     Dim anaType As String
-    
+
     Set hRng = HeaderRange()
     anaType = LCase(Application.WorksheetFunction.Trim(hRng.Cells(-1, 1).Value))
     Select Case anaType
@@ -90,32 +104,22 @@ Public Property Get TableType() As AnalysisTablesType
     Case Else
         ThrowError "Could not find the table type [uni-bivariate, spatial or timeseries? :(]" & ".Actual type is : " & anaType
     End Select
-  
+
     TableType = tType
 End Property
 
+'For spatial analyses, the table can be either on geo or hf (health facility)
 Private Property Get SpatialTableTypes() As String
     Dim rowVar As String
-    Dim lData As ILinelistSpecs
     Dim dict As ILLdictionary
-    Dim spatType As String
-    
-    Set lData = LinelistSpecifications
-    Set dict = lData.Dictionary
+    Dim vars As ILLVariables
 
-    rowVar = Value("row")
+    Set dict = Dictionary()
+    Set vars = LLVariables.Create(dict)
 
     'Find the spatial table type.
     'Use the spatial table type only if the table is valid (you need to check it before)
-    
-    spatType = Switch(dict.VariableExists("hf_" & rowVar), "hf", _
-                      dict.VariableExists("adm1_" & rowVar), "geo", _
-                      True, "")
-    SpatialTableTypes = spatType
-End Property
-
-Public Property Get Self() As ITablesSpecs
-    Set Self = Me
+    SpatialTableTypes = vars.Value(colName:="Control", varName:=rowVar)
 End Property
 
 Private Property Get TableId() As String
@@ -156,7 +160,6 @@ End Property
 
 Private Property Get HasPercent() As Boolean
     Select Case TableType
-
     Case TypeGlobalSummary
         HasPercent = False
     Case TypeUnivariate, TypeSpatial
@@ -182,7 +185,6 @@ Private Property Get HasTotal() As Boolean
                     (Value("percentage") = "column")) And (Value("column") <> vbNullString)
     Case TypeSpatial
         HasTotal = (Value("column") <> vbNullString)
-
     End Select
 End Property
 
@@ -219,9 +221,8 @@ Private Property Get HasMissing() As Boolean
 End Property
 
 Public Property Get ValidTable() As Boolean
-    
+
     Dim dict As ILLdictionary
-    Dim lData As ILinelistSpecs
     Dim Valid As Boolean
     Dim rowVar As String
     Dim colVar As String
@@ -229,8 +230,7 @@ Public Property Get ValidTable() As Boolean
     Dim rowControl As String
     Dim vars As ILLVariables
 
-    Set lData = LinelistSpecifications
-    Set dict = lData.Dictionary
+    Set dict = Dictionary()
     Set vars = LLVariables.Create(dict)
 
     rowVar = Value("row")
@@ -249,21 +249,15 @@ Public Property Get ValidTable() As Boolean
                                                                 (colControl = "choice_manual" Or colControl = "choice_formula") And _
                                                                 (rowControl = "choice_manual" Or rowControl = "choice_formula")
     Case TypeTimeSeries
-        Valid = (colVar = vbNullString Or colControl = "choice_manual" Or colControl = "choice_formula") And (vars.Value(colName:="type", varName:=rowVar) = "date")
+        Valid = (colVar = vbNullString Or colControl = "choice_manual" Or colControl = "choice_formula") And _
+                 (vars.Value(colName:="type", varName:=rowVar) = "date")
     Case TypeSpatial
-        Valid = (dict.VariableExists("adm1_" & rowVar) Or dict.VariableExists("hf_" & rowVar)) And _
+        Valid = (rowControl = "geo" Or rowControl = "hf") And _
                 (colVar = vbNullString Or colControl = "choice_manual" Or colControl = "choice_formula")
     End Select
-
     ValidTable = Valid
 End Property
 
-
-Private Property Get Dictionary() As ILLdictionary
-    Dim lData As ILinelistSpecs
-    Set lData = LinelistSpecifications()
-    Set Dictionary = lData.Dictionary()
-End Property
 
 Private Function ColumnExists(ByVal colName As String) As Boolean
     Dim hRng As Range
@@ -297,52 +291,72 @@ Private Function Value(ByVal colName As String) As String
     Value = retVal
 End Function
 
+'Get the categories of one variable on row or columns
 Private Property Get Data(ByVal rowOrCol As String) As BetterArray
     Dim varsCat As BetterArray
+    Dim dict As ILLdictionary
     Dim nameVar As String
+    Dim varControl As String 'control and control details of the variable
+    Dim varControlDet As String
     Dim vars As ILLVariables
-    Dim lData As ILinelistSpecs
+    Dim choi As ILLChoice
+    Dim choiform As ChoiceFormula
 
-    Set lData = LinelistSpecifications()
-    Set vars = LLVariables.Create(lData.Dictionary)
+    Set dict = Dictionary()
+    Set vars = LLVariables.Create(dict)
     Set varsCat = New BetterArray
+    'name var is the name of the variable from which we want to
+    'retrieve the categories
+
     nameVar = Value(rowOrCol)
     If vars.Contains(nameVar) Then
-        Set varsCat = lData.Categories(nameVar)
+        varControl = vars.Value(varName:=nameVar, colName:="Control")
+        varControlDet = vars.Value(varName:=nameVar, colName:="Control Details")
+
+        If (varControl = "choice_manual") Then
+            Set choi = Choice()
+            Set varsCat = choi.Categories(varControlDet)
+        ElseIf (varControl = "choice_formula") Then
+            Set choiform = ChoiceFormula.Create(varControlDet)
+            Set varsCat = choiform.Categories()
+        End If
+        'For choices, categories are drown from the choices
+        'For choice formula, use the choice formula object
     End If
     Set Data = varsCat.Clone()
 End Property
 
 Private Property Get Previous() As ITablesSpecs
-    Dim lData As ILinelistSpecs
     Dim hRng As Range
     Dim tRng As Range
     Dim actRng As Range                          'Actual range
     Dim taType As AnalysisTablesType
     Dim endCol As Long
     Dim precSec As ITablesSpecs
-    
-    
+    Dim dict As ILLdictionary
+    Dim choi As ILLchoice
+
+
     If isNewSection() Then ThrowErrorUnableInstanciate "Your table is on a new section, I can't return the previous table"
-    
+
     taType = TableType()
     Set hRng = HeaderRange()
     Set actRng = TableRange()
-    Set lData = LinelistSpecifications()
     Set tRng = actRng.Offset(-1)
-    
+    Set dict = Dictionary()
+    Set choi = Choice()
+
     'Loop until valid table
-    Set precSec = Create(hRng, tRng, lData)
+    Set precSec = Create(hRng, tRng, dict, choi)
     Set tRng = tRng.Offset(-1)
-    
+
     Do While (Not precSec.ValidTable()) And (Not (tRng.Row <= hRng.Row))
-        Set precSec = Create(hRng, tRng, lData)
+        Set precSec = Create(hRng, tRng, dict, choi)
         If precSec.isNewSection() Then Exit Do
         Set tRng = tRng.Offset(-1)
     Loop
-    
+
     Set Previous = precSec
-    
 End Property
 
 Private Property Get isNewSection() As Boolean
@@ -379,6 +393,18 @@ Private Sub ThrowError(ByVal errorMessage As String)
     Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Execution Error: " & errorMessage
 End Sub
 
+
+Private Sub CheckRequiments(ByVal headerRng As Range, ByVal tableSpecsRng As Range, _
+                            ByVal dict As ILLdictionary, ByVal choi As ILLChoice)
+    If headerRng Is Nothing Then ThrowErrorUnableInstanciate "Header range not defined"
+    If tableSpecsRng Is Nothing Then ThrowErrorUnableInstanciate "Table range not defined"
+    If dict Is Nothing Then ThrowErrorUnableInstanciate "dictionary not defined"
+    If choi Is Nothing Then ThrowErrorUnableInstanciate "dictionary not defined"
+    If headerRng.Columns.Count <> tableSpecsRng.Columns.Count Then ThrowErrorUnableInstanciate "Header range and sepicification range don't have same length"
+    If headerRng.Row > tableSpecsRng.Row Then ThrowErrorUnableInstanciate "Seems like header comes range after specification range. Maybe you reversed the order? "
+    If headerRng.Row < 1 Then ThrowErrorUnableInstanciate "Header range should be at row > 1"
+End Sub
+
 'Interface
 Public Property Get ITablesSpecs_TableType() As AnalysisTablesType
     ITablesSpecs_TableType = TableType()
@@ -390,10 +416,6 @@ End Property
 
 Public Property Get ITablesSpecs_ColumnCategories() As BetterArray
     Set ITablesSpecs_ColumnCategories = Data("column")
-End Property
-
-Public Property Get ITablesSpecs_Dictionary() As ILLdictionary
-    Set ITablesSpecs_Dictionary = Dictionary()
 End Property
 
 Public Property Get ITablesSpecs_TableId() As String

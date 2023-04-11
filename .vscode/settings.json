@@ -4,5 +4,6 @@
     "files.exclude": {
         "**/.mock": true
     },
-    "editor.lineNumbers": "on"
+    "editor.lineNumbers": "on",
+    "editor.fontFamily": "'Consolas', 'Courier New', monospace"
 }
