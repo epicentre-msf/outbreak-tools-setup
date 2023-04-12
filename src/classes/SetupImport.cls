@@ -97,7 +97,7 @@ End Sub
 
 
 'Check if the setup file to import is a valid setup file
-Private Sub Check(ByVal importDict As Boolean, _
+Private Sub check(ByVal importDict As Boolean, _
                   ByVal importChoi As Boolean, _
                   ByVal importExp As Boolean, _
                   ByVal importAna As Boolean, _
@@ -262,7 +262,7 @@ Public Sub ISetupImport_Check(ByVal impDict As Boolean, _
                               ByVal impAna As Boolean, _
                               ByVal impTrans As Boolean, _
                               Optional ByVal cleanSetup As Boolean = False)
-  Check impDict, impChoi, impExp, impAna, impTrans, cleanSetup
+  check impDict, impChoi, impExp, impAna, impTrans, cleanSetup
 End Sub
 
 Public Sub ISetupImport_Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)

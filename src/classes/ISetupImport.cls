@@ -17,7 +17,7 @@ Option Explicit
 
 'Exposed methods
 
-Public Sub Check(ByVal impDict As Boolean, _
+Public Sub check(ByVal impDict As Boolean, _
   ByVal impChoi As Boolean, _
   ByVal impExp As Boolean, _
   ByVal impAna As Boolean, _

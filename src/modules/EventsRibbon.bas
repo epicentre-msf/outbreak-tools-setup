@@ -2,6 +2,7 @@ Attribute VB_Name = "EventsRibbon"
 
 Option Explicit
 
+'@Folder("Events")
 '@IgnoreModule SheetAccessedUsingString, ParameterCanBeByVal, ParameterNotUsed : some parameters of controls are not used
 
 'Private constants for Ribbon Events
@@ -161,7 +162,7 @@ End Sub
 '===== Auxilliary subs used in the process
 
 'Add or Remove Rows to a table
-Private Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
+Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
     Dim part As Object
     Dim sh As Worksheet
     Dim shpass As Worksheet

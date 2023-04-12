@@ -2,6 +2,7 @@ Attribute VB_Name = "PrepareSetup"
 
 Option Explicit
 
+'@Folder("Initializations")
 
 'This module prepares the setup for usage and creates required elements for
 'a fresh new setup without the codes for data management.

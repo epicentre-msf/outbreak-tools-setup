@@ -225,7 +225,7 @@ Private Sub CheckStatus(ByVal sh As Worksheet, ByVal Target As Range)
     On Error GoTo 0
     If Not (rng Is Nothing) Then
       If Not IsUpdated(rngName) Then
-        If Not (InterSect(Target, rng) Is Nothing) Then
+        If Not (Intersect(Target, rng) Is Nothing) Then
           WriteUpdate rngName, counter
           Exit Sub
         End If

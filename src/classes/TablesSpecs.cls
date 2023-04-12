@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "analysis tables specifications (univariate, bivariate, time series and spatial)"
+'@PredeclaredId
 
 
 '@Folder("Analysis")
 '@ModuleDescription("analysis tables specifications (univariate, bivariate, time series and spatial)")
-'@IgnoreModule
 
 Option Explicit
 Implements ITablesSpecs
@@ -21,17 +22,21 @@ Private Type TTablesSpecs
     tRng As Range
     dict As ILLdictionary
     choi As ILLchoice
+    reason As String
 End Type
 
 Private this As TTablesSpecs
 Private Const CLASSNAME As String = "TableSpecs"
+Private Const CONTROLCOLUMN As String = "Control"
+Private Const CONTROLDETAILSCOLUMN As String = "Control Details"
+Private Const TYPECOLUMN As String = "Variable Type"
 
 'Instanciation
 'headerRange is the headerRange of the listObject
 'tableRange is the range of one line of the table, corresponding to the
 'specifications of one table in the analysis. (rowvar, colvar, etc.)
 Public Function Create(ByVal headerRng As Range, ByVal tableSpecsRng As Range, _
-                       ByVal dict As ILLdictionary, ByVal choi As ILLChoice) As ITablesSpecs
+                       ByVal dict As ILLdictionary, ByVal choi As ILLchoice) As ITablesSpecs
 
     CheckRequirements headerRng, tableSpecsRng, dict, choi
 
@@ -82,6 +87,15 @@ Public Property Get Self() As ITablesSpecs
 End Property
 
 '------------------------ private properties and methods
+'validity reason
+Private Property Get ValidityReason() As String
+    ValidityReason = this.reason
+End Property
+
+Private Property Let ValidityReason(ByVal reason As String)
+    this.reason = reason
+End Property
+
 'Get the table type of the one table
 Private Property Get TableType() As AnalysisTablesType
     Dim hRng As Range
@@ -110,7 +124,6 @@ End Property
 
 'For spatial analyses, the table can be either on geo or hf (health facility)
 Private Property Get SpatialTableTypes() As String
-    Dim rowVar As String
     Dim dict As ILLdictionary
     Dim vars As ILLVariables
 
@@ -119,7 +132,7 @@ Private Property Get SpatialTableTypes() As String
 
     'Find the spatial table type.
     'Use the spatial table type only if the table is valid (you need to check it before)
-    SpatialTableTypes = vars.Value(colName:="Control", varName:=rowVar)
+    SpatialTableTypes = vars.Value(colName:="Control", varName:=Value("row"))
 End Property
 
 Private Property Get TableId() As String
@@ -228,32 +241,103 @@ Public Property Get ValidTable() As Boolean
     Dim colVar As String
     Dim colControl As String
     Dim rowControl As String
+    Dim rowType As String
     Dim vars As ILLVariables
 
     Set dict = Dictionary()
     Set vars = LLVariables.Create(dict)
 
     rowVar = Value("row")
-    rowControl = vars.Value(colName:="control", varName:=rowVar)
+    rowControl = vars.Value(colName:=CONTROLCOLUMN, varName:=rowVar)
 
     colVar = Value("column")
-    colControl = vars.Value(colName:="control", varName:=colVar)
+    colControl = vars.Value(colName:=CONTROLCOLUMN, varName:=colVar)
+    ValidityReason = "The table seems valid"
 
     Select Case TableType
+
     Case TypeGlobalSummary
         Valid = (Value("label") <> vbNullString) And (Value("function") <> vbNullString)
+
+        If Not Valid Then
+        'add reasons of non validitydisn
+            If (Value("label") = vbNullString) And (Value("function") <> vbNullString) Then
+                ValidityReason = "Summary label is missing"
+            ElseIf (Value("label") <> vbNullString) And (Value("function") = vbNullString) Then
+                ValidityReason = "Summary function is missing"
+            ElseIf (Value("label") = vbNullString) And (Value("function") = vbNullString) Then
+                ValidityReason = "Summary label and summary function are missing"
+            End If
+        End If
+
     Case TypeUnivariate
         Valid = vars.Contains(rowVar) And (rowControl = "choice_manual" Or rowControl = "choice_formula")
+
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "The row variable is not specified"
+            ElseIf (Not vars.Contains(rowVar)) Then
+                ValidityReason = "The variable " & rowVar & " does not exists in the dictionary"
+            Else
+                ValidityReason = "The control of variable " & rowVar & " is " & rowControl & _
+                              "which is not choice_manual or choice_formula"
+            End If
+        End If
     Case TypeBivariate
         Valid = vars.Contains(rowVar) And vars.Contains(colVar) And _
                                                                 (colControl = "choice_manual" Or colControl = "choice_formula") And _
                                                                 (rowControl = "choice_manual" Or rowControl = "choice_formula")
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "The row variable is not specified"
+            ElseIf (colVar = vbNullString) Then
+                ValidityReason = "The column variable is not specified"
+            ElseIf (Not vars.Contains(rowVar)) Then
+                ValidityReason = "The row variable " & rowVar & " does not exists in the dictionary"
+            ElseIf (Not vars.Contains(colVar)) Then
+                ValidityReason = "The column variable " & colVar & " does not exists in the dictionary"
+            ElseIf (colControl <> "choice_manual" And colControl <> "choice_formula") Then
+                ValidityReason = "The control of variable " & colVar & " is " & colControl & _
+                              "which is not choice_manual or choice_formula"
+            ElseIf (rowControl <> "choice_manual" And rowControl <> "choice_formula") Then
+                ValidityReason = "The control of variable " & rowVar & " is " & rowControl & _
+                              "which is not choice_manual or choice_formula"
+            End If
+        End If
+
     Case TypeTimeSeries
-        Valid = (colVar = vbNullString Or colControl = "choice_manual" Or colControl = "choice_formula") And _
-                 (vars.Value(colName:="type", varName:=rowVar) = "date")
+        rowType = vars.Value(colName:=TYPECOLUMN, varName:=rowVar)
+        Valid = (colVar = vbNullString Or _
+                 colControl = "choice_manual" Or _
+                 colControl = "choice_formula") And _
+                 (rowType = "date")
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "The row variable is not specified"
+            ElseIf (colVar <> vbNullString And colControl <> "choice_manual" And colControl <> "choice_formula") Then
+                ValidityReason = "The control of variable " & _
+                              colVar & " is " & colControl & _
+                              "which is not choice_manual or choice_formula"
+            ElseIf (rowType <> "date") Then
+                ValidityReason = "The variable " & rowVar & _
+                              " is not of type date. Time series should be on date variables."
+            End If
+        End If
     Case TypeSpatial
         Valid = (rowControl = "geo" Or rowControl = "hf") And _
                 (colVar = vbNullString Or colControl = "choice_manual" Or colControl = "choice_formula")
+
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "The row variable is not specified"
+            ElseIf (colVar <> vbNullString And colControl <> "choice_manual" And colControl <> "choice_formula") Then
+                ValidityReason = "The control of variable " & colVar & " is " & rowControl & _
+                "which is not choice_manual or choice_formula"
+            ElseIf (rowControl <> "geo" And rowControl <> "hf") Then
+                ValidityReason = "The control of variable " & rowVar & " is " & rowControl & _
+                " which is not geo or hf. Spatial tables should be on geo or hf variables."
+            End If
+        End If
     End Select
     ValidTable = Valid
 End Property
@@ -269,6 +353,7 @@ Private Function ColumnIndex(ByVal colName As String) As Long
     Dim hRng As Range
     Set hRng = HeaderRange
     If ColumnExists(colName) Then
+        '@Ignore ExcelMemberMayReturnNothing
         ColumnIndex = hRng.Find(What:=colName, lookAt:=xlPart, MatchCase:=False).Column - hRng.Column + 1
     Else
         ColumnIndex = -1
@@ -299,7 +384,7 @@ Private Property Get Data(ByVal rowOrCol As String) As BetterArray
     Dim varControl As String 'control and control details of the variable
     Dim varControlDet As String
     Dim vars As ILLVariables
-    Dim choi As ILLChoice
+    Dim choi As ILLchoice
     Dim choiform As ChoiceFormula
 
     Set dict = Dictionary()
@@ -310,8 +395,8 @@ Private Property Get Data(ByVal rowOrCol As String) As BetterArray
 
     nameVar = Value(rowOrCol)
     If vars.Contains(nameVar) Then
-        varControl = vars.Value(varName:=nameVar, colName:="Control")
-        varControlDet = vars.Value(varName:=nameVar, colName:="Control Details")
+        varControl = vars.Value(varName:=nameVar, colName:=CONTROLCOLUMN)
+        varControlDet = vars.Value(varName:=nameVar, colName:=CONTROLDETAILSCOLUMN)
 
         If (varControl = "choice_manual") Then
             Set choi = Choice()
@@ -330,8 +415,6 @@ Private Property Get Previous() As ITablesSpecs
     Dim hRng As Range
     Dim tRng As Range
     Dim actRng As Range                          'Actual range
-    Dim taType As AnalysisTablesType
-    Dim endCol As Long
     Dim precSec As ITablesSpecs
     Dim dict As ILLdictionary
     Dim choi As ILLchoice
@@ -339,7 +422,6 @@ Private Property Get Previous() As ITablesSpecs
 
     If isNewSection() Then ThrowErrorUnableInstanciate "Your table is on a new section, I can't return the previous table"
 
-    taType = TableType()
     Set hRng = HeaderRange()
     Set actRng = TableRange()
     Set tRng = actRng.Offset(-1)
@@ -394,8 +476,8 @@ Private Sub ThrowError(ByVal errorMessage As String)
 End Sub
 
 
-Private Sub CheckRequiments(ByVal headerRng As Range, ByVal tableSpecsRng As Range, _
-                            ByVal dict As ILLdictionary, ByVal choi As ILLChoice)
+Private Sub CheckRequirements(ByVal headerRng As Range, ByVal tableSpecsRng As Range, _
+                            ByVal dict As ILLdictionary, ByVal choi As ILLchoice)
     If headerRng Is Nothing Then ThrowErrorUnableInstanciate "Header range not defined"
     If tableSpecsRng Is Nothing Then ThrowErrorUnableInstanciate "Table range not defined"
     If dict Is Nothing Then ThrowErrorUnableInstanciate "dictionary not defined"
@@ -406,58 +488,64 @@ Private Sub CheckRequiments(ByVal headerRng As Range, ByVal tableSpecsRng As Ran
 End Sub
 
 'Interface
-Public Property Get ITablesSpecs_TableType() As AnalysisTablesType
+Private Property Get ITablesSpecs_TableType() As AnalysisTablesType
     ITablesSpecs_TableType = TableType()
 End Property
 
-Public Property Get ITablesSpecs_RowCategories() As BetterArray
+Private Property Get ITablesSpecs_RowCategories() As BetterArray
     Set ITablesSpecs_RowCategories = Data("row")
 End Property
 
-Public Property Get ITablesSpecs_ColumnCategories() As BetterArray
+Private Property Get ITablesSpecs_ColumnCategories() As BetterArray
     Set ITablesSpecs_ColumnCategories = Data("column")
 End Property
 
-Public Property Get ITablesSpecs_TableId() As String
+Private Property Get ITablesSpecs_TableId() As String
     ITablesSpecs_TableId = TableId()
 End Property
 
-Public Property Get ITablesSpecs_isNewSection() As Boolean
+Private Property Get ITablesSpecs_isNewSection() As Boolean
     ITablesSpecs_isNewSection = isNewSection
 End Property
 
-Public Function ITablesSpecs_Value(ByVal colName As String) As String
+Private Function ITablesSpecs_Value(ByVal colName As String) As String
     ITablesSpecs_Value = Value(colName)
 End Function
 
-Public Property Get ITablesSpecs_HasTotal() As Boolean
+Private Property Get ITablesSpecs_HasTotal() As Boolean
     ITablesSpecs_HasTotal = HasTotal
 End Property
 
-Public Property Get ITablesSpecs_HasPercentage() As Boolean
+Private Property Get ITablesSpecs_HasPercentage() As Boolean
     ITablesSpecs_HasPercentage = HasPercent
 End Property
 
-Public Property Get ITablesSpecs_HasMissing() As Boolean
+Private Property Get ITablesSpecs_HasMissing() As Boolean
     ITablesSpecs_HasMissing = HasMissing
 End Property
 
-Public Property Get ITablesSpecs_HasGraph() As Boolean
+Private Property Get ITablesSpecs_HasGraph() As Boolean
     ITablesSpecs_HasGraph = HasGraph()
 End Property
 
-Public Property Get ITablesSpecs_Previous() As ITablesSpecs
+Private Property Get ITablesSpecs_Previous() As ITablesSpecs
     Set ITablesSpecs_Previous = Previous
 End Property
 
-Public Property Get ITablesSpecs_TableSectionId() As String
+Private Property Get ITablesSpecs_TableSectionId() As String
     ITablesSpecs_TableSectionId = TableSectionId
 End Property
 
-Public Property Get ITablesSpecs_ValidTable() As Boolean
+Private Property Get ITablesSpecs_ValidTable() As Boolean
     ITablesSpecs_ValidTable = ValidTable()
 End Property
 
-Public Property Get ITablesSpecs_SpatialTableTypes() As String
+Private Property Get ITablesSpecs_SpatialTableTypes() As String
     ITablesSpecs_SpatialTableTypes = SpatialTableTypes()
 End Property
+
+Private Property Get ITablesSpecs_ValidityReason() As String
+    ITablesSpecs_ValidityReason = ValidityReason()
+End Property
+
+

@@ -1,6 +1,8 @@
 Attribute VB_Name = "SetupErrors"
 Option Explicit
 
+'@Folder("Checks")
+
 'Module for checkings in the Setup file
 'This is a long long long module.
 
@@ -10,7 +12,7 @@ Private Const EXPORTSHEETNAME As String = "Exports"
 Private Const ANALYSISSHEETNAME As String = "Analysis"
 Private Const TRANSLATIONSHEETNAME As String = "Translations"
 
-Private CheckTables As BetterArray
+Private checkTables As BetterArray
 Private wb As Workbook
 Private errTab As ICustomTable 'Custom table for Error Messages
 Private pass As IPasswords
@@ -27,7 +29,7 @@ Private Sub Initialize()
     Set formData = FormulaData.Create(shform)
 
     'Initialize the checking
-    Set CheckTables = New BetterArray
+    Set checkTables = New BetterArray
     Set errTab = CustomTable.Create(shform.ListObjects("Tab_Error_Messages"), idCol:="Key")
     Set pass = Passwords.Create(wb.Worksheets("__pass"))
     Set dict = LLdictionary.Create(wb.Worksheets(DICTSHEETNAME), 5, 1)
@@ -43,7 +45,7 @@ Private Function FormulaMessage(ByVal formValue As String, _
     Set setupForm = Formulas.Create(dict, formData, formValue)
     If Not setupForm.Valid(formulaType:=formulaType) Then _
     FormulaMessage = ConvertedMessage(keyName, value_one, value_two, _
-                                     setupForm.Reason())
+                                     setupForm.reason())
 
 End Function
 
@@ -65,7 +67,7 @@ End Function
 
 Private Sub CheckDictionary()
 
-    Dim Check As IChecking
+    Dim check As IChecking
     Dim csTab As ICustomTable
     Dim expTab As ICustomTable
     Dim varRng As Range
@@ -98,7 +100,7 @@ Private Sub CheckDictionary()
 
     Set shdict = wb.Worksheets(DICTSHEETNAME)
     Set shexp = wb.Worksheets(EXPORTSHEETNAME)
-    Set Check = Checking.Create(titleName:="Dictionary incoherences Type--Where?--Details")
+    Set check = Checking.Create(titleName:="Dictionary incoherences Type--Where?--Details")
     Set csTab = CustomTable.Create(shdict.ListObjects(1), idCol:="Variable Name")
     Set expTab = CustomTable.Create(shexp.ListObjects(1), idCol:="Export Number")
     Set FUN = Application.WorksheetFunction
@@ -131,7 +133,7 @@ Private Sub CheckDictionary()
             checkingCounter = checkingCounter + 1
             keyName = "dict-var-unique"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         'Variabel lenths < 4
@@ -139,7 +141,7 @@ Private Sub CheckDictionary()
             checkingCounter = checkingCounter + 1
             keyName = "dict-var-length"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         'Empty variable name
@@ -149,7 +151,7 @@ Private Sub CheckDictionary()
             checkingCounter = checkingCounter + 1
             keyName = "dict-main-lab"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         sheetValue = shdict.Cells(cellRng.Row, sheetRng.Column)
@@ -159,7 +161,7 @@ Private Sub CheckDictionary()
             checkingCounter = checkingCounter + 1
             keyName = "dict-empty-sheet"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         controlValue = csTab.Value("Control", varValue)
@@ -170,7 +172,7 @@ Private Sub CheckDictionary()
             checkingCounter = checkingCounter + 1
             keyName = "dict-unknown-control"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, controlValue, varValue)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         'Incoherences in choice formula
@@ -184,7 +186,7 @@ Private Sub CheckDictionary()
                 checkingCounter = checkingCounter + 1
                 keyName = "dict-choiform-empty"
                 infoMessage = ConvertedMessage(keyName, cellRng.Row, choiName)
-                Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             Else
                 keyName = "dict-cat-notfound"
                 Set choiCategories = choi.Categories(choiName)
@@ -195,7 +197,7 @@ Private Sub CheckDictionary()
                     If Not choiCategories.Includes(catValue) Then
                         checkingCounter = checkingCounter + 1
                         infoMessage = ConvertedMessage(keyName, cellRng.Row, catValue, choiName)
-                        Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingInfo
+                        check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingInfo
                     End If
                 Next
             End If
@@ -207,7 +209,7 @@ Private Sub CheckDictionary()
             infoMessage = FormulaMessage(controlDetailsValue, keyName, cellRng.Row, varValue)
             If (infoMessage <> vbNullString) Then
                 checkingCounter = checkingCounter + 1
-                Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             End If
         End If
 
@@ -217,7 +219,7 @@ Private Sub CheckDictionary()
                 checkingCounter = checkingCounter + 1
                 keyName = "dict-choi-empty"
                 infoMessage = ConvertedMessage(keyName, cellRng.Row, controlDetailsValue)
-                Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             End If
         End If
 
@@ -230,7 +232,7 @@ Private Sub CheckDictionary()
             infoMessage = FormulaMessage(minValue, keyName, cellRng.Row, varValue)
             If (infoMessage <> vbNullString) Then
                 checkingCounter = checkingCounter + 1
-                Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             End If
         End If
 
@@ -239,7 +241,7 @@ Private Sub CheckDictionary()
             infoMessage = FormulaMessage(maxValue, keyName, cellRng.Row, varValue)
             If (infoMessage <> vbNullString) Then
                 checkingCounter = checkingCounter + 1
-                Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             End If
         End If
 
@@ -257,18 +259,18 @@ Private Sub CheckDictionary()
             keyName = "dict-export-na"
             infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
             infoMessage = Replace(infoMessage, "{$}", expCounter)
-            Check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingNote
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingNote
         End If
     Next
 
-    CheckTables.Push Check
+    checkTables.Push check
     pass.Protect DICTSHEETNAME
     pass.Protect EXPORTSHEETNAME
 End Sub
 
 
 Private Sub CheckChoice()
-    Dim Check As IChecking
+    Dim check As IChecking
     Dim shchoi As Worksheet
     Dim shdict As Worksheet
     Dim choiTab As ICustomTable
@@ -294,7 +296,7 @@ Private Sub CheckChoice()
     choi.Sort
     choiTab.RemoveRows
 
-    Set Check = Checking.Create(titleName:="Choices incoherences Type--Where?--Details")
+    Set check = Checking.Create(titleName:="Choices incoherences Type--Where?--Details")
 
     Set dictTab = CustomTable.Create(shdict.ListObjects(1))
     Set choiLst = choi.AllChoices()
@@ -312,7 +314,7 @@ Private Sub CheckChoice()
             keyName = "choi-unfound-choi"
             infoMessage = ConvertedMessage(keyName, choiName)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
         End If
     Next
 
@@ -328,7 +330,7 @@ Private Sub CheckChoice()
             keyName = "choi-emptychoi-lab"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, choiLabValue)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         'Sort without choice name
@@ -338,7 +340,7 @@ Private Sub CheckChoice()
             keyName = "choi-emptychoi-order"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, sortValue)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
         End If
 
         'Sort not filled
@@ -348,7 +350,7 @@ Private Sub CheckChoice()
             keyName = "choi-empty-order"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, choiName)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
         End If
 
         'missing label for choice name (info)
@@ -357,13 +359,13 @@ Private Sub CheckChoice()
             keyName = "choi-mis-lab"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, choiName)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
         End If
         Set cellRng = cellRng.Offset(-1)
     Loop
 
 
-    CheckTables.Push Check
+    checkTables.Push check
     pass.Protect CHOICESHEETNAME
 End Sub
 
@@ -372,7 +374,7 @@ Private Sub CheckExports()
     Dim expTab As ICustomTable
     Dim counter As Long
     Dim shexp As Worksheet
-    Dim Check As IChecking
+    Dim check As IChecking
     Dim keyName As String
     Dim checkingCounter As Long
     Dim expStatus As String
@@ -390,7 +392,7 @@ Private Sub CheckExports()
     Set keysLst = New BetterArray
     Set headersLst = New BetterArray
     Set statusRng = expTab.DataRange("Status")
-    Set Check = Checking.Create(titleName:="Export incoherences type--Where?--Details")
+    Set check = Checking.Create(titleName:="Export incoherences type--Where?--Details")
     Set FUN = Application.WorksheetFunction
 
     headersLst.Push "Label Button", "Password", "Export Metadata", "Export Translation", _
@@ -410,7 +412,7 @@ Private Sub CheckExports()
                 keyName = keysLst.Item(headerCounter)
                 infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
 
-                Check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
+                check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
             End If
         Next
 
@@ -422,12 +424,12 @@ Private Sub CheckExports()
             keyName = "exp-act-empty"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
 
-            Check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
         End If
     Next
 
     'Active export not filled in the dictionary
-    CheckTables.Push Check
+    checkTables.Push check
 End Sub
 
 
@@ -439,7 +441,7 @@ Private Sub CheckTranslations()
     Dim messageMissing As String
     Dim nbMissing As Long
     Dim langName As String
-    Dim Check As IChecking
+    Dim check As IChecking
     Dim counter As Long
     Dim colRng As Range
 
@@ -447,7 +449,7 @@ Private Sub CheckTranslations()
     Set shTrans = wb.Worksheets(TRANSLATIONSHEETNAME)
     Set Lo = shTrans.ListObjects(1)
     Set hRng = Lo.HeaderRowRange
-    Set Check = Checking.Create(titleName:="Translation incoherences--Where?--Details")
+    Set check = Checking.Create(titleName:="Translation incoherences--Where?--Details")
     If (Not Lo.DataBodyRange Is Nothing) Then
         For counter = 1 To hRng.Columns.Count
             langName = hRng.Cells(1, counter).Value
@@ -458,25 +460,147 @@ Private Sub CheckTranslations()
                             " labels are missing for column " & _
                             langName & "."
                 'Add the message to checkings
-                Check.Add "trads-mis-labs-" & counter, messageMissing, checkingInfo
+                check.Add "trads-mis-labs-" & counter, messageMissing, checkingInfo
             End If
         Next
     End If
 
-    CheckTables.Push Check
+    checkTables.Push check
 End Sub
 
 'adding checks for analysis
+Private Sub checkTable(ByVal partName As String)
+
+    Const TABGS As String = "Tab_global_summary"
+    Const TABUA As String = "Tab_Univariate_Analysis"
+    Const TABBA As String = "Tab_Bivariate_Analysis"
+    Const TABTS As String = "Tab_TimeSeries_Analysis"
+    Const TABSP As String = "Tab_Spatial_Analysis"
+
+    Dim tabLo As ListObject 'ListObject for each of the tables in analysis
+    Dim loname As String 'ListObject Name
+    Dim tabHeaderRng As Range 'HeaderRange for table specs
+    Dim tabSpecsRng As Range 'Specification range of one table
+    Dim specs As ITablesSpecs
+    Dim sh As Worksheet
+    Dim check As IChecking
+    Dim nbLines As Long
+    Dim checkingCounter As Long
+    Dim keyName As String
+    Dim infoMessage As String
+    Dim anaForm As String 'analysis formula
+    Dim FUN As WorksheetFunction
+
+    'The listObject is related to the name of part given
+    loname = Switch( _
+        partName = "Global summary", TABGS, _
+        partName = "Univariate analysis", TABUA, _
+        partName = "Bivariate analysis", TABBA, _
+        partName = "Time series analysis", TABTS, _
+        partName = "Spatial analysis", TABSP _
+    )
+    Set sh = wb.Worksheets(ANALYSISSHEETNAME)
+    Set FUN = Application.WorksheetFunction
+    checkingCounter = 0
+    'If the list Object does not exists, exit the checkings
+    On Error Resume Next
+    Set tabLo = sh.ListObjects(loname)
+    On Error GoTo 0
+    If tabLo Is Nothing Then Exit Sub
+    Set check = Checking.Create(titleName:="Analysis incoherences----", _
+                                subtitleName:=partName & "--Where?--Details")
+
+    Set tabHeaderRng = tabLo.HeaderRowRange
+    For nbLines = 1 To tabLo.ListRows.Count
+        'Non valid table
+        Set tabSpecsRng = tabLo.ListRows(nbLines).Range()
+        'If the specs range is empty, move to next one with a warning
+        If FUN.CountBlank(tabSpecsRng) = tabSpecsRng.Columns.Count Then
+            keyName = "ana-empty-tab"
+            checkingCounter = checkingCounter + 1
+            infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
+        Else
+            
+            Set specs = TablesSpecs.Create(tabHeaderRng, tabSpecsRng, dict, choi)
+    
+            'Invalid table
+            If (Not specs.ValidTable()) Then
+                checkingCounter = checkingCounter + 1
+                keyName = "ana-inv-tab"
+                infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row, specs.ValidityReason())
+                check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
+    
+                'on new section on time series add another Error
+                If (specs.TableType = TypeTimeSeries) And (specs.isNewSection()) Then
+                    keyName = "ana-ts-newsec"
+                    infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
+                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
+                End If
+            End If
+    
+            'No Title
+            If specs.Value("title") = vbNullString And (specs.TableType <> TypeGlobalSummary) Then
+                checkingCounter = checkingCounter + 1
+                keyName = "ana-empty-title"
+                infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
+    
+                check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
+            End If
+    
+            'flip coordinates = yes on univariate analysis table
+            If (specs.TableType = TypeUnivariate) And _
+               specs.HasGraph() And _
+               (specs.Value("flip") = "yes") And _
+               (specs.Value("percentage") = "yes") Then
+    
+                checkingCounter = checkingCounter + 1
+                keyName = "ana-uaflip-perc"
+                infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
+    
+                check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
+            End If
+    
+            'add graph = no and flip coordinates = "yes" (on tables expect time series)
+            If (specs.TableType <> TypeTimeSeries) Then
+                If (Not specs.HasGraph()) And (specs.Value("flip") = "yes") Then
+    
+                    checkingCounter = checkingCounter + 1
+                    keyName = "ana-adgr-flip"
+                    infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
+    
+                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
+                End If
+            End If
+            'Retrieve the formula of one specs and test them
+            anaForm = specs.Value("function")
+            If (anaForm <> vbNullString) Then
+                keyName = "ana-incor-form"
+                infoMessage = FormulaMessage(anaForm, keyName, tabSpecsRng.Row, _
+                                             formulaType:="analysis")
+                If (infoMessage <> vbNullString) Then
+                    checkingCounter = checkingCounter + 1
+                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+                End If
+            End If
+        End If
+    Next
+    
+    checkTables.Push check
+End Sub
+
 Private Sub CheckAnalysis()
 
-    Dim gsTab As ICustomTable
-    Dim uaTab As ICustomTable
-    Dim baTab As ICustomTable
-    Dim tsTab As ICustomTable
-
-    
-
-
+    'Resize all the tables on the analysis sheet
+    EventsRibbon.ManageRows sheetName:="Analysis", del:=True
+    'This busyapp is important because after managerows, enablevents = True
+    BusyApp
+    'Check all the tables progressively
+    checkTable "Global summary"
+    checkTable "Univariate analysis"
+    checkTable "Bivariate analysis"
+    checkTable "Time series analysis"
+    checkTable "Spatial analysis"
 End Sub
 
 Private Sub PrintReport()
@@ -492,8 +616,9 @@ Private Sub PrintReport()
     Set sh = wb.Worksheets(CHECKSHEETNAME)
     Set checKout = CheckingOutput.Create(sh)
     Set drop = DropdownLists.Create(wb.Worksheets(DROPSHEETNAME))
+    sh.Cells.EntireRow.Hidden = False
 
-    checKout.PrintOutput CheckTables
+    checKout.PrintOutput checkTables
     'Set validation for filtering
     drop.SetValidation sh.Range("RNG_CheckingFilter"), "__checking_types", "error"
     With sh
@@ -504,7 +629,24 @@ Private Sub PrintReport()
 End Sub
 
 
+Private Sub BusyApp()
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    Application.CalculateBeforeSave = False
+    Application.EnableAnimations = False
+    Application.Calculation = xlCalculationManual
+  End Sub
+
+Private Sub NotBusyApp()
+    Application.EnableEvents = True
+    Application.ScreenUpdating = True
+    Application.EnableAnimations = True
+    Application.Calculation = xlCalculationAutomatic
+End Sub
+
+
 Public Sub CheckTheSetup()
+    BusyApp
     Initialize
     CheckDictionary
     CheckChoice
@@ -512,4 +654,5 @@ Public Sub CheckTheSetup()
     CheckAnalysis
     CheckTranslations
     PrintReport
+    NotBusyApp
 End Sub

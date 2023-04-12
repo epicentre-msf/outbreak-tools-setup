@@ -27,7 +27,7 @@ Private Type TFormulas
     literals As Boolean
     formulavariables As BetterArray
     formulaTable As BetterArray
-    validityReason As String
+    ValidityReason As String
 End Type
 
 Private this As TFormulas
@@ -121,10 +121,10 @@ Private Property Let FormulaValidity(test As Boolean)
     this.validity = test
 End Property
 
-Private Property Get Reason(Optional ByVal formulaType As String = "analysis") As String
-    If Valid(formulaType) Then this.validityReason = "The formula seems correct"
+Private Property Get reason(Optional ByVal formulaType As String = "analysis") As String
+    If Valid(formulaType) Then this.ValidityReason = "The formula seems correct"
 
-    Reason = this.validityReason
+    reason = this.ValidityReason
 End Property
 
 Private Property Get ConvertedSetupFormula() As String
@@ -244,11 +244,11 @@ Public Property Get Valid(Optional ByVal formulaType As String = "analysis") As 
     'if it is a variable and we are on analysis, it is not valid, we need aggregation
     'If the formula is empty validity is false
     If setupForm = vbNullString Then
-        this.validityReason = "The formula is empty. No formula were found"
+        this.ValidityReason = "The formula is empty. No formula were found"
         GoTo FormulaIsNotValid
     ElseIf (vars.Contains(setupForm) And formulaType = "analysis") Then
         HasLiterals = True
-        this.validityReason = "Analysis formula can not consist of only one variable, you should use aggregation function"
+        this.ValidityReason = "Analysis formula can not consist of only one variable, you should use aggregation function"
         GoTo FormulaIsNotValid
     ElseIf formulaType = "analysis" And customFormulas.Includes(setupForm) Then
         HasLiterals = True
@@ -281,7 +281,7 @@ Public Property Get Valid(Optional ByVal formulaType As String = "analysis") As 
                                           (Not isQuoted(chunk)) And _
                                           (Not (formulaType = "analysis" And customFormulas.Includes(chunk))) Then
                 'Write here to say why
-                this.validityReason = "The formula parsing stoped at " & Mid(setupForm, 1, counter) & ": " & _
+                this.ValidityReason = "The formula parsing stoped at " & Mid(setupForm, 1, counter) & ": " & _
                                         chunk & " is unknown in formula " & setupForm
                 'Error because we don't know the meaning of chunk
                 
@@ -498,7 +498,7 @@ Public Property Get IFormulas_HasLiterals() As Boolean
 End Property
 
 Public Property Get IFormulas_Reason(Optional ByVal formulaType As String = "analysis") As String
-    IFormulas_Reason = Reason(formulaType)
+    IFormulas_Reason = reason(formulaType)
 End Property
 
 

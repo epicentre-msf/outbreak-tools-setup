@@ -120,7 +120,7 @@ Private Sub WriteValue(ByVal level As Byte, textValue As String, _
 End Sub
 
 'Write One checking
-Private Sub WriteChecking(ByVal Check As IChecking)
+Private Sub WriteChecking(ByVal check As IChecking)
   Dim counter As Long
   Dim keysList As BetterArray
   Dim keyName As String
@@ -131,10 +131,10 @@ Private Sub WriteChecking(ByVal Check As IChecking)
   Dim keyType As String
   Dim keyLabel As String
 
-  Set keysList = Check.ListOfKeys()
+  Set keysList = check.ListOfKeys()
   Set sh = Wksh()
-  title = Check.Heading()
-  subTitle = Check.Heading(subTitle:=True)
+  title = check.Heading()
+  subTitle = check.Heading(subTitle:=True)
 
   'Write the title if needed
   If (sh.Cells.Find(What:=Split(title, "--")(0), lookAt:=xlWhole, MatchCase:=True) Is Nothing) Then
@@ -146,9 +146,9 @@ Private Sub WriteChecking(ByVal Check As IChecking)
 
   For counter = keysList.LowerBound To keysList.UpperBound
     keyName = keysList.Item(counter)
-    keyColor = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingColor)
-    keyLabel = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingLabel)
-    keyType = Check.ValueOf(keyName:=keyName, retrievedValue:=checkingType)
+    keyColor = check.ValueOf(keyName:=keyName, retrievedValue:=checkingColor)
+    keyLabel = check.ValueOf(keyName:=keyName, retrievedValue:=checkingLabel)
+    keyType = check.ValueOf(keyName:=keyName, retrievedValue:=checkingType)
     keyLabel = keyType & "--" & keyLabel
     WriteValue level:=3, textValue:=keyLabel, color:=keyColor
   Next
@@ -159,7 +159,7 @@ End Sub
 'Write multiple checkings
 'This will write a list of multiple checkings
 Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
-  Dim Check As IChecking
+  Dim check As IChecking
   Dim counter As Long
   Dim sh As Worksheet
 
@@ -173,10 +173,10 @@ Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
     "You should provide a betterarray of checkings, item " & _
      counter & "is not of type IChecking"
 
-    Set Check = checkTable.Item(counter)
+    Set check = checkTable.Item(counter)
 
     'Write the check
-    WriteChecking Check
+    WriteChecking check
   Next
 End Sub
 

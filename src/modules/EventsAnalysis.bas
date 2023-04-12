@@ -1,6 +1,7 @@
 Attribute VB_Name = "EventsAnalysis"
 
 Option Explicit
+'@Folder("Events")
 
 'All events on the analysis Worksheet
 Private Const ANALYSISSHEET As String = "Analysis"
@@ -115,7 +116,7 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     Set pass = Passwords.Create(wb.Worksheets(PASSSHEETNAME))
     Set drop = DropdownLists.Create(wb.Worksheets(DROPDOWNSHEET))
 
-    If InterSect(Target, seriestitleRng) Is Nothing Then Exit Sub
+    If Intersect(Target, seriestitleRng) Is Nothing Then Exit Sub
     BusyApp
     pass.UnProtect ANALYSISSHEET
 

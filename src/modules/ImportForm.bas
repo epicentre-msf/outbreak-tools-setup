@@ -1,8 +1,10 @@
 Attribute VB_Name = "ImportForm"
+'@IgnoreModule SheetAccessedUsingString
 Option Explicit
 
-'Sub for functions on the import form
+'@Folder("Import/Export")
 
+'Sub for functions on the import form
 'Write the path to the new setup file to be imported
 Public Sub NewSetupPath()
     Dim io As IOSFiles
@@ -66,7 +68,7 @@ Public Sub ImportOrCleanSetup()
 
     'Check import to be sure everything is fine (At least one import has to be made
     'and the file is correct (without missing parts)
-    importObj.Check importDict, importChoi, importExp, importAna, _
+    importObj.check importDict, importChoi, importExp, importAna, _
                     importTrans, cleanSetup:=(doLabel = "Clear")
     Set sheetsList = New BetterArray
 
@@ -87,6 +89,10 @@ Public Sub ImportOrCleanSetup()
         If MsgBox("Do you really want to clear the setup?", _
                  vbYesNo, "Confirmation") = vbYes Then
             importObj.Clean pass, sheetsList
+            'Automatically clean the checking worksheet
+            On Error Resume Next
+            wb.Worksheets("__checkRep").Cells.Clear
+            On Error GoTo 0
             infoText = "Setup cleared!"
         End If
     End Select

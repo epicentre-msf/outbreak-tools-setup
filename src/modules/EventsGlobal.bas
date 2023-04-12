@@ -1,5 +1,6 @@
 Attribute VB_Name = "EventsGlobal"
 Option Explicit
+'@Folder("Events")
 
 'Module for all the global events: At the Workbook level
 Private Const UPDATEDSHEETNAME As String = "__updated"
@@ -98,7 +99,7 @@ Public Sub FilterCheckingsSheet(ByVal Target As Range)
     Set wb = ThisWorkbook
     Set sh = wb.Worksheets("__checkRep")
     Set sheetRng = sh.UsedRange
-    If InterSect(Target, sh.Range("RNG_CheckingFilter")) Is Nothing Then Exit Sub
+    If Intersect(Target, sh.Range("RNG_CheckingFilter")) Is Nothing Then Exit Sub
     filterValue = Target.Value
 
     If filterValue = vbNullString Then Exit Sub
@@ -108,7 +109,7 @@ Public Sub FilterCheckingsSheet(ByVal Target As Range)
         Set cellRng = sheetRng.Cells(sheetRng.Rows.Count, 1)
         Do While cellRng.Row > sheetRng.Row
             'Hide cells with values corresponding to those selected (keeping headers)
-            If (cellRng.Value <> filterValue) And (Not cellRng.Font.Size = 14) _
+            If (cellRng.Value <> filterValue) And (Not cellRng.Font.Size = 14) And (Not cellRng.Font.Size = 12) _
              And (Not cellRng.Value = vbNullString) Then cellRng.EntireRow.Hidden = True
             Set cellRng = cellRng.Offset(-1)
         Loop

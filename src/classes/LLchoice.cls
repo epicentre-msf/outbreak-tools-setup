@@ -167,7 +167,6 @@ Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As Better
     If CategoriesData.Length = 0 Then Exit Sub
 
     'Test if the choice already exists
-    Set checkCategories = New BetterArray
     Set checkCategories = Categories(choiceName)
     If checkCategories.Length > 0 Then Exit Sub  'Will probably trace log.
 
@@ -236,6 +235,7 @@ Private Property Get ILLchoice_Categories(ByVal choiceName As String) As BetterA
     Set ILLchoice_Categories = Categories(choiceName)
 End Property
 
+'@Ignore ProcedureNotUsed
 Private Property Get ILLChoice_ChoiceExists(ByVal choiceName As String) As Boolean
     ILLChoice_ChoiceExists = ChoiceExists(choiceName)
 End Property
@@ -260,3 +260,4 @@ End Sub
 Private Property Get ILLchoice_AllChoices() As BetterArray
     Set ILLchoice_AllChoices = AllChoices()
 End Property
+

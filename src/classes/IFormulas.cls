@@ -35,7 +35,7 @@ End Property
 Public Property Get HasLiterals() As Boolean: End Property
 
 'Logs for eventual errors in formula
-Public Property Get Reason(Optional ByVal formulaType As String = "analysis") As String: End Property
+Public Property Get reason(Optional ByVal formulaType As String = "analysis") As String: End Property
 
 
 

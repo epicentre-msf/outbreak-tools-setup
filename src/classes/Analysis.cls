@@ -14,6 +14,7 @@ Attribute VB_Exposed = False
 '@IgnoreModule
 
 Implements IAnalysis
+Option Explicit
 
 Private Type TAnalysis
     anash As Worksheet
@@ -31,7 +32,6 @@ Private Const TITLEGRAPHTIMESERIES As String = "Tab_Label_TSGraph"
 Private Const SPATIAL As String = "Tab_Spatial_Analysis"
 Private Const SPATIOTEMPORAL As String = "Tab_SpatioTemporal_Analysis"
 
-Option Explicit
 
 Public Function Create(ByVal anash As Worksheet) As IAnalysis
   If anash Is Nothing Then ThrowError "Unable to create instance of class, Worksheet object not defined"
