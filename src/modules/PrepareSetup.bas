@@ -88,7 +88,7 @@ Private Sub CreateDropdowns()
                  "choice_formula", "formula", "geo", "hf", "custom", _
                  "list_auto", "case_when"
     'print variable
-    AddElements "__var_print", "visible, horizontal", "visible, vertical", "hidden"
+    AddElements "__var_print", "print, horizontal header", "print, vertical header", "hidden"
     '- alert
     AddElements "__var_alert", "error", "warning", "info"
     '- geo_variables
@@ -169,7 +169,7 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="info"
 
     'print variable (add the variable to a print sheet)
-    currTab.SetValidation colName:="print variable", dropName:="__var_print", _
+    currTab.SetValidation colName:="register book", dropName:="__var_print", _
                          drop:=drop, alertType:="info"
     'variable should be unique
     currTab.SetValidation colName:="unique", dropName:="__yesno", _
