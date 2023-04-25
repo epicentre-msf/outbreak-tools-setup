@@ -159,6 +159,37 @@ Attribute clickClearSetup.VB_Description = "Callback for btnClear onAction: clea
     [Imports].Show
 End Sub
 
+'@Description("Callback for btnFilt onAction: clear all the filters in the current sheet")
+'@EntryPoint
+Public Sub clickFilters(ByRef control As IRibbonControl)
+    Dim pass As IPasswords
+    Dim shpass As Worksheet
+    Dim sh As Worksheet
+    Dim sheetName As String
+    Dim Lo As ListObject
+
+    BusyApp
+    Set sh = ActiveSheet
+    sheetName = sh.Name
+    Set shpass = ThisWorkbook.Worksheets(PASSSHEETNAME)
+    Set pass = Passwords.Create(shpass)
+    pass.Unprotect sheetName
+
+    For Each Lo in sh.ListObjects
+        If Not Lo.AutoFilter Is Nothing Then
+            On Error Resume Next
+                Lo.AutoFilter.ShowAllData
+            On Error GoTo 0
+        End If
+    Next
+    'Analysis and translations need strict protections
+    pass.Protect sheetName,  _
+    (sheetName = "Translations" Or sheetName = "Analysis"), _
+    (sheetName = "Translations")
+
+    NotBusyApp
+End Sub
+
 '===== Auxilliary subs used in the process
 
 'Add or Remove Rows to a table

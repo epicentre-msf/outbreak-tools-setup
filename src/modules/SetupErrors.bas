@@ -97,6 +97,7 @@ Private Sub CheckDictionary()
     Dim maxValue As String
     Dim mainVarRng As Range
     Dim mainLabValue As String
+    Dim uniqueValue As String
 
     Set shdict = wb.Worksheets(DICTSHEETNAME)
     Set shexp = wb.Worksheets(EXPORTSHEETNAME)
@@ -244,6 +245,17 @@ Private Sub CheckDictionary()
                 check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             End If
         End If
+
+        'Inform for validation on unique values
+        uniqueValue = csTab.Value("Unique", varValue)
+
+        If (uniqueValue = "yes") Then
+            checkingCounter = checkingCounter + 1
+            keyName = "dict-unique-val"
+            infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
+            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingInfo
+        End If
+
 
         Set cellRng = cellRng.Offset(-1)
     Loop
