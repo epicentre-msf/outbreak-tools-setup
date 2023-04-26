@@ -46,6 +46,8 @@ Public Sub ImportOrCleanSetup()
     Dim doLabel As String
     Dim pass As IPasswords
     Dim wb As Workbook
+    Dim labValue As String
+    Dim conformityCheck As Boolean
 
     BusyApp
     On Error GoTo errHand
@@ -58,6 +60,7 @@ Public Sub ImportOrCleanSetup()
     importTrans = [Imports].TranslationsCheck.Value
     importPath = Application.WorksheetFunction.Trim( _
                 Replace([Imports].LabPath, "Path: ", vbNullString))
+    conformityCheck = [Imports].ConformityCheck.Value
 
     Set progObj = [Imports].LabProgress
     Set pass = Passwords.Create(ThisWorkbook.Worksheets("__pass"))
@@ -70,6 +73,11 @@ Public Sub ImportOrCleanSetup()
     'and the file is correct (without missing parts)
     importObj.check importDict, importChoi, importExp, importAna, _
                     importTrans, cleanSetup:=(doLabel = "Clear")
+
+    'Stop import if checks are not valid
+    labValue = progObj.Caption
+    'Exit the sub in case of error, without proceeding
+    If InStr(1, labValue, "Error") > 0 Then Exit Sub
     Set sheetsList = New BetterArray
 
     'Add the sheets to import if required
@@ -97,9 +105,18 @@ Public Sub ImportOrCleanSetup()
         End If
     End Select
 
-    MsgBox infoText
-    progObj.Caption = infoText
-    actsh.Activate
+    DoEvents
+
+    'If there is a checking done, no need to add new message
+    If Not conformityCheck Then
+        MsgBox infoText
+        progObj.Caption = infoText
+        actsh.Activate
+    Else
+        [Imports].Hide
+        ThisWorkbook.Worksheets("__checkRep").Activate
+    End If
+
     SetAllUpdatedTo "yes"
     wb.Worksheets("Analysis").Calculate
 errHand:

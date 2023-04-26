@@ -22,6 +22,7 @@ Private choi As ILLchoice
 
 Private Sub Initialize()
     Dim shform As Worksheet
+    BusyApp
 
     'Initialize formula
     Set wb = ThisWorkbook
@@ -98,6 +99,8 @@ Private Sub CheckDictionary()
     Dim mainVarRng As Range
     Dim mainLabValue As String
     Dim uniqueValue As String
+
+    BusyApp
 
     Set shdict = wb.Worksheets(DICTSHEETNAME)
     Set shexp = wb.Worksheets(EXPORTSHEETNAME)
@@ -303,6 +306,8 @@ Private Sub CheckChoice()
     Set shdict = wb.Worksheets(DICTSHEETNAME)
     Set choiTab = CustomTable.Create(shchoi.ListObjects(1))
 
+    BusyApp
+
     pass.UnProtect CHOICESHEETNAME
     'Sort the choices in choice sheet
     choi.Sort
@@ -399,6 +404,8 @@ Private Sub CheckExports()
     Dim statusRng As Range
     Dim FUN As WorksheetFunction
 
+    BusyApp
+
     Set shexp = wb.Worksheets(EXPORTSHEETNAME)
     Set expTab = CustomTable.Create(shexp.ListObjects(1))
     Set keysLst = New BetterArray
@@ -457,6 +464,7 @@ Private Sub CheckTranslations()
     Dim counter As Long
     Dim colRng As Range
 
+    BusyApp
 
     Set shTrans = wb.Worksheets(TRANSLATIONSHEETNAME)
     Set Lo = shTrans.ListObjects(1)
@@ -503,6 +511,8 @@ Private Sub checkTable(ByVal partName As String)
     Dim anaForm As String 'analysis formula
     Dim FUN As WorksheetFunction
 
+    BusyApp
+
     'The listObject is related to the name of part given
     loname = Switch( _
         partName = "Global summary", TABGS, _
@@ -533,16 +543,16 @@ Private Sub checkTable(ByVal partName As String)
             infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
             check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
         Else
-            
+
             Set specs = TablesSpecs.Create(tabHeaderRng, tabSpecsRng, dict, choi)
-    
+
             'Invalid table
             If (Not specs.ValidTable()) Then
                 checkingCounter = checkingCounter + 1
                 keyName = "ana-inv-tab"
                 infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row, specs.ValidityReason())
                 check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
-    
+
                 'on new section on time series add another Error
                 If (specs.TableType = TypeTimeSeries) And (specs.isNewSection()) Then
                     keyName = "ana-ts-newsec"
@@ -550,37 +560,37 @@ Private Sub checkTable(ByVal partName As String)
                     check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
                 End If
             End If
-    
+
             'No Title
             If specs.Value("title") = vbNullString And (specs.TableType <> TypeGlobalSummary) Then
                 checkingCounter = checkingCounter + 1
                 keyName = "ana-empty-title"
                 infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
-    
+
                 check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
             End If
-    
+
             'flip coordinates = yes on univariate analysis table
             If (specs.TableType = TypeUnivariate) And _
                specs.HasGraph() And _
                (specs.Value("flip") = "yes") And _
                (specs.Value("percentage") = "yes") Then
-    
+
                 checkingCounter = checkingCounter + 1
                 keyName = "ana-uaflip-perc"
                 infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
-    
+
                 check.Add keyName & "-" & checkingCounter, infoMessage, checkingNote
             End If
-    
+
             'add graph = no and flip coordinates = "yes" (on tables expect time series)
             If (specs.TableType <> TypeTimeSeries) Then
                 If (Not specs.HasGraph()) And (specs.Value("flip") = "yes") Then
-    
+
                     checkingCounter = checkingCounter + 1
                     keyName = "ana-adgr-flip"
                     infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
-    
+
                     check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
                 End If
             End If
@@ -597,7 +607,7 @@ Private Sub checkTable(ByVal partName As String)
             End If
         End If
     Next
-    
+
     checkTables.Push check
 End Sub
 
@@ -625,6 +635,7 @@ Private Sub PrintReport()
     Dim drop As IDropdownLists
     Dim formatRng As Range
 
+    BusyApp
     Set sh = wb.Worksheets(CHECKSHEETNAME)
     Set checKout = CheckingOutput.Create(sh)
     Set drop = DropdownLists.Create(wb.Worksheets(DROPSHEETNAME))
@@ -637,6 +648,12 @@ Private Sub PrintReport()
         Set formatRng = .Range(.Cells(1, 2), .Cells(1, 3))
         formatRng.Font.color = RGB(21, 133, 255)
         formatRng.Font.Bold = True
+
+        With .Range("RNG_CheckingFilter")
+            .Interior.Color = RGB(221, 235, 247)
+            .HorizontalAlignment = xlHAlignCenter
+            .Value = "All"
+        End With
     End With
 End Sub
 
@@ -649,14 +666,6 @@ Private Sub BusyApp()
     Application.Calculation = xlCalculationManual
   End Sub
 
-Private Sub NotBusyApp()
-    Application.EnableEvents = True
-    Application.ScreenUpdating = True
-    Application.EnableAnimations = True
-    Application.Calculation = xlCalculationAutomatic
-End Sub
-
-
 Public Sub CheckTheSetup()
     BusyApp
     Initialize
@@ -666,5 +675,4 @@ Public Sub CheckTheSetup()
     CheckAnalysis
     CheckTranslations
     PrintReport
-    NotBusyApp
 End Sub
