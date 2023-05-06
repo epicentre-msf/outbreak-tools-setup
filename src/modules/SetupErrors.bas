@@ -537,7 +537,8 @@ Private Sub checkTable(ByVal partName As String)
         'Non valid table
         Set tabSpecsRng = tabLo.ListRows(nbLines).Range()
         'If the specs range is empty, move to next one with a warning
-        If FUN.CountBlank(tabSpecsRng) = tabSpecsRng.Columns.Count Then
+        If ((FUN.CountBlank(tabSpecsRng) = tabSpecsRng.Columns.Count) And _
+           (loname <> TABTS)) Or (FUN.CountBlank(tabSpecsRng) >= tabSpecsRng.Columns.Count - 1) Then
             keyName = "ana-empty-tab"
             checkingCounter = checkingCounter + 1
             infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
@@ -554,7 +555,8 @@ Private Sub checkTable(ByVal partName As String)
                 check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
 
                 'on new section on time series add another Error
-                If (specs.TableType = TypeTimeSeries) And (specs.isNewSection()) Then
+                If (specs.TableType = TypeTimeSeries) And (specs.isNewSection()) _
+                    And (FUN.CountBlank(tabSpecsRng) < tabSpecsRng.Columns.Count - 1) Then
                     keyName = "ana-ts-newsec"
                     infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
                     check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
