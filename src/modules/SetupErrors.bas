@@ -192,6 +192,7 @@ Private Sub CheckDictionary()
                 infoMessage = ConvertedMessage(keyName, cellRng.Row, choiName)
                 check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
             Else
+                'Test if categories in choice_formula exists
                 keyName = "dict-cat-notfound"
                 Set choiCategories = choi.Categories(choiName)
                 Set formCategories = setupForm.Categories()
@@ -207,8 +208,8 @@ Private Sub CheckDictionary()
             End If
         End If
 
-        'Incorrect formulas
-        If (controlValue = "formula") Then
+        'Incorrect formulas (should test case_when and choice_formula)
+        If (controlValue = "formula" Or controlValue = "case_when" Or controlValue = "choice_formula") Then
             keyName = "dict-incor-form"
             infoMessage = FormulaMessage(controlDetailsValue, keyName, cellRng.Row, varValue)
             If (infoMessage <> vbNullString) Then

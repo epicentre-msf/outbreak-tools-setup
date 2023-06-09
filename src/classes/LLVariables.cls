@@ -62,16 +62,25 @@ End Property
 'Test if a variable is present
 Private Function Contains(ByVal varName As String) As Boolean
     Dim varRng As Range
-    Dim exist As Boolean
-  
+    Dim Exist As Boolean
+    Dim searchValue As String
+
+    'Removing all wilcards in search
+    searchValue = Replace(varName, "*", "~*")
+    searchValue = Replace(searchValue, "?", "~?")
+    searchValue = Replace(searchValue, "!", "~!")
+    searchValue = Replace(searchValue, "[", "~[")
+    searchValue = Replace(searchValue, "]", "~]")
+    searchValue = Replace(searchValue, "#", "~#")
+
     Set varRng = VarRange()
-    If varName = vbNullString Then
-        exist = False
+    If searchValue = vbNullString Then
+        Exist = False
     Else
-        exist = Not (varRng.Find(What:=varName, lookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        Exist = Not (varRng.Find(What:=searchValue, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
-  
-    Contains = exist
+
+    Contains = Exist
 End Function
 
 'Find the row index of one variable
