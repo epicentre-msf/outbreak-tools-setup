@@ -2,7 +2,9 @@
     "editor.fontSize": 14,
     "typescript.workspaceSymbols.scope": "currentProject",
     "files.exclude": {
-        "**/.mock": true
+        "**/.mock": true,
+        "Rscripts/setup_aky.xlsb": true,
+        "Rscripts/setup_prev.xlsb": true
     },
     "editor.lineNumbers": "on",
     "editor.fontFamily": "'Consolas', 'Courier New', monospace"
