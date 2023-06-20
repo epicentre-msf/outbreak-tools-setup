@@ -155,6 +155,7 @@ Private Sub AddIds()
   For counter = 1 To rng.Rows.Count
     rng.Cells(counter, 1).Value = Application.WorksheetFunction.Trim(idPref & " " & counter)
   Next
+  rng.Locked = rng.Cells(1, 1).Locked
 End Sub
 
 

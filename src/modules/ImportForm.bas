@@ -121,6 +121,9 @@ Public Sub ImportOrCleanSetup()
 
     SetAllUpdatedTo "yes"
     wb.Worksheets("Analysis").Calculate
+    'Fire EnterAnalysis Event to update dropdows
+    
+    EventsAnalysis.EnterAnalysis
 errHand:
     NotBusyApp
 End Sub

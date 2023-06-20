@@ -23,8 +23,6 @@ End Sub
 
 Private Sub NotBusyApp()
     Application.EnableEvents = True
-    Application.ScreenUpdating = True
-    Application.EnableAnimations = True
 End Sub
 
 'Calculate columns of analysis worksheet
@@ -46,6 +44,7 @@ Public Sub CalculateAnalysis()
     csTab.DataRange("row").Calculate
     csTab.DataRange("column").Calculate
     On Error GoTo 0
+    
     NotBusyApp
 End Sub
 
