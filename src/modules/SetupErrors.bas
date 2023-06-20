@@ -208,7 +208,7 @@ Private Sub CheckDictionary()
             End If
         End If
 
-        'Incorrect formulas (should test case_when and choice_formula)
+        'Incorrect formulas (should include tests case_when and choice_formula)
         If (controlValue = "formula" Or controlValue = "case_when" Or controlValue = "choice_formula") Then
             keyName = "dict-incor-form"
             infoMessage = FormulaMessage(controlDetailsValue, keyName, cellRng.Row, varValue)
@@ -291,7 +291,6 @@ Private Sub CheckChoice()
     Dim shdict As Worksheet
     Dim choiTab As ICustomTable
     Dim dictTab As ICustomTable
-    Dim cntrlDetLst As BetterArray
     Dim choiLst As BetterArray
     Dim counter As Long
     Dim checkingCounter As Long
@@ -302,32 +301,62 @@ Private Sub CheckChoice()
     Dim sortValue As String
     Dim choiLabValue As String
     Dim keyName As String
+    Dim usedChoicesLst As BetterArray
+    Dim setupForm As Object
+    Dim cntrlRng As Range
+    Dim cntrlDetRng As Range
+
+    BusyApp
 
     Set shchoi = wb.Worksheets(CHOICESHEETNAME)
     Set shdict = wb.Worksheets(DICTSHEETNAME)
     Set choiTab = CustomTable.Create(shchoi.ListObjects(1))
-
-    BusyApp
+    Set usedChoicesLst = New BetterArray
 
     pass.UnProtect CHOICESHEETNAME
+
     'Sort the choices in choice sheet
     choi.Sort
     choiTab.RemoveRows
 
     Set check = Checking.Create(titleName:="Choices incoherences Type--Where?--Details")
-
     Set dictTab = CustomTable.Create(shdict.ListObjects(1))
+
+    'List of all choice names
     Set choiLst = choi.AllChoices()
-    Set cntrlDetLst = New BetterArray
     Set choiNameRng = choiTab.DataRange("List Name")
-    Set cellRng = choiNameRng.Cells(choiNameRng.Rows.Count, 1)
+    Set cntrlRng = dictTab.DataRange("Control")
+    Set cntrlDetRng = dictTab.DataRange("Control Details")
+
+    'Initialize the number of checkings to do.
     checkingCounter = 0
 
-    cntrlDetLst.FromExcelRange dictTab.DataRange("Control Details")
+    'List of choices_formulas
+    For counter = 1 To cntrlDetRng.Rows.Count
+
+        'add choices to the list of used choices
+        If (cntrlRng.Cells(counter, 1).Value = "choice_manual") Then
+
+           If (cntrlDetRng.Cells(counter, 1).Value <> vbNullString) Then _ 
+              usedChoicesLst.Push cntrlDetRng.Cells(counter, 1).Value
+
+        ' add choice formulas to the list of used choices
+        ElseIf (cntrlRng.Cells(counter, 1).Value = "choice_formula") Then
+
+            If (cntrlDetRng.Cells(counter, 1).Value <> vbNullString)  Then 
+                Set setupForm = ChoiceFormula.Create(cntrlDetRng.Cells(counter, 1).Value)
+                'avoid sending empty strings to the list of used choices, so test for that before
+                choiName = setupForm.ChoiceName()
+                If choiName <> vbNullString Then usedChoicesLst.Push choiName
+            End If
+
+        End If
+    Next
+
     'choices not used
     For counter = choiLst.LowerBound To choiLst.UpperBound
         choiName = choiLst.Item(counter)
-        If Not cntrlDetLst.Includes(choiName) Then
+        If Not usedChoicesLst.Includes(choiName) Then
             checkingCounter = checkingCounter + 1
             keyName = "choi-unfound-choi"
             infoMessage = ConvertedMessage(keyName, choiName)
@@ -336,7 +365,12 @@ Private Sub CheckChoice()
         End If
     Next
 
+    'Going through the choice sheet for eventual incoherences
+    'cellRng in the last cell of the choices.
+    Set cellRng = choiNameRng.Cells(choiNameRng.Rows.Count, 1)
+
     Do While cellRng.Row >= choiNameRng.Row
+
         choiName = cellRng.Value
         sortValue = cellRng.Offset(, 1).Value
         choiLabValue = cellRng.Offset(, 2).Value
@@ -404,6 +438,12 @@ Private Sub CheckExports()
     Dim exportRng As Range
     Dim statusRng As Range
     Dim FUN As WorksheetFunction
+    Dim fileNameRng As Range
+    Dim fileNameLst As BetterArray
+    Dim actFileName As String
+    Dim fileCounter As Long
+    Dim fileNameChunk As String
+    Dim vars As ILLVariables
 
     BusyApp
 
@@ -411,9 +451,12 @@ Private Sub CheckExports()
     Set expTab = CustomTable.Create(shexp.ListObjects(1))
     Set keysLst = New BetterArray
     Set headersLst = New BetterArray
+    Set fileNameLst = New BetterArray
     Set statusRng = expTab.DataRange("Status")
+    Set fileNameRng = expTab.DataRange("File Name")
     Set check = Checking.Create(titleName:="Export incoherences type--Where?--Details")
     Set FUN = Application.WorksheetFunction
+    Set vars = LLVariables.Create(dict)
 
     headersLst.Push "Label Button", "Password", "Export Metadata", "Export Translation", _
                     "File Format", "File Name", "Export Header"
@@ -427,6 +470,7 @@ Private Sub CheckExports()
         expStatus = cellRng.Value
         For headerCounter = keysLst.LowerBound To keysLst.UpperBound
             'Empty label, password, metadata, translation file format or file name, file header
+            'The check is done for each of the export.
             If IsEmpty(expTab.CellRange(headersLst.Item(headerCounter), counter)) And (expStatus = "active") Then
                 checkingCounter = checkingCounter + 1
                 keyName = keysLst.Item(headerCounter)
@@ -446,6 +490,40 @@ Private Sub CheckExports()
 
             check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
         End If
+
+        'Variable in File name not found:
+        'Get the file name, split on + and loop through elements
+        actFileName = fileNameRng.Cells(counter, 1).Value
+        fileNameLst.Clear
+        fileNameLst.Items = Split(actFileName, "+")
+
+        'Loop through each file name
+        For fileCounter = fileNameLst.LowerBound To fileNameLst.UpperBound
+
+            fileNameChunk = fileNameLst.Item(fileCounter)
+
+            If Not (InStr(1, fileNameChunk, Chr(34)) > 0) Then
+
+                'Test for linelist variables presence
+                If Not vars.Contains(fileNameChunk) Then
+
+                    checkingCounter = checkingCounter + 1
+                    keyName = "exp-filename-varunfound"
+                    infoMessage = ConvertedMessage(keyName, cellRng.Row, counter, fileNameChunk)
+                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+
+                    'Test for variables in vlist1D
+                ElseIf (vars.Value(colName :="Sheet Type", varName:=fileNameChunk) <> "vlist1D") Then
+
+                    checkingCounter = checkingCounter + 1
+                    keyName = "exp-filename-varnotvlist"
+                    infoMessage = ConvertedMessage(keyName, cellRng.Row, counter, fileNameChunk)
+                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+
+                End If
+
+            End If
+        Next
     Next
 
     'Active export not filled in the dictionary

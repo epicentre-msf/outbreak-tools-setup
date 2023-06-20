@@ -162,6 +162,8 @@ End Sub
 '@Description("Callback for btnFilt onAction: clear all the filters in the current sheet")
 '@EntryPoint
 Public Sub clickFilters(ByRef control As IRibbonControl)
+Attribute clickFilters.VB_Description = "Callback for btnFilt onAction: clear all the filters in the current sheet"
+
     Dim pass As IPasswords
     Dim shpass As Worksheet
     Dim sh As Worksheet

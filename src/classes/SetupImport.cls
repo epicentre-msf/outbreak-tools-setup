@@ -110,7 +110,7 @@ Private Sub check(ByVal importDict As Boolean, _
 
   Const NO_FILE_WARNING As String = "Error : no setup file was founded at the provided path"
   Const NO_FILE_WB As String = "Error : the specified file is not an excel workbook, or is broken, unable to open it."
-  Const IMPORT_OPTIONS_WARNING As String = "Error: Please select at least one option for imports (Dictionary, Analysis or Translations)"
+  Const IMPORT_OPTIONS_WARNING As String = "Error: Please select at least one option (Dictionary, Analysis or Translations)"
 
   If (Not importDict) And (Not importAna) And (Not importTrans) And (Not importChoi) And (Not importExp) Then
     MsgBox IMPORT_OPTIONS_WARNING, vbExclamation + vbOkOnly

@@ -325,7 +325,7 @@ Attribute ConfigureSetup.VB_Description = "Configure the setup for codes"
     AddValidationsAndUpdates  'Add the validations to each parts of the setup
     EventsRibbon.UpdatedWatchedValues 'Update columns to be translated (in EventsRibbon)
     'Transfer codes to all the worksheets
-    TransferCodeWksh 'Transfer all the codes to the worksheets
+    TransferCodeWksh 'Transfer all the codes to the worksheets and workbook
     MsgBox "Done!"
     NotBusyApp
 End Sub
@@ -377,8 +377,9 @@ End Sub
 Private Sub TransferCodeWksh()
 
    Const CHANGEMODULENAME As String = "EventsSheetChange"
+   Const WBMODULENAME As String = "EventsSetupWorkbook"
 
-   Dim sheetsList As BetterArray                'List of sheets where to transfer the code
+   Dim objectsList As BetterArray                'List of sheets where to transfer the code
    Dim codeContent As String                    'a string to contain code to add
    Dim vbProj As Object                         'component, project and modules
    Dim vbComp As Object
@@ -386,21 +387,31 @@ Private Sub TransferCodeWksh()
    Dim sheetName As String
    Dim counter As Long
    Dim wb As Workbook
+   Dim modName As String
 
-   Set sheetsList = New BetterArray
+   Set objectsList = New BetterArray
    Set wb = ThisWorkbook
-   sheetsList.Push "Dictionary", "Choices", "Exports", "Analysis", "__checkRep"
+   objectsList.Push "__WorkbookLevel", "Dictionary", "Choices", "Exports", "Analysis", "__checkRep"
 
-   For counter = sheetsList.LowerBound To sheetsList.UpperBound
-        sheetName = sheetsList.Item(counter)
+   For counter = objectsList.LowerBound To objectsList.UpperBound
+        sheetName = objectsList.Item(counter)
+        modName = IIf(sheetName = "__WorkbookLevel", WBMODULENAME, CHANGEMODULENAME)
+
         'save the code module in the string sNouvCode
-        With wb.VBProject.VBComponents(CHANGEMODULENAME).CodeModule
+        With wb.VBProject.VBComponents(modName).CodeModule
             codeContent = .Lines(1, .CountOfLines)
         End With
 
         With wb
             Set vbProj = .VBProject
-            Set vbComp = vbProj.VBComponents(.sheets(sheetName).codeName)
+            'The component could be the workbook code name for workbook related transfers
+
+            If sheetName = "__WorkbookLevel" Then
+                Set vbComp = vbProj.VBComponents(.codeName)
+            Else
+                Set vbComp = vbProj.VBComponents(.sheets(sheetName).codeName)
+            End If
+
             Set codeMod = vbComp.CodeModule
         End With
 
@@ -409,5 +420,6 @@ Private Sub TransferCodeWksh()
             .DeleteLines 1, .CountOfLines
             .AddFromString codeContent
         End With
+
     Next
 End Sub

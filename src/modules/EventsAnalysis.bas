@@ -117,6 +117,8 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     Set drop = DropdownLists.Create(wb.Worksheets(DROPDOWNSHEET))
 
     If Intersect(Target, seriestitleRng) Is Nothing Then Exit Sub
+    If Target.Rows.Count > 1 Then Exit Sub
+
     BusyApp
     pass.UnProtect ANALYSISSHEET
 

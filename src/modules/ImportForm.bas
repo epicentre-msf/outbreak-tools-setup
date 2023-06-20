@@ -102,6 +102,8 @@ Public Sub ImportOrCleanSetup()
             wb.Worksheets("__checkRep").Cells.Clear
             On Error GoTo 0
             infoText = "Setup cleared!"
+        Else
+            infoText = "Aborted!"
         End If
     End Select
 
