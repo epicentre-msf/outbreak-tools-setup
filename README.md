@@ -7,7 +7,7 @@
 
 [![Download stable version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/stable_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/setup.xlsb)
 [![Download development version of setup file](https://github.com/epicentre-msf/outbreak-tools-setup/raw/main/src/imgs/dev_setup.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/raw/dev/src/bin/setup_dev.xlsb)
-[![Documentation](https://github.com/epicentre-msf/outbreak-tools/raw/main/src/imgs/docs.svg)](https://github.com/epicentre-ms/outbreak-tools-setup/wiki)
+[![Documentation](https://github.com/epicentre-msf/outbreak-tools/raw/main/src/imgs/docs.svg)](https://github.com/epicentre-msf/outbreak-tools-setup/wiki)
 
 </p>
 </div>
