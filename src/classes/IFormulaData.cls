@@ -9,10 +9,9 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "Interface of FormulaData"
 
-
-'@Folder("Formula")
+'@Interface
+'@Folder("Formulas")
 '@ModuleDescription("Interface of FormulaData")
-'@IgnoreModule
 
 Option Explicit
 

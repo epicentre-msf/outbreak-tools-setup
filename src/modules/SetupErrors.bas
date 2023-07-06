@@ -575,6 +575,7 @@ Private Sub checkTable(ByVal partName As String)
     Const TABBA As String = "Tab_Bivariate_Analysis"
     Const TABTS As String = "Tab_TimeSeries_Analysis"
     Const TABSP As String = "Tab_Spatial_Analysis"
+    Const TABSPTEMP As String = "Tab_SpatioTemporal_Analysis"
 
     Dim tabLo As ListObject 'ListObject for each of the tables in analysis
     Dim loname As String 'ListObject Name
@@ -598,8 +599,10 @@ Private Sub checkTable(ByVal partName As String)
         partName = "Univariate analysis", TABUA, _
         partName = "Bivariate analysis", TABBA, _
         partName = "Time series analysis", TABTS, _
-        partName = "Spatial analysis", TABSP _
+        partName = "Spatial analysis", TABSP, _
+        partName = "Spatio-temporal analysis", TABSPTEMP _ 
     )
+
     Set sh = wb.Worksheets(ANALYSISSHEETNAME)
     Set FUN = Application.WorksheetFunction
     checkingCounter = 0
@@ -666,7 +669,7 @@ Private Sub checkTable(ByVal partName As String)
 
             'add graph = no and flip coordinates = "yes" (on tables expect time series)
             If (specs.TableType <> TypeTimeSeries) Then
-                If (Not specs.HasGraph()) And (specs.Value("flip") = "yes") Then
+                If (Not specs.HasGraph()) And (specs.Value("flip") = "yes")  Then
 
                     checkingCounter = checkingCounter + 1
                     keyName = "ana-adgr-flip"
@@ -675,6 +678,7 @@ Private Sub checkTable(ByVal partName As String)
                     check.Add keyName & "-" & checkingCounter, infoMessage, checkingInfo
                 End If
             End If
+
             'Retrieve the formula of one specs and test them
             anaForm = specs.Value("function")
             If (anaForm <> vbNullString) Then
@@ -704,6 +708,7 @@ Private Sub CheckAnalysis()
     checkTable "Bivariate analysis"
     checkTable "Time series analysis"
     checkTable "Spatial analysis"
+    checkTable "Spatio-temporal analysis"
 End Sub
 
 Private Sub PrintReport()

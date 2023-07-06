@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "How to write the output of all checks"
 
-
-'@Folder("Checkings")
+'@PredeclaredId
+'@Folder("Checks")
 '@ModuleDescription("How to write the output of all checks")
-'@IgnoreModule
 
 Option Explicit
 Implements ICheckingOutput
@@ -51,7 +51,6 @@ End Property
 'Find the CellRange where to start writing
 Private Property Get WritingCell() As Range
   Dim sh As Worksheet
-  Dim cellRng As Range
   Set sh = Wksh()
   With sh
     Set WritingCell = .Cells(.Cells(.Rows.Count, 2).End(xlUp).Row, 2).Offset(3)
@@ -180,12 +179,14 @@ Private Sub WriteCheckingTables(ByVal checkTable As BetterArray)
   Next
 End Sub
 
-'Output elements
-Public Sub ICheckingOutput_PrintOutput(ByVal checkTable As BetterArray)
-  WriteCheckingTables checkTable
-End Sub
-
 'Errors and output
 Private Sub ThrowError(ByVal errorMessage As String)
   Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
+
+
+'Output elements
+Private Sub ICheckingOutput_PrintOutput(ByVal checkTable As BetterArray)
+  WriteCheckingTables checkTable
+End Sub
+

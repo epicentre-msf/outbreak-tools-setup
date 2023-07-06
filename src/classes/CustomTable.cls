@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "A wrapper of ListObject"
 
-
-'@Folder("Global")
-'@ModuleDescription("A wrapper of listObject to deal with custom tables")
-'@IgnoreModule
+'@PredeclaredId
+'@Folder("General")
+'@ModuleDescription("A wrapper of ListObject")
+'@IgnoreModule ReadOnlyPropertyAssignment, ExcelMemberMayReturnNothing, IIfSideEffect
 
 Option Explicit
 Implements ICustomTable
@@ -83,20 +84,6 @@ Private Property Get HeaderRowRange() As Range
   Set HeaderRowRange = Lo.HeaderRowRange()
 End Property
 
-Private Sub BusyApp()
-  Application.EnableEvents = False
-  Application.ScreenUpdating = False
-  Application.EnableAnimations = False
-  Application.Calculation = xlCalculationManual
-End Sub
-
-Private Sub NotBusyApp()
-  Application.EnableEvents = True
-  Application.ScreenUpdating = True
-  Application.EnableAnimations = True
-  Application.Calculation = xlCalculationAutomatic
-End Sub
-
 'Resize a table
 Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
   Dim Lo As ListObject
@@ -165,9 +152,7 @@ Private Sub SetValidation(ByVal colName As String, _
                           Optional ByVal alertType As String = "info")
 
     Dim rng As Range
-    Dim sh As Worksheet
 
-    Set sh = Wksh()
     'Test if the colname exists before seting the validation
     If Not ColumnExists(colName) Then Exit Sub
     Set rng = DataRange(colName)
@@ -253,7 +238,6 @@ End Property
 
     Dim idRng As Range
     Dim colRng As Range
-    Dim sh As Worksheet
     Dim retValue As Variant
   
     'Iterations for id and return ranges
@@ -262,7 +246,6 @@ End Property
   
     If IdValue = vbNullString Then Exit Property
   
-    Set sh = Wksh()
     If (Not ColumnExists(colName)) Or (Not ColumnExists(IdValue)) Then Exit Property
     Set idRng = DataRange(IdValue)
     Set colRng = DataRange(colName)
@@ -458,50 +441,50 @@ Private Sub SortElements(ByVal els As Variant)
   Next
 End Sub
 
-Public Sub ICustomTable_AddRows()
+Private Sub ICustomTable_AddRows()
   Resize AddRows:=True
 End Sub
 
-Public Sub ICustomTable_RemoveRows(Optional ByVal totalCount As Long = 0)
+Private Sub ICustomTable_RemoveRows(Optional ByVal totalCount As Long = 0)
   Resize AddRows:=False, totalRowCount:=totalCount
 End Sub
 
-Public Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
+Private Sub ICustomTable_SetValidation(ByVal colName As String, ByVal drop As IDropdownLists, _
                                       ByVal dropName As String, Optional ByVal alertType As String = "info")
     SetValidation colName, drop, dropName, alertType
 End Sub
 
-Public Property Get ICustomTable_DataRange(ByVal colName As String, _
+Private Property Get ICustomTable_DataRange(ByVal colName As String, _
                                           Optional ByVal includeHeaders As Boolean = False, _
                                           Optional ByVal strictSearch As Boolean = False) As Range
   Set ICustomTable_DataRange = DataRange(colName, includeHeaders, strictSearch)
 End Property
 
-Public Property Get ICustomTable_Value(ByVal colName As String, ByVal keyName As String) As String
+Private Property Get ICustomTable_Value(ByVal colName As String, ByVal keyName As String) As String
   ICustomTable_Value = Value(colName, keyName)
 End Property
 
-Public Property Get ICustomTable_CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
+Private Property Get ICustomTable_CellRange(ByVal colName As String, ByVal lineNum As Long) As Range
   Set ICustomTable_CellRange = CellRange(colName, lineNum)
 End Property
 
-Public Sub ICustomTable_Import(ByVal impTab As ICustomTable)
+Private Sub ICustomTable_Import(ByVal impTab As ICustomTable)
   Import impTab
 End Sub
 
-Public Property Get ICustomTable_HeaderRange() As Range
+Private Property Get ICustomTable_HeaderRange() As Range
   Set ICustomTable_HeaderRange = HeaderRange()
 End Property
 
-Public Property Get ICustomTable_Name() As String
+Private Property Get ICustomTable_Name() As String
   ICustomTable_Name = Name()
 End Property
 
-Public Sub ICustomTable_Clean()
+Private Sub ICustomTable_Clean()
   Clean
 End Sub
 
-Public Sub ICustomTable_Sort(ByVal els As Variant)
+Private Sub ICustomTable_Sort(ByVal els As Variant)
   SortElements els
 End Sub
 

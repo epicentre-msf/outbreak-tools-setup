@@ -19,6 +19,7 @@ update_setup  <- function(update_status = 0) {
          file.copy(from = "./Rscripts/setup_aky.xlsb",
              to = "./setup.xlsb", overwrite = TRUE)
     }
+
     # revert back previous stable designer due to corrupt files.
     if (update_status == 2) {
          file.copy(from = "./Rscripts/setup_prev.xlsb",

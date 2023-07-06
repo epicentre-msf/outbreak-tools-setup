@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Checking of the setup"
 
-
-'@Folder("Checkings")
+'@PredeclaredId
+'@Folder("Checks")
 '@ModuleDescription("Checking of the setup")
-'@IgnoreModule
 
 Option Explicit
 Implements IChecking
@@ -169,20 +169,20 @@ End Sub
 
 
 'Exposed methods
-Public Sub IChecking_Add(ByVal keyName As String, ByVal LABEL As String, _
+Private Sub IChecking_Add(ByVal keyName As String, ByVal LABEL As String, _
                 Optional ByVal scope As CheckingScope = checkingNote)
     Add keyName, LABEL, scope
 End Sub
-Public Property Get IChecking_ListOfKeys() As BetterArray
+Private Property Get IChecking_ListOfKeys() As BetterArray
   Set IChecking_ListOfKeys = ListOfKeys()
 End Property
 
 'Heading could be subtitle or title.
-Public Property Get IChecking_Heading(Optional ByVal subTitle As Boolean = False) As String
+Private Property Get IChecking_Heading(Optional ByVal subTitle As Boolean = False) As String
   IChecking_Heading = Heading(subTitle)
 End Property
 
 'You can retrieve the label, the scope or the color
-Public Property Get IChecking_ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As CheckingValue = 1) As String
+Private Property Get IChecking_ValueOf(ByVal keyName As String, Optional ByVal retrievedValue As CheckingValue = 1) As String
   IChecking_ValueOf = ValueOf(keyName, retrievedValue)
 End Property

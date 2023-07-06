@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of analysis class"
 
-
-'@Folder("Dictionary")
-'@ModuleDescription("Interface of ")
-'@IgnoreModule
+'@Interface
+'@Folder("Analysis")
+'@ModuleDescription("Interface of analysis class")
+'@IgnoreModule ProcedureNotUsed
 
 Option Explicit
 

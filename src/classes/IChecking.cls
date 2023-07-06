@@ -7,12 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Attribute VB_Description = "A class for checking at each level of the setup file"
+Attribute VB_Description = "Interface of setup checkings"
 
 
-'@Folder("Checkings")
+'@Folder("Checks")
 '@ModuleDescription("Interface of setup checkings")
-'@IgnoreModule
 
 Public Enum CheckingScope
   checkingError = 1

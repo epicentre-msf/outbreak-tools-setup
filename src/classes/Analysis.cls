@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Management of events in analysis worksheet"
 
-
+'@PredeclaredId
 '@Folder("Analysis")
-'@ModuleDescription("Analysis Class")
-'@IgnoreModule
+'@ModuleDescription("Management of events in analysis worksheet")
+
 
 Implements IAnalysis
 Option Explicit
@@ -31,6 +32,7 @@ Private Const GRAPHTIMESERIES As String = "Tab_Graph_TimeSeries"
 Private Const TITLEGRAPHTIMESERIES As String = "Tab_Label_TSGraph"
 Private Const SPATIAL As String = "Tab_Spatial_Analysis"
 Private Const SPATIOTEMPORAL As String = "Tab_SpatioTemporal_Analysis"
+Private Const SPATIOTEMPSPECS As String = "Tab_SpatioTemporal_Specs"
 
 
 Public Function Create(ByVal anash As Worksheet) As IAnalysis
@@ -93,12 +95,14 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     listLoNames.Push GRAPHTIMESERIES
   Case "spatial analysis"
     listLoNames.Push SPATIAL
+  Case "spatio-temporal specifications"
+    listLoNames.Push SPATIOTEMPSPECS
   Case "spatio-temporal analysis"
     listLoNames.Push SPATIOTEMPORAL
   Case Else
     listLoNames.Push GLOBALSUMMARY, UNIVARIATE, BIVARIATE, TIMESERIES, _
                      TITLEGRAPHTIMESERIES, GRAPHTIMESERIES, SPATIAL, _
-                     SPATIOTEMPORAL
+                     SPATIOTEMPSPECS, SPATIOTEMPORAL
   End Select
 
   For counter = listLoNames.LowerBound To listLoNames.UpperBound
@@ -147,7 +151,8 @@ Private Sub CheckTablesRequirements()
   Set loTable = New BetterArray
 
   loTable.Push GLOBALSUMMARY, UNIVARIATE, BIVARIATE, TIMESERIES, _
-               GRAPHTIMESERIES, TITLEGRAPHTIMESERIES, SPATIAL, SPATIOTEMPORAL
+               GRAPHTIMESERIES, TITLEGRAPHTIMESERIES, SPATIAL, SPATIOTEMPSPECS, _ 
+               SPATIOTEMPORAL
 
   For counter = loTable.LowerBound To loTable.UpperBound
       loname = loTable.Items(counter)
@@ -165,10 +170,10 @@ Private Sub ThrowError(ByVal errorMessage As String)
 End Sub
 
 'Exposed methods
-Public Sub IAnalysis_AddRows()
+Private Sub IAnalysis_AddRows()
   ManageRows
 End Sub
 
-Public Sub IAnalysis_RemoveRows()
+Private Sub IAnalysis_RemoveRows()
   ManageRows del:=True
 End Sub

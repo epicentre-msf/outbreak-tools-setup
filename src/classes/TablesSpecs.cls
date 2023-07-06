@@ -115,8 +115,10 @@ Private Property Get TableType() As AnalysisTablesType
         tType = TypeTimeSeries
     Case "spatial analysis"
         tType = TypeSpatial
+    Case "spatio-temporal analysis"
+        tType = TypeSpatioTemporal
     Case Else
-        ThrowError "Could not find the table type [uni-bivariate, spatial or timeseries? :(]" & ".Actual type is : " & anaType
+        ThrowError "Could not find the table type [uni-bivariate, spatial, timeseries, spatio-tempora? :(]" & ".Actual type is : " & anaType
     End Select
 
     TableType = tType
@@ -158,6 +160,8 @@ Private Property Get TableId() As String
         prefix = "TS"
     Case TypeSpatial
         prefix = "SA"
+    Case TypeSpatioTemporal
+        prefix = "SPT"
     End Select
 
     TableId = prefix & "_tab" & lineNum
@@ -181,6 +185,8 @@ Private Property Get HasPercent() As Boolean
         HasPercent = (Value("percentage")) = "row" Or (Value("percentage") = "column") Or (Value("percentage") = "total")
     Case TypeTimeSeries
         HasPercent = ((Value("percentage")) = "row" Or (Value("percentage") = "column")) And HasTotal()
+    Case TypeSpatioTemporal
+        HasPercent = False
     End Select
 End Property
 
@@ -198,6 +204,8 @@ Private Property Get HasTotal() As Boolean
                     (Value("percentage") = "column")) And (Value("column") <> vbNullString)
     Case TypeSpatial
         HasTotal = (Value("column") <> vbNullString)
+    Case TypeSpatioTemporal
+        HasTotal = False
     End Select
 End Property
 
@@ -211,6 +219,8 @@ Public Property Get HasGraph() As Boolean
         HasGraph = (Value("graph") = "percentage" Or Value("graph") = "values" Or Value("graph") = "both")
     Case TypeSpatial
         HasGraph = (Value("graph") = "yes") And (Value("column") <> vbNullString)
+    Case TypeSpatioTemporal
+        HasGraph = (Value("graph") = "yes")
     End Select
 End Property
 
@@ -229,8 +239,10 @@ Private Property Get HasMissing() As Boolean
         HasMissing = (Value("missing") = "yes") And (Value("column") <> vbNullString)
     Case TypeSpatial
         HasMissing = (Value("missing") = "yes") And (Value("column") <> vbNullString)
+    'For spatio - temporal, there is no missing on column
+    Case TypeSpatioTemporal
+        HasMissing = False
     End Select
-
 End Property
 
 Public Property Get ValidTable() As Boolean
@@ -338,6 +350,25 @@ Public Property Get ValidTable() As Boolean
                 " which is not geo or hf. Spatial tables should be on geo or hf variables."
             End If
         End If
+
+    Case TypeSpatioTemporal
+        rowType = vars.Value(colName:=TYPECOLUMN, varName:=rowVar)
+        Valid = (rowType = "date") And (colControl = "geo" Or colControl = "hf")
+
+        'Add non validity reasons
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "The row variable is not specified"
+            ElseIf (colVar = vbNullString) Then
+                ValidityReason = "The column variable is not specified"
+            ElseIf (rowType <> "date") Then
+                ValidityReason = "The row variable " & rowVar & _ 
+                 "is not of type date. Spatio temporal tables should have dates as row variables." 
+            ElseIf (colControl <> "geo" And colControl <> "hf") Then
+                ValidityReason = "The column variable " & colVar & " is " & _ 
+                "not geo or hf. Columns of spatio-temporal tables shoud be geo or hf variables."
+            End If
+        End If
     End Select
     ValidTable = Valid
 End Property
@@ -398,15 +429,15 @@ Private Property Get Data(ByVal rowOrCol As String) As BetterArray
         varControl = vars.Value(varName:=nameVar, colName:=CONTROLCOLUMN)
         varControlDet = vars.Value(varName:=nameVar, colName:=CONTROLDETAILSCOLUMN)
 
+        'For choices, categories are drown from the choices
+        'For choice formula, use the choice formula object
         If (varControl = "choice_manual") Then
             Set choi = Choice()
             Set varsCat = choi.Categories(varControlDet)
         ElseIf (varControl = "choice_formula") Then
             Set choiform = ChoiceFormula.Create(varControlDet)
             Set varsCat = choiform.Categories()
-        End If
-        'For choices, categories are drown from the choices
-        'For choice formula, use the choice formula object
+        End If  
     End If
     Set Data = varsCat.Clone()
 End Property

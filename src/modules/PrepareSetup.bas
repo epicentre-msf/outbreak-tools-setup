@@ -128,6 +128,7 @@ Private Sub CreateDropdowns()
                 "Add or remove rows of labels for time series graphs", _
                 "Add or remove rows of graph on time series", _
                 "Add or remove rows of spatial analysis", _
+                "Add or remove rows of spatio-temporal specifications", _
                 "Add or remove rows of spatio-temporal analysis", _
                 "Add or remove rows of all tables"
 
@@ -199,10 +200,14 @@ Private Sub AddValidationsAndUpdates()
                         drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export translation", dropName:="__yesno", _
                         drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="export translation", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
     currTab.SetValidation colName:="file format", dropName:="__export_format", _
                         drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export header", dropName:="__export_header", _
                         drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="export analysis", dropName:="__yesno", _
+                          drop:=drop, alertType:="error"    
 
     'Add Watchers on columns
     BusyApp
@@ -293,6 +298,7 @@ Private Sub AddValidationsAndUpdates()
 
     currTab.SetValidation colName:="row", dropName:="__geo_vars", _
                           drop:=drop, alertType:="error"
+
     'On spatial analysis column variables are not mandatory
     currTab.SetValidation colName:="column", dropName:="__choice_vars", _
                           drop:=drop, alertType:="info"
@@ -300,13 +306,28 @@ Private Sub AddValidationsAndUpdates()
                           drop:=drop, alertType:="error"
     currTab.SetValidation colName:="add percentage", dropName:="__yesno", _
                           drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="add graph", dropName:="__perc_val", _
+    currTab.SetValidation colName:="add graph", dropName:="__yesno", _
                         drop:=drop, alertType:="error"
     currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
                         drop:=drop, alertType:="error"
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                         alertType:="info"
     BusyApp
+
+    'Spatio Temporal analysis
+    MoveToTable "Tab_SpatioTemporal_Analysis"
+
+    currTab.SetValidation colName:="row", dropName:="__time_vars", drop:=drop, _  
+                          alertType:="error"
+    currTab.SetValidation colName:="column", dropName:="__geo_vars", drop:=drop, _ 
+                           alertType:="error"
+    currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
+                           alertType:="info"
+    currTab.SetValidation colName:="flip coordinates", dropName:="__yesno", _
+                           drop:=drop, alertType:="error"
+    currTab.SetValidation colName:="add graph", dropName:="__yesno", _
+                           drop:=drop, alertType:="error"
+    
     pass.Protect "Analysis"
 
     'on checking worksheet, add dropdown on filters
