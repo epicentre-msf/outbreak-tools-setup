@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Manage passwords in the setup file"
 
-
-'@Folder("Linelist Passwords")
-'@ModuleDescription("Manage passwords in the linelist")
-'@IgnoreModule
+'@PredeclaredId
+'@Folder("setup file)
+'@ModuleDescription("Manage passwords in the setup file")
 
 Option Explicit
 
@@ -164,25 +164,25 @@ Private Sub ThrowError(ByVal errorMessage As String)
     Err.Raise VBA.vbObjectError + 516, CLASSNAME, "Error : " & errorMessage
 End Sub
 
-Public Property Get IPasswords_PassWord() As String
+Private Property Get IPasswords_PassWord() As String
     IPasswords_PassWord = Password()
 End Property
 
-Public Sub IPasswords_UnProtect(Optional ByVal sheetName As String = "_active")
+Private Sub IPasswords_UnProtect(Optional ByVal sheetName As String = "_active")
     UnProtect sheetName
 End Sub
 
-Public Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", _
+Private Sub IPasswords_Protect(Optional ByVal sheetName As String = "_active", _
                               Optional ByVal strictProtect As Boolean = False, _
                               Optional ByVal deleteColumns As Boolean = False)
     Protect sheetName, strictProtect, deleteColumns
 End Sub
 
     'Protect and unprotect the workbook to avoid sheet name changes
-Public Sub IPasswords_ProtectWkb(ByVal wb As Workbook, Optional ByVal protectSheetName As Boolean = True)
+Private Sub IPasswords_ProtectWkb(ByVal wb As Workbook, Optional ByVal protectSheetName As Boolean = True)
     ProtectWkb wb, protectSheetName
 End Sub
 
-Public Sub IPasswords_UnProtectWkb(ByVal wb As Workbook)
+Private Sub IPasswords_UnProtectWkb(ByVal wb As Workbook)
     UnProtectWkb wb
 End Sub

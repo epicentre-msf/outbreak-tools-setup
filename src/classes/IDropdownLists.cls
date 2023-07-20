@@ -7,12 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of dropdown class"
 
-
-'@Folder("Dictionary")
-'@ModuleDescription("Interface of ")
-'@IgnoreModule
-
+'@Folder("General")
+'@ModuleDescription("Interface of dropdown class")
 Option Explicit
 
 'Exposed methods

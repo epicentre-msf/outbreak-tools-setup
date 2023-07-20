@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of export class"
 
-
-'@Folder("Linelist")
-'@ModuleDescription("Export Linelist Data")
-'@IgnoreModule
+'@Folder("Dictionary")
+'@ModuleDescription("Interface of export class")
+'@Interface
 
 Option Explicit
 

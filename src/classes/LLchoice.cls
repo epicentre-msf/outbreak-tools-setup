@@ -8,9 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "Linelist choice class"
+
 '@PredeclaredId
-
-
 '@Folder("Dictionary")
 '@ModuleDescription("Linelist choice class")
 

@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "Work with unstructured data in a worksheet"
 
 '@PredeclaredId
-'@IgnoreModule IIfSideEffect, ExcelMemberMayReturnNothing, ReadOnlyPropertyAssignment
+'@IgnoreModule SuspiciousPredeclaredInstanceAccess, IIfSideEffect, ExcelMemberMayReturnNothing, ReadOnlyPropertyAssignment
 '@Folder("General")
 '@ModuleDescription("Work with unstructured data in a worksheet")
 

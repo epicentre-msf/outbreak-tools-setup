@@ -7,14 +7,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Linelist variables class"
 
-
+'@PredeclaredId
 '@Folder("Dictionary")
-'@ModuleDescription("Linelist Variable Class")
-'@IgnoreModule
+'@ModuleDescription("Linelist variables class")
 
-
-'This is a modified version of LLvariables without need for Dictionary
+'This is a modified version of LLvariables without need for the Dictionary
 'to be prepared
 
 Option Explicit
@@ -32,7 +31,8 @@ Private Const CLASSNAME As String = "LLVariables"
 
 Public Function Create(ByVal dict As ILLdictionary) As ILLVariables
 
-    If Not dict.ColumnExists(VARIABLENAME) Then ThrowErrorUnableInstanciateNoVarName
+    If Not dict.ColumnExists(VARIABLENAME) Then _ 
+     ThrowErrorUnableInstanciateNoVarName
 
     With New LLVariables
         Set .Dictionary = dict
@@ -57,7 +57,7 @@ Friend Property Get VarRange() As Range
     Set VarRange = this.varRng
 End Property
 
-'Functions --------------------------------------------------------------------------
+'Functions ---------------------------------------------------------------------
 
 'Test if a variable is present
 Private Function Contains(ByVal varName As String) As Boolean
@@ -77,7 +77,8 @@ Private Function Contains(ByVal varName As String) As Boolean
     If searchValue = vbNullString Then
         Exist = False
     Else
-        Exist = Not (varRng.Find(What:=searchValue, LookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        Exist = Not (varRng.Find(What:=searchValue, _ 
+                     LookAt:=xlWhole, MatchCase:=True) Is Nothing)
     End If
 
     Contains = Exist
@@ -123,7 +124,9 @@ Private Function Value(ByVal colName As String, ByVal varName As String) As Stri
     Value = retValue
 End Function
 
-Private Sub SetValue(ByVal varName As String, ByVal colName As String, ByVal newValue As String, Optional ByVal onEmpty As Boolean = False)
+Private Sub SetValue(ByVal varName As String, ByVal colName As String, _ 
+                     ByVal newValue As String, _ 
+                    Optional ByVal onEmpty As Boolean = False)
 
     'Row and columns to return
     Dim rowNum As Long
@@ -148,30 +151,35 @@ Private Sub SetValue(ByVal varName As String, ByVal colName As String, ByVal new
 End Sub
 
 
-'Errors ------------------------------------------------------------------------------------------------------------------------------------
+'Errors ------------------------------------------------------------------------
 Private Sub ThrowErrorUnableInstanciateNoVarName()
-    Err.Raise VBA.vbObjectError + 513, CLASSNAME, "Unable to create an instance of the class variable, variable name column does not exists"
+    Err.Raise VBA.vbObjectError + 513, CLASSNAME, _ 
+     "Unable to create an instance of the class variable, variable name column does not exists"
 End Sub
 
 
-'Interface ---------------------------------------------------------------------------------------------------------------------------------
+'Interface ---------------------------------------------------------------------
 
 'Properties
-Public Property Get ILLVariables_Dictionary() As ILLdictionary
+Private Property Get ILLVariables_Dictionary() As ILLdictionary
     Set ILLVariables_Dictionary = Dictionary
 End Property
 
 'Exposed methods
-Public Function ILLVariables_Value(ByVal colName As String, ByVal varName As String) As String
+Private Function ILLVariables_Value(ByVal colName As String, _ 
+                                    ByVal varName As String) As String
     ILLVariables_Value = Value(colName, varName)
 End Function
 
 
-Public Function ILLVariables_Contains(ByVal varName As String) As Boolean
+Private Function ILLVariables_Contains(ByVal varName As String) As Boolean
     ILLVariables_Contains = Contains(varName)
 End Function
 
-Public Sub ILLVariables_SetValue(ByVal varName As String, ByVal colName As String, ByVal newValue As String, Optional ByVal onEmpty As Boolean = False)
+Private Sub ILLVariables_SetValue(ByVal varName As String, _ 
+                                  ByVal colName As String, _ 
+                                  ByVal newValue As String, _ 
+                                  Optional ByVal onEmpty As Boolean = False)
     SetValue varName, colName, newValue, onEmpty
 End Sub
 

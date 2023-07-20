@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
+Attribute VB_Description = "Interface of translation"
 
 '@Folder("Dictionary")
-'@ModuleDescription("Interface of ")
-'@IgnoreModule
+'@ModuleDescription("Interface of translation")
+'@Interface
 
 Option Explicit
 

@@ -7,23 +7,30 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Attribute VB_Description = "Interface of Dictionary Class"
+Attribute VB_Description = "Interface of dictionary class"
 
 '@Folder("Dictionary")
-'@ModuleDescription "Interface of Dictionary Class"
+'@ModuleDescription "Interface of dictionary class"
 '@Interface
-
 '@IgnoreModule ProcedureNotUsed
+
 Option Explicit
 
 'Exposed methods
 Public Property Get Data() As IDataSheet: End Property
 Public Property Get DataRange(Optional ByVal colName As String = "__all__", _
-                              Optional ByVal includeHeaders As Boolean = False) As Range: End Property
+                              Optional ByVal includeHeaders As Boolean = False) _ 
+                              As Range
+End Property
 
 'Functions
-Public Function ColumnExists(ByVal colName As String, Optional ByVal checkValidity As Boolean) As Boolean: End Function
+Public Function ColumnExists(ByVal colName As String, _ 
+                             Optional ByVal checkValidity As Boolean) _ 
+                            As Boolean
+End Function
+
 Public Function VariableExists(ByVal varName As String) As Boolean: End Function
+
 'Add and remove rows
 Public Sub AddRows(): End Sub
 Public Sub RemoveRows(): End Sub

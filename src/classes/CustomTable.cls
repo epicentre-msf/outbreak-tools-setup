@@ -25,6 +25,9 @@ End Type
 Private this As TCustomTable
 Private Const CLASSNAME As String = "ICustomTable"
 Private Const NBROWSADD As Long = 5 'Number of Rows to add when resizing
+Private Const TABTRANSLATIONS As String = "Tab_Translations"
+Private Const TABEXPORT As String = "Tab_Export"
+
 
 Public Function Create(ByVal Lo As ListObject, _
                       Optional ByVal idCol As String = vbNullString, _
@@ -85,7 +88,9 @@ Private Property Get HeaderRowRange() As Range
 End Property
 
 'Resize a table
-Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal totalRowCount As Long = 0)
+Private Sub Resize(Optional ByVal AddRows As Boolean = False, _ 
+                   Optional ByVal totalRowCount As Long = 0, _ 
+                   Optional ByVal nbRows As Long = NBROWSADD)
   Dim Lo As ListObject
   'Begining of the tables
   Dim loRowHeader As Long
@@ -108,10 +113,10 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, Optional ByVal tot
     rowCounter = loRowsEnd
     If AddRows Then
       loRowsEnd = loRowsEnd + 1 'Start at the bottom of the table
-      For rowCounter = 1 To NBROWSADD + 1
+      For rowCounter = 1 To  nbRows + 1
             .Rows(loRowsEnd).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
       Next
-      loRowsEnd = loRowsEnd + NBROWSADD
+      loRowsEnd = loRowsEnd + nbRows
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
       AddIds
     Else
@@ -238,7 +243,7 @@ End Property
 
     Dim idRng As Range
     Dim colRng As Range
-    Dim retValue As Variant
+    Dim retValue As String
   
     'Iterations for id and return ranges
     Dim cellidRng As Range
@@ -257,14 +262,15 @@ End Property
       Set cellidRng = cellidRng.Offset(1)
       Set cellRetRng = cellRetRng.Offset(1)
     Loop
-  
+
+    retValue = vbNullString
     On Error Resume Next
       If cellidRng.Row <= idRng.Cells(idRng.Rows.Count, 1).Row Then
-        retValue = cellRetRng.Value
+        retValue = CStr(cellRetRng.Value)
       End If
     On Error GoTo 0
   
-    If TypeName(retValue) = "String" Then Value = retValue
+    Value = retValue
   End Property
 
 Private Property Get Name() As String
@@ -295,15 +301,52 @@ Private Sub Clean()
     If toClear Then rng.ClearContents
   Next
 
-  If Name() = "Tab_Translations" Then
+  If Name() = TABTRANSLATIONS Then
     On Error Resume Next
     Lo.DataBodyRange.ClearContents
     On Error GoTo 0
     totalCount = 1
   End If
   'Now resize the listObject
-  If Name() <> "Tab_Export" Then Resize AddRows:=False, totalRowCount:=totalCount
+  If Name() <> TABEXPORT Then Resize AddRows:=False, totalRowCount:=totalCount
 End Sub
+
+Private Sub ImportAll(ByVal impTab As ICustomTable)
+  Dim currhRng As Range
+  Dim imphRng As Range
+  Dim currLo As ListObject
+  Dim sh As Worksheet
+  Dim impTabList As BetterArray 'Data of imported Table
+  Dim bodyRng As Range
+
+  'I want to import by keep all the headers of the imported tab.
+  'First I need to clean the current tab and then I copy and paste
+  'the data from the imported table
+
+  If Name() <> impTab.Name() Then Exit Sub
+
+  Clean
+  Set currLo = Table()
+  Set currhRng = currLo.HeaderRowRange()
+  Set imphRng = impTab.HeaderRange()
+  Set impTabList = New BetterArray
+  Set sh = Wksh()
+
+  'Get the data from imported listObject
+  impTabList.FromExcelRange imphRng.Cells(1, 1), _ 
+                            DetectLastRow:=True, DetectLastColumn:=True
+
+  'AddRows to the current Table
+  Resize AddRows:=True, nbRows:=impTabList.Length
+  'Copy/paste data
+  impTabList.ToExcelRange currhRng.Cells(1, 1)
+  'Resize the new listObject with imported elements
+  With sh
+    Set bodyRng = .Range(currhRng.Cells(1, 1), currhRng.Cells(impTabList.Length, imphRng.Columns.Count))
+    currLo.Resize bodyRng
+  End With
+End Sub
+
 
 'Import another custom table to this one
 
@@ -319,6 +362,8 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Dim rng As Range
   Dim sh As Worksheet
   Dim toClear As Boolean
+  'current Header Range
+
 
   'Test if the custom tables have the same name, otherwise exit.
   If Name() <> impTab.Name() Then Exit Sub
@@ -468,8 +513,15 @@ Private Property Get ICustomTable_CellRange(ByVal colName As String, ByVal lineN
   Set ICustomTable_CellRange = CellRange(colName, lineNum)
 End Property
 
-Private Sub ICustomTable_Import(ByVal impTab As ICustomTable)
-  Import impTab
+Private Sub ICustomTable_Import(ByVal impTab As ICustomTable, Optional ByVal keepImportHeaders As Boolean = False)
+
+  'If you want to keep import headers, use import all instead.
+  If keepImportHeaders Then
+    ImportAll impTab
+  Else
+    Import impTab
+  End If
+
 End Sub
 
 Private Property Get ICustomTable_HeaderRange() As Range

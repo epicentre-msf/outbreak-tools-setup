@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Linelist sheets"
 
-
+'@PredeclaredId
 '@Folder("Dictionary")
 '@ModuleDescription("Linelist sheets")
-'@IgnoreModule
 
 Option Explicit
 
@@ -253,39 +253,39 @@ Private Sub ThrowErrorUnableInstanciateNotPrepared()
 End Sub
 
 'Interface ---------------------------------------------------------------------
-Public Property Get ILLSheets_Dictionary() As ILLdictionary
+Private Property Get ILLSheets_Dictionary() As ILLdictionary
     Set ILLSheets_Dictionary = Dictionary()
 End Property
 
-Public Function ILLSheets_SheetInfo(ByVal sheetName As String, Optional ByVal info As Byte = 1) As String
+Private Function ILLSheets_SheetInfo(ByVal sheetName As String, Optional ByVal info As Byte = 1) As String
     ILLSheets_SheetInfo = SheetInfo(sheetName, info)
 End Function
 
-Public Function ILLSheets_Contains(ByVal sheetName As String) As Boolean
+Private Function ILLSheets_Contains(ByVal sheetName As String) As Boolean
     ILLSheets_Contains = Contains(sheetName)
 End Function
 
-Public Function ILLSheets_DataBounds(ByVal sheetName As String, _
+Private Function ILLSheets_DataBounds(ByVal sheetName As String, _
                                      Optional ByVal Bound As Byte = 1) As Long
     ILLSheets_DataBounds = DataBounds(sheetName, Bound)
 End Function
 
-Public Function ILLSheets_ContainsControl(ByVal sheetName As String, Optional ByVal control As String = "list_auto") As Boolean
+Private Function ILLSheets_ContainsControl(ByVal sheetName As String, Optional ByVal control As String = "list_auto") As Boolean
     ILLSheets_ContainsControl = ContainsControl(sheetName, control)
 End Function
 
 'Variable Address
-Public Function ILLSheets_VariableAddress(ByVal varName As String, Optional ByVal onSheet As String = vbNullString) As String
+Private Function ILLSheets_VariableAddress(ByVal varName As String, Optional ByVal onSheet As String = vbNullString) As String
     ILLSheets_VariableAddress = VariableAddress(varName, onSheet)
 End Function
 
 'Row index of the sheet in the dictionary
-Public Function ILLSheets_RowIndex(ByVal sheetName As String) As Long
+Private Function ILLSheets_RowIndex(ByVal sheetName As String) As Long
     ILLSheets_RowIndex = RowIndex(sheetName)
 End Function
 
 'Number of variables in the SheetS
-Public Function ILLSheets_NumberOfVars(ByVal sheetName As String) As Long
+Private Function ILLSheets_NumberOfVars(ByVal sheetName As String) As Long
     ILLSheets_NumberOfVars = NumberVars(sheetName)
 End Function
 

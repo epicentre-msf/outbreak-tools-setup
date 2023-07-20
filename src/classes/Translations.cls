@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Manage translations of the current setup"
 
-
-'@Folder("Global")
+'@PredeclaredId
+'@Folder("Dictionary")
 '@ModuleDescription("Manage translations of the current setup")
-'@IgnoreModule
+'@IgnoreModule ImplicitActiveSheetReference : I will use Range method without referring to a worksheet.
 
 Option Explicit
 Implements ITranslations
@@ -374,7 +375,7 @@ Private Sub SortTransLo()
   sortRng.Sort key1:=keyColRng, header:=xlYes, Orientation:=xlTopToBottom
   'Now redefine the listObject
   sh.ListObjects.Add(xlSrcRange, loRng, , xlYes).Name = savedName
-  sh.ListObjects(1).TableStyle = ""
+  sh.ListObjects(1).TableStyle = vbNullString
 End Sub
 
 
@@ -397,20 +398,17 @@ End Property
 'Add a new language to the worksheet
 Private Sub AddTransLang(Optional ByVal langVal As String = vbNullString)
 
-  Dim BordersColor As Long
   Dim sh As Worksheet
   Dim Lo As ListObject
   Dim hRng As Range
   Dim prevLoRng As Range
   Dim newLoRng As Range
-  Dim askFirst As Long
   Dim cellRng As Range
   Dim langList As BetterArray
 
 
   Set Lo = Table()
   Set sh = Wksh()
-  BordersColor = RGB(34, 96, 162)
 
 
   Set hRng = Lo.HeaderRowRange
@@ -460,10 +458,10 @@ Private Function RangeExists(ByVal rngName As String) As Boolean
 End Function
 
 'Exposed methods
-Public Sub ITranslations_UpdateTrans(ByVal rngSh As Worksheet)
+Private Sub ITranslations_UpdateTrans(ByVal rngSh As Worksheet)
   UpdateTrans rngSh
 End Sub
 
-Public Sub ITranslations_AddTransLang(ByVal langVal As String)
+Private Sub ITranslations_AddTransLang(ByVal langVal As String)
   AddTransLang langVal
 End Sub

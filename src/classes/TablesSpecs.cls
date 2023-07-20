@@ -8,9 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Attribute VB_Description = "analysis tables specifications (univariate, bivariate, time series and spatial)"
+
 '@PredeclaredId
-
-
 '@Folder("Analysis")
 '@ModuleDescription("analysis tables specifications (univariate, bivariate, time series and spatial)")
 

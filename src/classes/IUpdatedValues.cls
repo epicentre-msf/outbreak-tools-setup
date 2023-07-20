@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of updated values class"
 
-
-'@Folder("Setup")
-'@ModuleDescription("Interface of Updating Class")
-'@IgnoreModule
+'@Folder("setup file")
+'@ModuleDescription("Interface of updated values class")
+'@Interface
 
 Option Explicit
 

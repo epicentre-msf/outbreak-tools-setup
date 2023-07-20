@@ -12,7 +12,7 @@ Attribute VB_Description = "Interface of DataSheet Object"
 
 '@Folder("General")
 '@ModuleDescription("Interface of DataSheet Object")
-'@IgnoreModule
+'@Interface
 
 Option Explicit
 

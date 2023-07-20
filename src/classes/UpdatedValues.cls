@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Watch updated values in the setup"
 
 
-'@Folder("Setup")
+'@PredeclaredId
+'@Folder("setup file")
 '@ModuleDescription("Watch updated values in the setup")
-'@IgnoreModule
 Option Explicit
 Implements IUpdatedValues
 
@@ -181,7 +182,7 @@ Private Sub WriteValues(ByVal colName As String, ByVal rngName As String, _
   upLo.Resize loRng
 End Sub
 
-Private Sub WriteUpdate(ByVal idName As String, ByVal pos As Long, Optional ByVal statusType As String = "yes")
+Private Sub WriteUpdate(ByVal pos As Long, Optional ByVal statusType As String = "yes")
   Dim upLo As ListObject
   Dim idRng As Range
   'Find the colName in the listObject
@@ -199,7 +200,6 @@ End Sub
 Private Sub DeleteUp()
   Dim upLo As ListObject
   Dim rng As Range
-  Dim counter As Long
   Set upLo = Table()
   Set rng = upLo.Range
   If Not upLo.DataBodyRange Is Nothing Then upLo.DataBodyRange.Delete
@@ -226,7 +226,7 @@ Private Sub CheckStatus(ByVal sh As Worksheet, ByVal Target As Range)
     If Not (rng Is Nothing) Then
       If Not IsUpdated(rngName) Then
         If Not (Intersect(Target, rng) Is Nothing) Then
-          WriteUpdate rngName, counter
+          WriteUpdate counter
           Exit Sub
         End If
       End If
@@ -270,22 +270,22 @@ Private Sub ThrowError(ByVal errorMessage As String)
 End Sub
 
 'Exposed methods
-Public Sub IUpdatedValues_AddColumns(ByVal Lo As ListObject)
+Private Sub IUpdatedValues_AddColumns(ByVal Lo As ListObject)
   AddColumns Lo
 End Sub
 
-Public Property Get IUpdatedValues_IsUpdated(ByVal colName As String) As Boolean
+Private Property Get IUpdatedValues_IsUpdated(ByVal colName As String) As Boolean
   IUpdatedValues_IsUpdated = IsUpdated(colName)
 End Property
 
-Public Sub IUpdatedValues_CheckUpdate(ByVal sh As Worksheet, ByVal Target As Range)
+Private Sub IUpdatedValues_CheckUpdate(ByVal sh As Worksheet, ByVal Target As Range)
   CheckStatus sh, Target
 End Sub
 
-Public Sub IUpdatedValues_ClearUp()
+Private Sub IUpdatedValues_ClearUp()
   ClearUp
 End Sub
 
-Public Sub IUpdatedValues_DeleteUp()
+Private Sub IUpdatedValues_DeleteUp()
   DeleteUp
 End Sub

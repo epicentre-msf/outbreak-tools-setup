@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
+Attribute VB_Description = "Interface of variable class"
 
 '@Folder("Dictionary")
-'@ModuleDescription("Interface of Variable class")
-'@IgnoreModule
+'@ModuleDescription("Interface of variable class")
+'@Interface
 
 Option Explicit
 

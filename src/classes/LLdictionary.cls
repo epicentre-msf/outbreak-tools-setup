@@ -7,10 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Attribute VB_Description = "Interface for dicitonary class"
+Attribute VB_Description = "Interface for dictionary class"
 
 '@Folder("Dictionary")
-'@ModuleDescription("Interface for dicitonary class")
+'@ModuleDescription("Interface for dictionary class")
 '@PredeclaredId
 
 Option Explicit

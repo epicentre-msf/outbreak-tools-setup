@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
+Attribute VB_Description = "Interface of passwords"
 
 '@Folder("setup file")
-'@ModuleDescription("Interface of Password")
-'@IgnoreModule
+'@ModuleDescription("Interface of passwords")
+'@Interface
 
 Option Explicit
 

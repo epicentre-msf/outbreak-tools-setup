@@ -7,11 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Description = "Manage Exports"
 
-
-'@Folder("Linelist")
-'@ModuleDescription("Export Object of the linelist")
-'@IgnoreModule
+'@PredeclaredId
+'@Folder("Dictionary")
+'@ModuleDescription("Manage Exports")
 
 Option Explicit
 
@@ -71,15 +71,15 @@ Private Sub ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long,
     expData.Import fromWksh, fromStartRow, fromStartcol
 End Sub
 
-Public Sub ILLExport_Translate(ByVal trans As ITranslation)
+Private Sub ILLExport_Translate(ByVal trans As ITranslation)
     Translate trans
 End Sub
 
-Public Sub ILLExport_ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden)
+Private Sub ILLExport_ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden)
     ExportSpecs toWkb, Hide:=Hide
 End Sub
 
-Public Sub ILLExport_ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
+Private Sub ILLExport_ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
     ImportSpecs fromWksh, fromStartRow, fromStartcol
 End Sub
 

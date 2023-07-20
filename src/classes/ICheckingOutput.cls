@@ -7,11 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of checking output"
 
 
-'@Folder("Dictionary")
-'@ModuleDescription("Interface of ")
-'@IgnoreModule
+'@Folder("Checks")
+'@ModuleDescription("Interface of checking output")
+'@Interface
 
 Option Explicit
 

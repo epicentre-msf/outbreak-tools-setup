@@ -7,25 +7,33 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface of CustomTable"
 
-
-'@Folder("Dictionary")
-'@ModuleDescription("Interface of ")
-'@IgnoreModule
+'@Folder("General")
+'@ModuleDescription("Interface of CustomTable")
+'@Interface
 
 Option Explicit
 
 
-Public Property Get DataRange(ByVal colName As String, Optional ByVal includeHeaders As Boolean = False, _
-                              Optional ByVal strictSearch As Boolean = False) As Range
+Public Property Get DataRange(ByVal colName As String, _ 
+                              Optional ByVal includeHeaders As Boolean = False, _
+                              Optional ByVal strictSearch As Boolean = False) _ 
+                              As Range
 End Property
 Public Property Get HeaderRange() As Range: End Property
 Public Property Get Name() As String: End Property
-Public Property Get CellRange(ByVal colName As String, ByVal lineNum As Long) As Range: End Property
-Public Property Get Value(ByVal colName As String, ByVal keyName As String) As String: End Property
+Public Property Get CellRange(ByVal colName As String, _ 
+                              ByVal lineNum As Long) As Range
+End Property
+Public Property Get Value(ByVal colName As String, _
+                          ByVal keyName As String) As String
+End Property
 
 
-Public Sub Import(ByVal impTab As ICustomTable): End Sub
+Public Sub Import(ByVal impTab As ICustomTable, _ 
+                  Optional ByVal keepImportHeaders As Boolean = False)
+End Sub
 Public Sub Clean(): End Sub
 Public Sub Sort(ByVal els As Variant): End Sub
 Public Sub AddRows(): End Sub

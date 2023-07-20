@@ -213,8 +213,11 @@ Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
           Set currLo = currsh.ListObjects(impLo.Name)
           Set impTab = CustomTable.Create(impLo)
           Set currTab = CustomTable.Create(currLo)
+
           'Import the custom table in the current sheet
-          currTab.Import impTab
+          'For translations, import all the headers of imported sheet
+          currTab.Import impTab, keepImportHeaders := (sheetName = "Translations")
+
         End If
       Next
 
