@@ -122,6 +122,10 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
       prefName = vbNullString
       idColName = vbNullString
       totalCount = 7
+    Case SPATIOTEMPORAL
+      prefName = vbNullString
+      idColName = vbNullString
+      totalCount = 1
     Case Else
       prefName = vbNullString
       idColName = vbNullString

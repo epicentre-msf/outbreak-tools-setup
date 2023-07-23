@@ -62,3 +62,22 @@ Attribute TSValue.VB_Description = "Get a time series value from the time series
 
     TSValue = csTab.Value(colName:=tsCol, keyName:=tsTitle)
 End Function
+
+'@Description("Get the Spatio-temporal Geo max from the label on spatio-temporal table")
+'@EntryPoint: The function is used only on analysis sheet / spatio-temporal analysis table
+Public Function SpatTempValue(ByVal spSection As String, Optional ByVal spCol As String = "N geo max") As String
+Attribute SpatTempValue.VB_Description = "Get the Spatio-temporal Geo max from the label on spatio-temporal table"
+
+    Application.Volatile
+
+    Const LOBJNAME As String = "Tab_SpatioTemporal_Specs"
+    Dim csTab As ICustomTable
+    Dim sh As Worksheet
+    Set sh = ThisWorkbook.Worksheets("Analysis")
+
+    Set csTab = CustomTable.Create(sh.ListObjects(LOBJNAME), "Section")
+    SpatTempValue = csTab.Value(colName:=spCol, keyName:=spSection)
+End Function
+
+
+

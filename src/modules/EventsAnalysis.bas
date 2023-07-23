@@ -27,7 +27,6 @@ End Sub
 
 'Calculate columns of analysis worksheet
 Public Sub CalculateAnalysis()
-    Dim csTab As ICustomTable
     Dim wb As Workbook
     Dim sh As Worksheet
 
@@ -36,15 +35,17 @@ Public Sub CalculateAnalysis()
     On Error Resume Next 'If the datarange is nothing, proceed to next line
     Set sh = wb.Worksheets(ANALYSISSHEET)
     BusyApp
+    'Calculate spatial table title
     sh.Range("__ana_series_title_").Calculate
-    Set csTab = CustomTable.Create(sh.ListObjects("Tab_Graph_TimeSeries"))
-    csTab.DataRange("graph id").Calculate
-    csTab.DataRange("series id").Calculate
-    csTab.DataRange("graph order").Calculate
-    csTab.DataRange("row").Calculate
-    csTab.DataRange("column").Calculate
+    'Calculate spatio temporal table ngeomax
+    sh.Range("__ana_spatemp_ngeomax_").Calculate
+    'Calculate ranges in graph for time series table
+    sh.Range("__ana_labtsgraphs_graphid_").Calculate
+    sh.Range("__ana_labtsgraphs_graphorder_").Calculate
+    sh.Range("__ana_labtsgraphs_seriesid_").Calculate
+    sh.Range("__ana_labtsgraphs_groupbyvariable_").Calculate
+    sh.Range("__ana_labtsgraphs_timevariable_").Calculate
     On Error GoTo 0
-    
     NotBusyApp
 End Sub
 

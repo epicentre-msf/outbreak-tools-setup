@@ -120,7 +120,7 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
       AddIds
     Else
-      Do While (rowCounter > loRowHeader + 1)
+      Do While (rowCounter > loRowHeader)
         If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
           .Rows(rowCounter).EntireRow.Delete
           'update the end rows
@@ -128,6 +128,7 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
         End If
         rowCounter = rowCounter - 1
       Loop
+      loRowsEnd = Application.WorksheetFunction.Max(loRowsEnd, loRowHeader + 1)
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
     End If
   End With
@@ -318,8 +319,9 @@ Private Sub ImportAll(ByVal impTab As ICustomTable)
   Dim sh As Worksheet
   Dim impTabList As BetterArray 'Data of imported Table
   Dim bodyRng As Range
+  Dim cellRng As Range
 
-  'I want to import by keep all the headers of the imported tab.
+  'I want to import by keeping all the headers of the imported tab.
   'First I need to clean the current tab and then I copy and paste
   'the data from the imported table
 
@@ -338,13 +340,24 @@ Private Sub ImportAll(ByVal impTab As ICustomTable)
 
   'AddRows to the current Table
   Resize AddRows:=True, nbRows:=impTabList.Length
-  'Copy/paste data
+  'Paste data with betterarray
   impTabList.ToExcelRange currhRng.Cells(1, 1)
   'Resize the new listObject with imported elements
   With sh
     Set bodyRng = .Range(currhRng.Cells(1, 1), currhRng.Cells(impTabList.Length, imphRng.Columns.Count))
     currLo.Resize bodyRng
   End With
+
+  'Clear elements after the end of the table (in case imported table has
+  'less columns compare to current table)
+  Set cellRng = currhRng.Cells(1, imphRng.Columns.Count + 1)
+
+  Do while Not IsEmpty(cellRng)
+    cellRng.EntireColumn.Cells.Clear
+    cellRng.EntireColumn.Locked = False
+    Set cellRng = cellRng.Offset(, 1)
+  Loop
+
 End Sub
 
 

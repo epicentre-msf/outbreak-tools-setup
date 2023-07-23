@@ -125,7 +125,8 @@ Private Sub CheckDictionary()
     Set mainVarRng = csTab.DataRange("Main Label")
     Set cellRng = varRng.Cells(varRng.Rows.Count, 1)
     controlsList.Push "choice_manual", "choice_formula", "formula", _
-                      "geo", "hf", "custom", "list_auto", "case_when"
+                      "geo", "hf", "custom", "list_auto", "case_when", _ 
+                      "choice_custom"
 
     'Errors on columns
     Do While cellRng.Row >= varRng.Row
