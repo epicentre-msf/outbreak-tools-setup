@@ -122,7 +122,9 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
     Else
       Do While (rowCounter > loRowHeader)
         If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
+          On Error Resume Next
           .Rows(rowCounter).EntireRow.Delete
+          On Error GoTo 0
           'update the end rows
           loRowsEnd = loRowsEnd - 1
         End If
@@ -286,11 +288,9 @@ Private Sub Clean()
   Dim headerValue As String
   Dim counter As Long
   Dim toClear As Boolean
-  Dim totalCount As Long
 
   Set Lo = Table()
   Set hRng = Lo.HeaderRowRange
-  totalCount = 0
 
   For counter = 1 To hRng.Columns.Count
     headerValue = hRng.Cells(1, counter).Value
@@ -302,14 +302,14 @@ Private Sub Clean()
     If toClear Then rng.ClearContents
   Next
 
-  If Name() = TABTRANSLATIONS Then
+  'Now resize the listObject (I don't care here about the total row count)
+  If (Name() <> TABEXPORT) And (Name() <> TABTRANSLATIONS) Then
+     Resize AddRows:=False
+  ElseIf (Name() = TABTRANSLATIONS) Then
     On Error Resume Next
-    Lo.DataBodyRange.ClearContents
+    Lo.DataBodyRange.Delete
     On Error GoTo 0
-    totalCount = 1
   End If
-  'Now resize the listObject
-  If Name() <> TABEXPORT Then Resize AddRows:=False, totalRowCount:=totalCount
 End Sub
 
 Private Sub ImportAll(ByVal impTab As ICustomTable)
