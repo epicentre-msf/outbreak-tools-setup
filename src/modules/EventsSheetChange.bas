@@ -13,14 +13,8 @@ Private Sub BusyApp()
     Application.Calculation = xlCalculationManual
 End Sub
 
-Private Sub NotBusyApp()
-    Application.ScreenUpdating = True
-    Application.EnableAnimations = True
-End Sub
-
 Private Sub Worksheet_Change(ByVal Target As Range)
     Application.EnableEvents = False
-    Application.Cursor = xlNorthwestArrow
 
     BusyApp
 
@@ -43,16 +37,18 @@ Private Sub Worksheet_Change(ByVal Target As Range)
 
     End If
 
-    Application.Cursor = xlDefault
     Application.EnableEvents = True
-    NotBusyApp
 End Sub
 
 
 Private Sub Worksheet_Activate()
+
+    If Me.Name <> "Analysis" Then Exit Sub
+    
+    Application.EnableEvents = False
     BusyApp
 
-    If Me.Name = "Analysis" Then EventsAnalysis.EnterAnalysis
+    EventsAnalysis.EnterAnalysis
 
-    NotBusyApp
+    Application.EnableEvents = True
 End Sub

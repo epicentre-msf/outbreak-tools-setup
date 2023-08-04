@@ -762,4 +762,5 @@ Public Sub CheckTheSetup()
     CheckAnalysis
     CheckTranslations
     PrintReport
+    Application.EnableEvents = True
 End Sub

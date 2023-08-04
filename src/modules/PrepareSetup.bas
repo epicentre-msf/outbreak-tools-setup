@@ -25,7 +25,6 @@ Private Sub BusyApp()
 
 Private Sub NotBusyApp()
     Application.EnableEvents = True
-    Application.ScreenUpdating = True
     Application.EnableAnimations = True
     Application.Calculation = xlCalculationAutomatic
 End Sub

@@ -21,7 +21,6 @@ End Sub
 
 Private Sub NotBusyApp()
     Application.EnableEvents = True
-    Application.ScreenUpdating = True
     Application.EnableAnimations = True
 End Sub
 

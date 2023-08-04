@@ -32,21 +32,10 @@ Public Sub CalculateAnalysis()
 
     Set wb = ThisWorkbook
 
-    On Error Resume Next 'If the datarange is nothing, proceed to next line
+    On Error Resume Next
     Set sh = wb.Worksheets(ANALYSISSHEET)
-    BusyApp
-    'Calculate spatial table title
-    sh.Range("__ana_series_title_").Calculate
-    'Calculate spatio temporal table ngeomax
-    sh.Range("__ana_spatemp_ngeomax_").Calculate
-    'Calculate ranges in graph for time series table
-    sh.Range("__ana_labtsgraphs_graphid_").Calculate
-    sh.Range("__ana_labtsgraphs_graphorder_").Calculate
-    sh.Range("__ana_labtsgraphs_seriesid_").Calculate
-    sh.Range("__ana_labtsgraphs_groupbyvariable_").Calculate
-    sh.Range("__ana_labtsgraphs_timevariable_").Calculate
+    sh.UsedRange.Calculate
     On Error GoTo 0
-    NotBusyApp
 End Sub
 
 'When you enter the analysis sheet, update dropdown for time variables, etc.
@@ -67,27 +56,23 @@ Public Sub EnterAnalysis()
     Set upObj = UpdatedValues.Create(wb.Worksheets(UPDATEDSHEETNAME), "dict")
 
     If upObj.IsUpdated("control_details") Or upObj.IsUpdated("variable_name") Then
+        On Error Resume Next
         'Update geo vars
         Set lst = dict.GeoVars()
-        On Error Resume Next
         drop.Update lst, "__geo_vars"
-        On Error GoTo 0
         'Update choices vars
         Set lst = dict.ChoicesVars()
-        On Error Resume Next
         drop.Update lst, "__choice_vars"
         On Error GoTo 0
     End If
 
     If upObj.IsUpdated("variable_type") Or upObj.IsUpdated("variable_name") Then
         'Update time vars
-        Set lst = dict.TimeVars()
         On Error Resume Next
+        Set lst = dict.TimeVars()
         drop.Update lst, "__time_vars"
         On Error GoTo 0
     End If
-
-    NotBusyApp
 End Sub
 
 'Add choices dropdowns on the analysis worksheet

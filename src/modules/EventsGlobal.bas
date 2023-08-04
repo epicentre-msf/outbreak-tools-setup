@@ -9,17 +9,11 @@ Private Const TRANSLATIONSHEET As String = "Translations"
 
 'speed app
 Private Sub BusyApp()
-    Application.EnableEvents = False
     Application.ScreenUpdating = False
     Application.EnableAnimations = False
     Application.Calculation = xlCalculationManual
 End Sub
 
-Private Sub NotBusyApp()
-    Application.EnableEvents = True
-    Application.ScreenUpdating = True
-    Application.EnableAnimations = True
-End Sub
 
 'Check update status when something changes in a range on a worksheet
 Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
@@ -46,7 +40,6 @@ Public Sub checkUpdateStatus(ByVal sh As Worksheet, ByVal Target As Range)
         upObj.CheckUpdate sh, Target
     End If
 
-    NotBusyApp
 End Sub
 
 'Fire this event when the workbook is opened
@@ -64,7 +57,6 @@ Public Sub OpenedWorkbook()
     Set rng = wb.Worksheets(TRANSLATIONSHEET).Range("RNG_NbTimesTrans")
     rng.Value = 0
     On Error GoTo 0
-    NotBusyApp
     'Set all update ranges to no
     SetAllUpdatedTo "yes"
     Application.CalculateBeforeSave = False
