@@ -84,7 +84,7 @@ Private Sub CreateDropdowns()
     AddElements "__sheet_type", "vlist1D", "hlist2D"
     '- control
     AddElements "__var_control", "choice_manual", _
-                 "choice_formula", "choice_custom", _ 
+                 "choice_formula", "choice_custom", "choice_multiple",  _ 
                  "formula", "geo", "hf", "custom", _
                  "list_auto", "case_when"
     'print variable

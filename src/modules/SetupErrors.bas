@@ -126,7 +126,7 @@ Private Sub CheckDictionary()
     Set cellRng = varRng.Cells(varRng.Rows.Count, 1)
     controlsList.Push "choice_manual", "choice_formula", "formula", _
                       "geo", "hf", "custom", "list_auto", "case_when", _ 
-                      "choice_custom"
+                      "choice_custom", "choice_multiple"
 
     'Errors on columns
     Do While cellRng.Row >= varRng.Row
@@ -173,7 +173,9 @@ Private Sub CheckDictionary()
         controlDetailsValue = csTab.Value("Control Details", varValue)
 
         'Unkown control
-        If (Not controlsList.Includes(controlValue)) And (controlValue <> vbNullString) Then
+        If (Not controlsList.Includes(controlValue)) And _ 
+           (controlValue <> vbNullString) And _ 
+           (Not (InStr(1, controlValue, "choice_multiple") = 1)) Then
             checkingCounter = checkingCounter + 1
             keyName = "dict-unknown-control"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, controlValue, varValue)
@@ -220,7 +222,11 @@ Private Sub CheckDictionary()
         End If
 
         'Choices not present in choice sheet
-        If (controlValue = "choice_manual") Then
+        'Could be choice manual, choice_custom or a choice multiple. For choice_custom, important
+        'To precise that the controlDetails shoud be non empty.
+        If (controlValue = "choice_manual") Or _ 
+           ((controlValue = "choice_custom") And (controlDetailsValue <> vbNullString)) Or _ 
+           (InStr(1, controlValue, "choice_multiple") = 1) Then
             If Not choi.ChoiceExists(controlDetailsValue) Then
                 checkingCounter = checkingCounter + 1
                 keyName = "dict-choi-empty"
@@ -306,6 +312,7 @@ Private Sub CheckChoice()
     Dim setupForm As Object
     Dim cntrlRng As Range
     Dim cntrlDetRng As Range
+    Dim actualControl As String
 
     BusyApp
 
@@ -335,14 +342,17 @@ Private Sub CheckChoice()
     'List of choices_formulas
     For counter = 1 To cntrlDetRng.Rows.Count
 
+        actualControl = cntrlRng.Cells(counter, 1).Value
         'add choices to the list of used choices
-        If (cntrlRng.Cells(counter, 1).Value = "choice_manual") Then
+        If (actualControl = "choice_manual") Or _ 
+            (actualControl = "choice_custom") Or _ 
+            (InStr(1, actualControl, "choice_multiple") = 1) Then
 
            If (cntrlDetRng.Cells(counter, 1).Value <> vbNullString) Then _ 
               usedChoicesLst.Push cntrlDetRng.Cells(counter, 1).Value
 
         ' add choice formulas to the list of used choices
-        ElseIf (cntrlRng.Cells(counter, 1).Value = "choice_formula") Then
+        ElseIf (actualControl = "choice_formula") Then
 
             If (cntrlDetRng.Cells(counter, 1).Value <> vbNullString)  Then 
                 Set setupForm = ChoiceFormula.Create(cntrlDetRng.Cells(counter, 1).Value)
