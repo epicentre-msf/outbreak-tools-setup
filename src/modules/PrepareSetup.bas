@@ -153,6 +153,10 @@ Private Sub AddValidationsAndUpdates()
 
     currTab.SetValidation colName:="sheet type", dropName:="__sheet_type", _
                         drop:=drop, alertType:="error"
+
+    'editable label
+    currTab.SetValidation colName:="editable label", dropName:="__yesno", _ 
+                          drop:=drop, alertType:="error"
     'variable status
     currTab.SetValidation colName:="status", dropName:="__var_status", _
                         drop:=drop, alertType:="error"

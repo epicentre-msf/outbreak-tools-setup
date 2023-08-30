@@ -369,6 +369,7 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Dim headerValue As String
   Dim newHeaderValue As String
   Dim counter As Long
+  Dim formatCounter As Long
   Dim nbImpRows As Long
   Dim impDataRng As Range
   Dim currDataRng As Range
@@ -412,6 +413,27 @@ Private Sub Import(ByVal impTab As ICustomTable)
       If toClear Then
         currDataRng.Cells.ClearContents
         rng.Value = impDataRng.Value
+      End If
+
+      'Import the columns formattings for the conditional formatting
+      If (newHeaderValue = "Formatting Values") Then
+        
+        For formatCounter = 1 To impDataRng.Rows.Count
+          'Add interiror color
+          If (impDataRng.Cells(formatCounter, 1).Interior.color <> vbWhite) Then 
+            rng.Cells(formatCounter, 1).Interior.color = impDataRng.Cells(formatCounter, 1).Interior.color
+          End If
+          
+          'Add Font color
+          If (impDataRng.Cells(formatCounter, 1) <> vbBlack) Then
+            rng.Cells(formatCounter, 1).Font.color = impDataRng.Cells(formatCounter, 1).Font.color
+          End If
+
+          'Add Font weight and decoration
+          rng.Cells(formatCounter, 1).Font.Bold = impDataRng.Cells(formatCounter, 1).Font.Bold
+          rng.Cells(formatCounter, 1).Font.Italic = impDataRng.Cells(formatCounter, 1).Font.Italic
+        Next
+
       End If
     End If
   Next
