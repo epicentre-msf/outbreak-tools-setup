@@ -94,14 +94,18 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
   Dim Lo As ListObject
   'Begining of the tables
   Dim loRowHeader As Long
+  Dim delStop As Long 'where to stop when deleting rows of a table
   Dim loColHeader  As Long
   Dim rowCounter As Long
   'End of the listobject table
   Dim loRowsEnd As Long
   Dim loColsEnd As Long
+  
   Dim sh As Worksheet
+
   Set sh = Wksh()
   Set Lo = Table()
+
   'Remove unwanted rows from each listObject
   With sh
     'Rows and columns at the begining of the table to resize
@@ -120,7 +124,9 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
       AddIds
     Else
-      Do While (rowCounter > loRowHeader)
+      'On analysis sheets, there are formulas, you should stop/avoid the first row
+      delStop = IIf(sh.Name = "Analysis", loRowHeader + 1, loRowHeader)
+      Do While (rowCounter > delStop)
         If (Application.WorksheetFunction.CountA(.Rows(rowCounter)) <= totalRowCount) Then
           On Error Resume Next
           .Rows(rowCounter).EntireRow.Delete
