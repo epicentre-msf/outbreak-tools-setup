@@ -50,6 +50,8 @@ Public Sub ImportOrCleanSetup()
 
     BusyApp
     On Error GoTo errHand
+    Application.Cursor = xlWait
+
     Set actsh = ActiveSheet
     Set wb = ThisWorkbook
     importDict = [Imports].DictionaryCheck.Value
@@ -118,13 +120,14 @@ Public Sub ImportOrCleanSetup()
         ThisWorkbook.Worksheets("__checkRep").Activate
     End If
 
-    SetAllUpdatedTo "yes"
-    wb.Worksheets("Analysis").Calculate
-    'Fire EnterAnalysis Event to update dropdows
-    
-    EventsAnalysis.EnterAnalysis
+    'Fire EnterAnalysis Event to update dropdowns on analysis sheet (force updates)
+    EventsAnalysis.EnterAnalysis forceUpdate:=True
+
+    'Call events related to workbook opening
+    EventsGlobal.OpenedWorkbook
 errHand:
     NotBusyApp
+    Application.Cursor = xlDefault
 End Sub
 
 

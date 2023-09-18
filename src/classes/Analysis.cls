@@ -125,7 +125,7 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Case SPATIOTEMPORAL
       prefName = vbNullString
       idColName = vbNullString
-      totalCount = 2
+      totalCount = 3
     Case Else
       prefName = vbNullString
       idColName = vbNullString

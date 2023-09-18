@@ -91,12 +91,18 @@ Private Sub CreateDropdowns()
     AddElements "__var_print", "print, horizontal header", "print, vertical header", "hidden"
     '- alert
     AddElements "__var_alert", "error", "warning", "info"
-    '- geo_variables
+    '- geo and hf variables
     AddElements "__geo_vars", vbNullString, vbNullString
+    '- Hf variables
+    AddElements "__hfonly_vars", vbNullString, vbNullString
+    '- only geo vars
+    AddElements "__geoonly_vars", vbNullString, vbNullString
     '- choices_variables
     AddElements "__choice_vars", vbNullString, vbNullString
     '- time_variables
     AddElements "__time_vars", vbNullString, vbNullString
+    '- spatial type (hf or geo)
+    AddElements "__hf_or_geo", "hf", "geo"
 
     'EXPORTS ------------------------------------------ -------------------------
     '- export_status
@@ -319,6 +325,14 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="format", dropName:="__formats", drop:=drop, _
                         alertType:="info"
     BusyApp
+
+    'Specifications on Spatio Temporal analysis
+
+    MoveToTable "Tab_SpatioTemporal_Specs"
+
+    currTab.SetValidation colName:="spatial type", dropName:="__hf_or_geo", _ 
+                          drop:=drop, alertType:="error" 
+                          
 
     'Spatio Temporal analysis
     MoveToTable "Tab_SpatioTemporal_Analysis"

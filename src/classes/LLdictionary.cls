@@ -213,3 +213,14 @@ Private Property Get ILLdictionary_TimeVars() As BetterArray
     Set ILLdictionary_TimeVars = SpecialVars(first_condition:="date", _
                                              conditionName:="Variable Type")
 End Property
+
+Private Property Get ILLdictionary_SpecialVars( _ 
+                                ByVal first_condition As String, _
+                                Optional ByVal second_condition As String = vbNullString, _
+                                Optional ByVal conditionName As String = "Control") As BetterArray
+
+    Set ILLdictionary_SpecialVars = SpecialVars(first_condition, _ 
+                                        second_condition, _ 
+                                        conditionName)
+
+End Property

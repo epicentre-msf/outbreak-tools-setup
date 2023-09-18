@@ -74,11 +74,13 @@ Private Function Contains(ByVal varName As String) As Boolean
     searchValue = Replace(searchValue, "#", "~#")
 
     Set varRng = VarRange()
-    If searchValue = vbNullString Then
+    If (searchValue = vbNullString) Then
         Exist = False
     Else
+        On Error Resume Next
         Exist = Not (varRng.Find(What:=searchValue, _ 
                      LookAt:=xlWhole, MatchCase:=True) Is Nothing)
+        On Error GoTo 0
     End If
 
     Contains = Exist

@@ -291,7 +291,7 @@ Public Property Get ValidTable() As Boolean
                 ValidityReason = "The variable " & rowVar & " does not exists in the dictionary"
             Else
                 ValidityReason = "The control of variable " & rowVar & " is " & rowControl & _
-                              "which is not choice_manual or choice_formula"
+                              ", which is not choice_manual or choice_formula"
             End If
         End If
     Case TypeBivariate
@@ -325,6 +325,10 @@ Public Property Get ValidTable() As Boolean
         If Not Valid Then
             If (rowVar = vbNullString) Then
                 ValidityReason = "The row variable is not specified"
+            ElseIf (Not vars.Contains(rowVar)) Then
+                ValidityReason = "The row variable " & rowVar & " does not exists in the dictionary"
+            ElseIf (colVar <> vbNullString And (Not vars.Contains(colVar))) Then
+                ValidityReason = "The column variable " & colVar & " does not exists in the dictionary"
             ElseIf (colVar <> vbNullString And colControl <> "choice_manual" And colControl <> "choice_formula") Then
                 ValidityReason = "The control of variable " & _
                               colVar & " is " & colControl & _
@@ -365,7 +369,7 @@ Public Property Get ValidTable() As Boolean
                  "is not of type date. Spatio temporal tables should have dates as row variables." 
             ElseIf (colControl <> "geo" And colControl <> "hf") Then
                 ValidityReason = "The column variable " & colVar & " is " & _ 
-                "not geo or hf. Columns of spatio-temporal tables shoud be geo or hf variables."
+                "neither geo nor hf. Columns of spatio-temporal tables shoud be geo or hf variables."
             End If
         End If
     End Select

@@ -15,6 +15,7 @@ End Sub
 
 Private Sub Worksheet_Change(ByVal Target As Range)
     Application.EnableEvents = False
+    Application.Cursor = xlNorthWestArrow
 
     BusyApp
 
@@ -23,8 +24,6 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     Else
        EventsGlobal.FilterCheckingsSheet Target
     End If
-
-    
 
     'Only for analysis
     If Me.Name = "Analysis" Then
@@ -35,20 +34,24 @@ Private Sub Worksheet_Change(ByVal Target As Range)
        BusyApp
        EventsAnalysis.AddChoicesDropdown Target
 
+       BusyApp
+       EventsAnalysis.AddGeoDropdown Target
+
     End If
 
     Application.EnableEvents = True
+    Application.Cursor = xlDefault
 End Sub
 
 
 Private Sub Worksheet_Activate()
-
-    If Me.Name <> "Analysis" Then Exit Sub
     
     Application.EnableEvents = False
+    Application.Cursor = xlNorthWestArrow
     BusyApp
 
-    EventsAnalysis.EnterAnalysis
+    If (Me.Name = "Analysis") Then EventsAnalysis.EnterAnalysis
 
+    Application.Cursor = xlDefault
     Application.EnableEvents = True
 End Sub
