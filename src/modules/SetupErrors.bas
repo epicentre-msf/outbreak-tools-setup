@@ -275,14 +275,18 @@ Private Sub CheckDictionary()
     expTab.Sort "Export Number"
 
     For expCounter = 1 To 5
+    
         Set expRng = csTab.DataRange("Export " & expCounter)
         Set expStatusRng = expTab.DataRange("Status")
-        If (FUN.CountBlank(expRng) <> expRng.Rows.Count) And (expStatusRng.Cells(expCounter, 1).Value <> "active") Then
-            checkingCounter = checkingCounter + 1
-            keyName = "dict-export-na"
-            infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
-            infoMessage = Replace(infoMessage, "{$}", expCounter)
-            check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingNote
+
+        If (Not (expRng Is Nothing)) And (Not (expStatusRng Is Nothing)) Then
+            If (FUN.CountBlank(expRng) <> expRng.Rows.Count) And (expStatusRng.Cells(expCounter, 1).Value <> "active") Then
+                checkingCounter = checkingCounter + 1
+                keyName = "dict-export-na"
+                infoMessage = errTab.Value(colName:="Message", keyName:=keyName)
+                infoMessage = Replace(infoMessage, "{$}", expCounter)
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingNote
+            End If
         End If
     Next
 

@@ -157,15 +157,22 @@ Private Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
   Dim counter As Long
   Dim sheetName As String
   Dim csTab As ICustomTable
+  Dim excludeNames As BetterArray
 
   Set wb = ThisWorkbook
+  Set excludeNames = New BetterArray
   For counter = sheetsList.LowerBound To sheetsList.UpperBound
     sheetName = sheetsList.Item(counter)
+      'For exports, don't clean the export number
+      If sheetName = "Exports" Then
+        excludeNames.Push "Export Number"
+      End If
     Set sh = wb.Worksheets(sheetName)
     pass.UnProtect sheetName
     For Each Lo In sh.ListObjects
       Set csTab = CustomTable.Create(Lo)
-      csTab.Clean
+      csTab.Clean excludeNames:=excludeNames
+      excludeNames.Clear
     Next
     pass.Protect sheetName, (sheetName = "Translations" Or sheetName = "Analysis"), _
     (sheetName = "Translations")

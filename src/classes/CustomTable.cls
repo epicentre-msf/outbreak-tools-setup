@@ -287,13 +287,12 @@ Private Property Get Name() As String
 End Property
 
 'Clean every columns of the listObject and avoid formula columns
-Private Sub Clean()
+Private Sub Clean(ByVal excludeNames As BetterArray)
   Dim rng As Range
   Dim hRng As Range
   Dim Lo As ListObject
   Dim headerValue As String
   Dim counter As Long
-  Dim toClear As Boolean
 
   Set Lo = Table()
   Set hRng = Lo.HeaderRowRange
@@ -301,11 +300,11 @@ Private Sub Clean()
   For counter = 1 To hRng.Columns.Count
     headerValue = hRng.Cells(1, counter).Value
     Set rng = DataRange(headerValue)
-    toClear = False
-    On Error Resume Next
-    toClear = (CStr(rng.Cells(1, 1).formula) = CStr(rng.Cells(1, 1).Value))
-    On Error GoTo 0
-    If toClear Then rng.ClearContents
+
+    If (Not rng.Cells(1, 1).HasFormula) And _ 
+       (Not excludeNames.Includes(headerValue)) Then 
+      rng.ClearContents
+    End If
   Next
 
   'Now resize the listObject (I don't care here about the total row count)
@@ -326,14 +325,16 @@ Private Sub ImportAll(ByVal impTab As ICustomTable)
   Dim impTabList As BetterArray 'Data of imported Table
   Dim bodyRng As Range
   Dim cellRng As Range
+  Dim excludeNames As BetterArray
 
   'I want to import by keeping all the headers of the imported tab.
   'First I need to clean the current tab and then I copy and paste
   'the data from the imported table
 
   If Name() <> impTab.Name() Then Exit Sub
+  Set excludeNames = New BetterArray
 
-  Clean
+  Clean excludeNames:=excludeNames
   Set currLo = Table()
   Set currhRng = currLo.HeaderRowRange()
   Set imphRng = impTab.HeaderRange()
@@ -410,19 +411,14 @@ Private Sub Import(ByVal impTab As ICustomTable)
       Loop
       'Add values if the range does not contains formulas. If the range contains formulas, do nothing
       Set rng = sh.Range(currDataRng.Cells(1, 1), currDataRng.Cells(nbImpRows, 1))
-      toClear = False
 
-      On Error Resume Next
-      toClear = (CStr(rng.Cells(1, 1).formula) = CStr(rng.Cells(1, 1).Value))
-      On Error GoTo 0
-
-      If toClear Then
+      If Not (rng.Cells(1, 1).HasFormula) Then
         currDataRng.Cells.ClearContents
         rng.Value = impDataRng.Value
       End If
 
-      'Import the columns formattings for the conditional formatting
-      If (newHeaderValue = "Formatting Values") Then
+      'Import the columns formattings for the conditional formatting and variable Name
+      If (newHeaderValue = "Formatting Values" Or newHeaderValue = "Variable Name") Then
         
         For formatCounter = 1 To impDataRng.Rows.Count
           'Add interiror color
@@ -573,8 +569,8 @@ Private Property Get ICustomTable_Name() As String
   ICustomTable_Name = Name()
 End Property
 
-Private Sub ICustomTable_Clean()
-  Clean
+Private Sub ICustomTable_Clean(ByVal excludeNames As BetterArray)
+  Clean excludeNames
 End Sub
 
 Private Sub ICustomTable_Sort(ByVal els As Variant)

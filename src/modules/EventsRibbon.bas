@@ -158,6 +158,21 @@ Attribute clickClearSetup.VB_Description = "Callback for btnClear onAction: clea
     [Imports].Show
 End Sub
 
+'@Description("Callback for btnInit onAction: Initialize the setup")
+'@EntryPoint
+Public Sub clickInitializeSetup(ByRef control As IRibbonControl)
+Attribute clickInitializeSetup.VB_Description = "Callback for btnInit onAction: Initialize the setup"
+    'Call configure setup from the PrepareSetup module
+    ConfigureSetup
+End Sub
+
+'@Description("Callback for btnPrep onAction: Prepare the setup for deployment")
+Public Sub clickPrepareProd(ByRef control As IRibbonControl)
+Attribute clickPrepareProd.VB_Description = "Callback for btnPrep onAction: Prepare the setup for deployment"
+    'Call prepare for production from the PrepareSetup module
+    PrepareForProd
+End Sub
+
 '@Description("Callback for btnFilt onAction: clear all the filters in the current sheet")
 '@EntryPoint
 Public Sub clickFilters(ByRef control As IRibbonControl)

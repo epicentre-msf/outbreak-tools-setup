@@ -34,7 +34,7 @@ End Property
 Public Sub Import(ByVal impTab As ICustomTable, _ 
                   Optional ByVal keepImportHeaders As Boolean = False)
 End Sub
-Public Sub Clean(): End Sub
+Public Sub Clean(ByVal excludeNames As BetterArray): End Sub
 Public Sub Sort(ByVal els As Variant): End Sub
 Public Sub AddRows(): End Sub
 Public Sub RemoveRows(Optional ByVal totalCount As Long = 0): End Sub
