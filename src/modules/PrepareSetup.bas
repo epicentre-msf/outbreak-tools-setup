@@ -110,7 +110,7 @@ Private Sub CreateDropdowns()
     '- export_format
     AddElements "__export_format", "xlsx", "xlsb"
     '- export_headers
-    AddElements "__export_header", "variable names", "variable labels"
+    AddElements "__export_header", "variables names", "variables labels"
 
     'ANALYSIS ------------------------------------------------------------------
     '- percentage_ba
