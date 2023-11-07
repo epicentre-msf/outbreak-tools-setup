@@ -23,6 +23,7 @@ Public Enum AnalysisTablesType
     TypeTimeSeries = 4
     TypeSpatial = 5
     TypeSpatioTemporal = 6
+    TypeTimeSeriesGraph = 7
 End Enum
 
 Public Property Get TableType() As AnalysisTablesType: End Property 'One of the previous mentioned table types

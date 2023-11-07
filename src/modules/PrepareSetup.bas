@@ -77,7 +77,7 @@ Private Sub CreateDropdowns()
 
     'DICTIONARY ----------------------------------------------------------------
     ' - variable status
-    AddElements "__var_status", "mandatory", "optional", "hidden"
+    AddElements "__var_status", "mandatory", "optional, visible", "optional, hidden", "hidden"
     '- variable_type
     AddElements "__var_type", "date", "integer", "text", "decimal"
     '- sheet_type
@@ -85,8 +85,7 @@ Private Sub CreateDropdowns()
     '- control
     AddElements "__var_control", "choice_manual", _
                  "choice_formula", "choice_custom", "choice_multiple",  _ 
-                 "formula", "geo", "hf", "custom", _
-                 "list_auto", "case_when"
+                 "formula", "geo", "hf", "list_auto", "case_when"
     'print variable
     AddElements "__var_print", "print, horizontal header", "print, vertical header", "hidden"
     '- alert
@@ -360,6 +359,13 @@ End Sub
 Public Sub ConfigureSetup()
 Attribute ConfigureSetup.VB_Description = "Configure the setup for codes"
     'Initialize elements
+
+    On Error Resume Next
+    If (ThisWorkbook.Worksheets("Dev").Range("RNG_InProduction").Value = "yes") Then
+        Exit Sub
+    End If
+    On Error GoTo 0
+
     BusyApp
     Initialize
     CreateDropdowns 'Create dropdowns for the setup
@@ -380,9 +386,16 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     Dim pwd As String
     Dim sh As Worksheet
 
+    Set wb = ThisWorkbook
+
+    On Error Resume Next
+    If (wb.Worksheets("Dev").Range("RNG_InProduction").Value = "yes") Then
+        Exit Sub
+    End If
+    On Error GoTo 0
+
     BusyApp
 
-    Set wb = ThisWorkbook
     'First write the password to the password sheet
     pwd = wb.Worksheets("Dev").Range("RNG_DevPasswd").Value
     wb.Worksheets("__pass").Range("RNG_DebuggingPassword").Value = pwd
@@ -406,6 +419,7 @@ Attribute PrepareForProd.VB_Description = "Prepare the setup for production"
     wb.Worksheets("__pass").Visible = xlSheetHidden
     wb.Worksheets("__variables").Visible = xlSheetHidden
     wb.Worksheets("__formula").Visible = xlSheetHidden
+    wb.Worksheets("Dev").Range("RNG_InProduction").Value = "yes"
     wb.Worksheets("Dev").Visible = xlSheetHidden
 
     'Protect the workbook

@@ -123,6 +123,13 @@ End Sub
 Public Sub clickUpdateTranslate(ByRef control As IRibbonControl)
 Attribute clickUpdateTranslate.VB_Description = "Callback for btnTransUp onAction: Update columns to be translated"
     'remove update columns and add new columns to watch
+    
+    On Error Resume Next
+    If (ThisWorkbook.Worksheets("Dev").Range("RNG_InProduction").Value = "yes") Then
+        Exit Sub
+    End If
+    On Error GoTo 0
+
     BusyApp
     CleanUpdateColumns
     UpdatedWatchedValues

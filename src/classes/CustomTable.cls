@@ -373,7 +373,7 @@ End Sub
 Private Sub Import(ByVal impTab As ICustomTable)
 
   Dim imphRng As Range
-  Dim headerValue As String
+  Dim headerValue As String 
   Dim newHeaderValue As String
   Dim counter As Long
   Dim formatCounter As Long
@@ -383,14 +383,22 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Dim rng As Range
   Dim sh As Worksheet
   Dim toClear As Boolean
-  'current Header Range
-
+  Dim formatHeaders As BetterArray
+  Dim hasComment As Boolean
+  Dim hasCommentThreaded As Boolean
+  Dim commentText As String
+  Dim commentThreadedText As String
 
   'Test if the custom tables have the same name, otherwise exit.
   If Name() <> impTab.Name() Then Exit Sub
 
   Set imphRng = impTab.HeaderRange()
   Set sh = Wksh()
+  'List of headers where we should import comments and formatting.
+  Set formatHeaders = New BetterArray
+  formatHeaders.Push "Variable Name", "Main Label", "Dev Comments", _ 
+                     "Sub Label", "Formatting Values", "Control", _ 
+                     "Control Details"
 
   For counter = 1 To imphRng.Columns.Count
     headerValue = imphRng.Cells(1, counter).Value
@@ -418,9 +426,41 @@ Private Sub Import(ByVal impTab As ICustomTable)
       End If
 
       'Import the columns formattings for the conditional formatting and variable Name
-      If (newHeaderValue = "Formatting Values" Or newHeaderValue = "Variable Name") Then
+      If formatHeaders.Includes(newHeaderValue) Then
         
+        'Clear all eventual comments on the range
+        rng.ClearComments
+
         For formatCounter = 1 To impDataRng.Rows.Count
+
+          'keep the comment if there is one
+          hasComment = False
+          hasCommentThreaded = False
+          
+          'On some excel version there is no CommentThread. So it would
+          'result in Error.
+          On Error Resume Next
+            hasCommentThreaded = (impDataRng.Cells(formatCounter, 1).CommentThreaded.Text <> vbNullString)
+            hasComment = (impDataRng.Cells(formatCounter, 1).Comment.Text <> vbNullString)
+            commentThreadedText = impDataRng.Cells(formatCounter, 1).CommentThreaded.Text
+            commentText = impDataRng.Cells(formatCounter, 1).Comment.Text
+          On Error GoTo 0
+
+          If hasComment Then
+            On Error Resume Next
+            rng.Cells(formatCounter, 1).AddComment
+            rng.Cells(formatCounter, 1).Comment.Text Text:=commentText
+            rng.Cells(formatCounter, 1).Comment.Visible = False
+            On Error GoTo 0
+          End If
+
+          If hasCommentThreaded Then
+            On Error Resume Next
+              rng.Cells(formatCounter, 1).AddComment
+              rng.Cells(formatCounter, 1).Comment.Text Text:=commentThreadedText
+            On Error GoTo 0
+          End If
+
           'Add interiror color
           If (impDataRng.Cells(formatCounter, 1).Interior.color <> vbWhite) Then 
             rng.Cells(formatCounter, 1).Interior.color = impDataRng.Cells(formatCounter, 1).Interior.color
@@ -435,7 +475,6 @@ Private Sub Import(ByVal impTab As ICustomTable)
           rng.Cells(formatCounter, 1).Font.Bold = impDataRng.Cells(formatCounter, 1).Font.Bold
           rng.Cells(formatCounter, 1).Font.Italic = impDataRng.Cells(formatCounter, 1).Font.Italic
         Next
-
       End If
     End If
   Next
