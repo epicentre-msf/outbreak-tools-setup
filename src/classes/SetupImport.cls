@@ -176,6 +176,9 @@ Private Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
     Next
     pass.Protect sheetName, (sheetName = "Translations" Or sheetName = "Analysis"), _
     (sheetName = "Translations")
+
+    'Delete all eventual comments/commentsthreaded in the worksheets
+    sh.UsedRange.ClearComments
   Next
 End Sub
 

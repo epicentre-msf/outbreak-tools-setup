@@ -98,29 +98,31 @@ End Property
 'Get the table type of the one table
 Private Property Get TableType() As AnalysisTablesType
     Dim hRng As Range
-    Dim tType As AnalysisTablesType
+    Dim scope As AnalysisTablesType
     Dim anaType As String
 
     Set hRng = HeaderRange()
     anaType = LCase(Application.WorksheetFunction.Trim(hRng.Cells(-1, 1).Value))
     Select Case anaType
     Case "global summary"
-        tType = TypeGlobalSummary
+        scope = TypeGlobalSummary
     Case "univariate analysis"
-        tType = TypeUnivariate
+        scope = TypeUnivariate
     Case "bivariate analysis"
-        tType = TypeBivariate
+        scope = TypeBivariate
     Case "time series analysis"
-        tType = TypeTimeSeries
+        scope = TypeTimeSeries
     Case "spatial analysis"
-        tType = TypeSpatial
+        scope = TypeSpatial
     Case "spatio-temporal analysis"
-        tType = TypeSpatioTemporal
+        scope = TypeSpatioTemporal
+    Case "graph on time series"
+        scope = TypeTimeSeriesGraph
     Case Else
-        ThrowError "Could not find the table type [uni-bivariate, spatial, timeseries, spatio-tempora? :(]" & ".Actual type is : " & anaType
+        ThrowError "Could not find the table type :(" & ".Actual type is : " & anaType
     End Select
 
-    TableType = tType
+    TableType = scope
 End Property
 
 'For spatial analyses, the table can be either on geo or hf (health facility)
@@ -161,13 +163,15 @@ Private Property Get TableId() As String
         prefix = "SA"
     Case TypeSpatioTemporal
         prefix = "SPT"
+    Case TypeTimeSeriesGraph
+        prefix = "TSGR"
     End Select
 
     TableId = prefix & "_tab" & lineNum
 End Property
 
 Private Property Get TableSectionId() As String
-    If isNewSection() Or (TableType = TypeGlobalSummary) Then
+    If isNewSection() Or (TableType = TypeGlobalSummary) Or (TableType = TypeTimeSeriesGraph) Then
         TableSectionId = TableId()
     Else
         TableSectionId = Previous.TableSectionId
@@ -176,7 +180,7 @@ End Property
 
 Private Property Get HasPercent() As Boolean
     Select Case TableType
-    Case TypeGlobalSummary
+    Case TypeGlobalSummary, TypeSpatioTemporal
         HasPercent = False
     Case TypeUnivariate, TypeSpatial
         HasPercent = (Value("percentage") = "yes")
@@ -184,7 +188,7 @@ Private Property Get HasPercent() As Boolean
         HasPercent = (Value("percentage")) = "row" Or (Value("percentage") = "column") Or (Value("percentage") = "total")
     Case TypeTimeSeries
         HasPercent = ((Value("percentage")) = "row" Or (Value("percentage") = "column")) And HasTotal()
-    Case TypeSpatioTemporal
+    Case Else
         HasPercent = False
     End Select
 End Property
@@ -192,7 +196,7 @@ End Property
 Private Property Get HasTotal() As Boolean
     Select Case TableType
 
-    Case TypeGlobalSummary
+    Case TypeGlobalSummary, TypeSpatioTemporal
         HasTotal = False
     Case TypeUnivariate
         HasTotal = True
@@ -203,7 +207,7 @@ Private Property Get HasTotal() As Boolean
                     (Value("percentage") = "column")) And (Value("column") <> vbNullString)
     Case TypeSpatial
         HasTotal = (Value("column") <> vbNullString)
-    Case TypeSpatioTemporal
+    Case Else
         HasTotal = False
     End Select
 End Property
@@ -217,16 +221,18 @@ Public Property Get HasGraph() As Boolean
     Case TypeBivariate
         HasGraph = (Value("graph") = "percentage" Or Value("graph") = "values" Or Value("graph") = "both")
     Case TypeSpatial
-        HasGraph = (Value("graph") = "yes") And (Value("column") <> vbNullString)
+        HasGraph = (Value("graph") = "yes") And (Value("row") <> vbNullString)
     Case TypeSpatioTemporal
         HasGraph = (Value("graph") = "yes")
+    Case Else
+        HasGraph = False
     End Select
 End Property
 
 Private Property Get HasMissing() As Boolean
     Select Case TableType
 
-    Case TypeGlobalSummary
+    Case TypeGlobalSummary, TypeSpatioTemporal
         HasMissing = False
     Case TypeUnivariate
         HasMissing = Value("missing") = "yes"
@@ -239,7 +245,7 @@ Private Property Get HasMissing() As Boolean
     Case TypeSpatial
         HasMissing = (Value("missing") = "yes") And (Value("column") <> vbNullString)
     'For spatio - temporal, there is no missing on column
-    Case TypeSpatioTemporal
+    Case Else
         HasMissing = False
     End Select
 End Property
@@ -254,6 +260,10 @@ Public Property Get ValidTable() As Boolean
     Dim rowControl As String
     Dim rowType As String
     Dim vars As ILLVariables
+    Dim graphId As String
+    Dim seriesId As String
+    Dim graphOrder As String
+    Dim choicesVal As String
 
     Set dict = Dictionary()
     Set vars = LLVariables.Create(dict)
@@ -370,6 +380,25 @@ Public Property Get ValidTable() As Boolean
             ElseIf (colControl <> "geo" And colControl <> "hf") Then
                 ValidityReason = "The column variable " & colVar & " is " & _ 
                 "neither geo nor hf. Columns of spatio-temporal tables shoud be geo or hf variables."
+            End If
+        End If
+
+    Case TypeTimeSeriesGraph
+        
+        graphId = Value("graph id")
+        seriesId = Value("series id")
+        graphOrder = Value("graph order")
+        
+        Valid = (rowVar <> vbNullString) And (graphId <> vbNullString) And _ 
+                (seriesId <> vbNullString) And (graphOrder <> vbNullString)
+
+        If Not Valid Then
+            If (rowVar = vbNullString) Then
+                ValidityReason = "Unable to find the time variable. Series title may be missing."
+            ElseIf (seriesId = vbNullString) Then
+                ValidityReason = "Unable to find the series ID. Series title may be missing."
+            ElseIf (graphOrder = vbNullString) Or (graphId = vbNullString) Then
+                ValidityReason = "Unable to find the 'graph ID'/'graph order'. Graph title may be missing."
             End If
         End If
     End Select
@@ -496,7 +525,8 @@ Private Property Get isNewSection() As Boolean
         oldSec = (ActualSection = previousSection) And (prevCell.Row <> hRng.Row)
     End If
 
-    isNewSection = (Not oldSec) And (TableType <> TypeGlobalSummary)
+    isNewSection = (Not oldSec) And (TableType <> TypeGlobalSummary) And _ 
+                  (TableType <> TypeTimeSeriesGraph)
 End Property
 
 'Errors

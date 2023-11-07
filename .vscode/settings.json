@@ -7,7 +7,7 @@
         "Rscripts/setup_prev.xlsb": true
     },
     "editor.lineNumbers": "on",
-    "editor.fontFamily": "'Office Code Pro', 'Courier New', monospace",
+    "editor.fontFamily": "'Consolas', 'Courier New', monospace",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#1a1a1a",
         "activityBar.background": "#1a1a1a",

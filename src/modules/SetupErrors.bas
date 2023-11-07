@@ -438,6 +438,9 @@ End Sub
 
 'Checking on exports
 Private Sub CheckExports()
+
+    Const AVAILABLENUMBEROFEXPORTS As Integer = 5
+
     Dim expTab As ICustomTable
     Dim counter As Long
     Dim shexp As Worksheet
@@ -480,7 +483,8 @@ Private Sub CheckExports()
 
     checkingCounter = 0
 
-    For counter = 1 To 5
+    For counter = 1 To AVAILABLENUMBEROFEXPORTS
+
         Set cellRng = expTab.CellRange("Status", counter + statusRng.Row - 1)
         expStatus = cellRng.Value
         For headerCounter = keysLst.LowerBound To keysLst.UpperBound
@@ -496,9 +500,21 @@ Private Sub CheckExports()
         Next
 
         'Active export not filled in the dictionary
+        On Error Resume Next
+        Set exportRng = Nothing
         Set exportRng = dict.DataRange("Export " & counter, includeHeaders:=False)
+        On Error GoTo 0
 
-        If (expStatus = "active") And (FUN.CountBlank(exportRng) = exportRng.Rows.Count) Then
+        If (expStatus = "active") And (exportRng Is Nothing) Then
+            
+            checkingCounter = checkingCounter + 1
+            keyName = "exp-unfound-dictcolumn"
+            infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
+
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+
+        ElseIf (expStatus = "active") And (FUN.CountBlank(exportRng) = exportRng.Rows.Count) Then
+            
             checkingCounter = checkingCounter + 1
             keyName = "exp-act-empty"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
@@ -591,6 +607,7 @@ Private Sub checkTable(ByVal partName As String)
     Const TABTS As String = "Tab_TimeSeries_Analysis"
     Const TABSP As String = "Tab_Spatial_Analysis"
     Const TABSPTEMP As String = "Tab_SpatioTemporal_Analysis"
+    Const TABTSGRAPHS As String = "Tab_Graph_TimeSeries"
 
     Dim tabLo As ListObject 'ListObject for each of the tables in analysis
     Dim loname As String 'ListObject Name
@@ -605,6 +622,7 @@ Private Sub checkTable(ByVal partName As String)
     Dim infoMessage As String
     Dim anaForm As String 'analysis formula
     Dim FUN As WorksheetFunction
+    Dim tableScope As Byte
 
     BusyApp
 
@@ -615,7 +633,8 @@ Private Sub checkTable(ByVal partName As String)
         partName = "Bivariate analysis", TABBA, _
         partName = "Time series analysis", TABTS, _
         partName = "Spatial analysis", TABSP, _
-        partName = "Spatio-temporal analysis", TABSPTEMP _ 
+        partName = "Spatio-temporal analysis", TABSPTEMP, _
+        partName = "Time series graphs", TABTSGRAPHS _ 
     )
 
     Set sh = wb.Worksheets(ANALYSISSHEETNAME)
@@ -630,6 +649,7 @@ Private Sub checkTable(ByVal partName As String)
                                 subtitleName:=partName & "--Where?--Details")
 
     Set tabHeaderRng = tabLo.HeaderRowRange
+
     For nbLines = 1 To tabLo.ListRows.Count
         'Non valid table
         Set tabSpecsRng = tabLo.ListRows(nbLines).Range()
@@ -643,6 +663,7 @@ Private Sub checkTable(ByVal partName As String)
         Else
 
             Set specs = TablesSpecs.Create(tabHeaderRng, tabSpecsRng, dict, choi)
+            tableScope = specs.TableType
 
             'Invalid table
             If (Not specs.ValidTable()) Then
@@ -652,16 +673,19 @@ Private Sub checkTable(ByVal partName As String)
                 check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
 
                 'on new section on time series add another Error
-                If (specs.TableType = TypeTimeSeries) And (specs.isNewSection()) _
+                If (tableScope = TypeTimeSeries) And (specs.isNewSection()) _
                     And (FUN.CountBlank(tabSpecsRng) < tabSpecsRng.Columns.Count - 1) Then
                     keyName = "ana-ts-newsec"
                     infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
                     check.Add keyName & "-" & checkingCounter, infoMessage, checkingError
                 End If
-            End If
+            End If 
 
             'No Title
-            If specs.Value("title") = vbNullString And (specs.TableType <> TypeGlobalSummary) Then
+            If (specs.Value("title") = vbNullString) And _ 
+               (tableScope <> TypeGlobalSummary) And _ 
+               (tableScope <> TypeTimeSeriesGraph) Then
+
                 checkingCounter = checkingCounter + 1
                 keyName = "ana-empty-title"
                 infoMessage = ConvertedMessage(keyName, tabSpecsRng.Row)
@@ -670,7 +694,7 @@ Private Sub checkTable(ByVal partName As String)
             End If
 
             'flip coordinates = yes on univariate analysis table
-            If (specs.TableType = TypeUnivariate) And _
+            If (tableScope = TypeUnivariate) And _
                specs.HasGraph() And _
                (specs.Value("flip") = "yes") And _
                (specs.Value("percentage") = "yes") Then
@@ -683,7 +707,7 @@ Private Sub checkTable(ByVal partName As String)
             End If
 
             'add graph = no and flip coordinates = "yes" (on tables expect time series)
-            If (specs.TableType <> TypeTimeSeries) Then
+            If (tableScope <> TypeTimeSeries) And (tableScope <> TypeTimeSeriesGraph) Then
                 If (Not specs.HasGraph()) And (specs.Value("flip") = "yes")  Then
 
                     checkingCounter = checkingCounter + 1
@@ -695,14 +719,16 @@ Private Sub checkTable(ByVal partName As String)
             End If
 
             'Retrieve the formula of one specs and test them
-            anaForm = specs.Value("function")
-            If (anaForm <> vbNullString) Then
-                keyName = "ana-incor-form"
-                infoMessage = FormulaMessage(anaForm, keyName, tabSpecsRng.Row, _
-                                             formulaType:="analysis")
-                If (infoMessage <> vbNullString) Then
-                    checkingCounter = checkingCounter + 1
-                    check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+            If (tableScope <> TypeTimeSeriesGraph) Then
+                anaForm = specs.Value("function")
+                If (anaForm <> vbNullString) Then
+                    keyName = "ana-incor-form"
+                    infoMessage = FormulaMessage(anaForm, keyName, tabSpecsRng.Row, _
+                                                formulaType:="analysis")
+                    If (infoMessage <> vbNullString) Then
+                        checkingCounter = checkingCounter + 1
+                        check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+                    End If
                 End If
             End If
         End If
@@ -722,6 +748,7 @@ Private Sub CheckAnalysis()
     checkTable "Univariate analysis"
     checkTable "Bivariate analysis"
     checkTable "Time series analysis"
+    checkTable "Time series graphs"
     checkTable "Spatial analysis"
     checkTable "Spatio-temporal analysis"
 End Sub
