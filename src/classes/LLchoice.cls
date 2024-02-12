@@ -23,8 +23,9 @@ End Type
 
 Private this As Tchoice
 
-Private Const listName As String = "List Name"
+Private Const LISTNAME As String = "List Name"
 Private Const LABEL   As String = "Label"
+Private Const LABELSHORT As String = "Short Label"
 Private Const ORDER   As String = "Ordering List"
 
 'Instanciation
@@ -90,8 +91,8 @@ Private Property Get ChoiceExists(ByVal choiceName As String) As Boolean
     exist = False
 
     Set dataObject = ChoiceData
-    If dataObject.ColumnExists(listName) Then
-        Set listRng = DataRange(listName, includeHeaders:=False)
+    If dataObject.ColumnExists(LISTNAME) Then
+        Set listRng = DataRange(LISTNAME, includeHeaders:=False)
         exist = Not (listRng.Find(What:=choiceName, lookAt:=xlWhole, _
                                   MatchCase:=True, After:=listRng.Cells(listRng.Rows.Count, 1)) Is Nothing)
     End If
@@ -107,7 +108,7 @@ Private Property Get Categories(ByVal choiceName As String) As BetterArray
     Set lst = New BetterArray
 
     If ChoiceExists(choiceName) Then
-        Set rngName = DataRange(listName, includeHeaders:=False)
+        Set rngName = DataRange(LISTNAME, includeHeaders:=False)
         Set rngLabel = DataRange(LABEL, includeHeaders:=False)
         For counter = 1 To rngName.Rows.Count
             If rngName.Cells(counter, 1).Value = choiceName Then _
@@ -127,8 +128,8 @@ Private Sub Sort()
 
     Set dataObject = ChoiceData
 
-    If dataObject.ColumnExists(listName) And dataObject.ColumnExists(ORDER) Then
-        Set listRng = DataRange(listName, includeHeaders:=False)
+    If dataObject.ColumnExists(LISTNAME) And dataObject.ColumnExists(ORDER) Then
+        Set listRng = DataRange(LISTNAME, includeHeaders:=False)
         Set orderRng = DataRange(ORDER, includeHeaders:=False)
         Set choiceRng = DataRange(includeHeaders:=False)
 
@@ -142,7 +143,7 @@ Private Property Get AllChoices() As BetterArray
     Dim counter As Long 'counter for the number of rows of one range
 
     Set lstChoi = New BetterArray
-    Set lstRng = DataRange(listName, includeHeaders:=False)
+    Set lstRng = DataRange(LISTNAME, includeHeaders:=False)
     For counter = 1 To lstRng.Rows.Count
         If Not lstChoi.Includes(lstRng.Cells(counter, 1).Value) Then _
             lstChoi.Push lstRng.Cells(counter, 1).Value
@@ -169,7 +170,7 @@ Private Sub AddChoice(ByVal choiceName As String, ByVal CategoriesData As Better
     Set checkCategories = Categories(choiceName)
     If checkCategories.Length > 0 Then Exit Sub  'Will probably trace log.
 
-    Set listRng = DataRange(listName)
+    Set listRng = DataRange(LISTNAME)
     Set labelRng = DataRange(LABEL)
     Set orderRng = DataRange(ORDER)
     Set choicewksh = Wksh()
