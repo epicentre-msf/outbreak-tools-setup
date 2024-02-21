@@ -370,3 +370,9 @@ Private Sub PrepareForm(Optional ByVal cleanSetup As Boolean = False)
         [Imports].Quit.Top = 440
     End If
 End Sub
+
+'@Description("Callback for btnImpExp onAction: Import elements from a disease worksheet")
+'@EntryPoint
+Public Sub clickImportDisease(ByRef control As IRibbonControl)
+Attribute clickImportDisease.VB_Description = "Callback for btnImpExp onAction: Import elements from a disease worksheet"
+End Sub
