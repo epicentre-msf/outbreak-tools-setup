@@ -259,6 +259,8 @@ Private Sub UpdateTrans(ByVal rngSh As Worksheet)
   SortTransLo
   'Format the listObject
   FormatTable
+  'Add condtional formatting to some of the columns
+  AddConditionalFormatting
   'Count the number of elements and print a message
   PrintNumberOfMissing
 End Sub
@@ -327,15 +329,32 @@ Private Sub FormatTable()
 End Sub
 
 'Add validation to the listObject
-Private Sub AddValidation()
+Private Sub AddConditionalFormatting()
 
   Dim Lo As ListObject
   Dim colRng As Range
+  Dim counter As Long
+  Dim sh As Worksheet
 
+  Set Lo = Table()
+  Set sh = Wksh()
 
-  
+  On Error Resume Next
+  sh.Cells.FormatConditions.Delete
+  On Error GoTo 0
 
-
+  'Start with the second column of the listobject
+  Set colRng = Lo.ListColumns(1).Range.Offset(1, 1)
+  'Highlighting duplicates
+  Do While Not (Intersect(colRng, Lo.Range) Is Nothing)
+      'Delete previous conditional formatting before adding new one
+      colRng.FormatConditions.AddUniqueValues
+      With colRng.FormatConditions(colRng.FormatConditions.Count)
+          .DupeUnique = xlDuplicate
+          .Interior.color = vbRed
+      End With
+    Set colRng = colRng.Offset(, 1)
+  Loop
 End Sub
 
 'Message with the number of missing values
@@ -415,12 +434,12 @@ Private Sub AddTransLang(Optional ByVal langVal As String = vbNullString)
   Dim prevLoRng As Range
   Dim newLoRng As Range
   Dim cellRng As Range
+  Dim startColRng As Range 'Start column for adding validations
   Dim langList As BetterArray
 
 
   Set Lo = Table()
   Set sh = Wksh()
-
 
   Set hRng = Lo.HeaderRowRange
   'Previous range of the listObject
@@ -448,9 +467,10 @@ Private Sub AddTransLang(Optional ByVal langVal As String = vbNullString)
     newLoRng.EntireColumn.ColumnWidth = 60
     newLoRng.EntireRow.RowHeight = 30
     Lo.Resize newLoRng
-
     'Format the new table
     FormatTable
+    'Add conditional Formatting
+    AddConditionalFormatting
   End If
 End Sub
 
