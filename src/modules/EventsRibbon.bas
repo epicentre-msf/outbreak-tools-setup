@@ -103,6 +103,7 @@ Attribute clickAddTrans.VB_Description = "Callback for btnTransAdd onAction: Imp
     Set trads = Translations.Create(tradsh, TABTRANSLATION)
 
     pass.UnProtect TRADSHEETNAME
+    'update all values for translation
     trads.UpdateTrans upsh
     pass.Protect TRADSHEETNAME, True, True
 

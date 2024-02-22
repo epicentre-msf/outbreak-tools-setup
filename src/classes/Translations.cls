@@ -324,6 +324,17 @@ Private Sub FormatTable()
   Set csTab = CustomTable.Create(Lo)
   csTab.RemoveRows totalCount:=1
   On Error GoTo 0
+End Sub
+
+'Add validation to the listObject
+Private Sub AddValidation()
+
+  Dim Lo As ListObject
+  Dim colRng As Range
+
+
+  
+
 
 End Sub
 
