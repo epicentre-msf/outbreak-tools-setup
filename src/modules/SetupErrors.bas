@@ -439,7 +439,7 @@ End Sub
 'Checking on exports
 Private Sub CheckExports()
 
-    Const AVAILABLENUMBEROFEXPORTS As Integer = 5
+    Const AVAILABLENUMBEROFEXPORTS As Integer = 6
 
     Dim expTab As ICustomTable
     Dim counter As Long
