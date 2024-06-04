@@ -23,11 +23,11 @@ End Type
 
 Private this As TLLExport
 
-Public Function Create(ByVal sh As Worksheet) As ILLExport
+Public Function Create(ByVal sh As Worksheet, ByVal expStartRow As Long, ByVal expStartCol As Long) As ILLExport
   
     'Set creation of datasheet
     Dim customData As IDataSheet
-    Set customData = DataSheet.Create(sh, 1, 1)
+    Set customData = DataSheet.Create(sh, expStartRow, expStartCol)
 
     With New LLExport
         Set .Data = customData
@@ -64,6 +64,33 @@ Private Sub Translate(ByVal trans As ITranslation)
     trans.TranslateRange rng
 End Sub
 
+'Add / Remove Rows
+Private Sub ManageRows(Optional ByVal del As Boolean = False)
+    Dim sh As Worksheet
+    Dim Lo As ListObject
+    Dim tabl As ICustomTable
+
+    Set sh = Wksh()
+
+    On Error Resume Next
+    Set Lo = sh.ListObjects(1)
+    On Error GoTo 0
+    If Lo Is Nothing Then Exit Sub
+
+    Set tabl = CustomTable.Create(Lo, "export number")
+    If del Then
+        tabl.RemoveRows totalCount:=1
+    Else
+        tabl.AddRows nbRows:=2
+    End If
+End Sub
+
+Private Property Get NumberOfExports() As Long
+    On Error Resume Next
+    NumberOfExports = Data.DataRange.Rows.Count
+    On Error GoTo 0
+End Property
+
 'Import from another worksheet
 Private Sub ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
     Dim expData As IDataSheet
@@ -82,4 +109,18 @@ End Sub
 Private Sub ILLExport_ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
     ImportSpecs fromWksh, fromStartRow, fromStartcol
 End Sub
+
+'Remove Rows
+Private Sub ILLExport_RemoveRows()
+    ManageRows del:=True
+End Sub
+
+'Add Rows
+Private Sub ILLExport_AddRows()
+    ManageRows
+End Sub
+
+Private Property Get ILLExport_NumberOfExports() As Long
+    ILLExport_NumberOfExports = NumberOfExports()
+End Property
 

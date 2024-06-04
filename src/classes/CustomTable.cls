@@ -562,8 +562,8 @@ Private Sub SortElements(ByVal els As Variant)
   Next
 End Sub
 
-Private Sub ICustomTable_AddRows()
-  Resize AddRows:=True
+Private Sub ICustomTable_AddRows(Optional ByVal nbRows As Long = NBROWSADD)
+  Resize AddRows:=True, nbRows:=nbRows
 End Sub
 
 Private Sub ICustomTable_RemoveRows(Optional ByVal totalCount As Long = 0)

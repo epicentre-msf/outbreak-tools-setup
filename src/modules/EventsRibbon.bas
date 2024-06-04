@@ -10,6 +10,7 @@ Private Const TRADSHEETNAME As String = "Translations"
 Private Const TABTRANSLATION As String = "Tab_Translations"
 Private Const PASSSHEETNAME As String = "__pass"
 Private Const UPDATEDSHEETNAME As String = "__updated"
+Private Const DICTSHEETNAME As String = "Dictionary"
 
 'Private Subs to speed up process
 Private Sub BusyApp()
@@ -222,6 +223,8 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Dim sh As Worksheet
     Dim shpass As Worksheet
     Dim pass As IPasswords
+    Dim prevNbExp As Long
+    Dim actNbExp As Long
 
     BusyApp
 
@@ -242,6 +245,9 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
         Set part = LLchoice.Create(sh, 4, 1)
     Case "Analysis"
         Set part = Analysis.Create(sh)
+    Case "Exports"
+        Set part = LLExport.Create(sh, 4, 1)
+        prevNbExp = part.NumberOfExports()
     End Select
 
     'Exit if unable to find the corresponding object
@@ -256,10 +262,47 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     End If
 
     pass.Protect sh.Name, (sh.Name = "Analysis")
+
+    If (sh.Name = "Exports") Then 
+        actNbExp = part.NumberOfExports()
+        ManageDictionaryExport prevNbExp, actNbExp, del
+    End If
+
     sh.EnableCalculation = True
     NotBusyApp
 End Sub
 
+Private Sub ManageDictionaryExport(ByVal prevNbExp As Long, ByVal actNbExp As Long, _ 
+                                   Optional ByVal del As Boolean = False)
+    Dim dict As ILLdictionary
+    Dim counter As Long
+    Dim shpass As Worksheet
+    Dim shdict As Worksheet
+    Dim pass As IPasswords
+
+    Set shpass = ThisWorkbook.Worksheets(PASSSHEETNAME)
+    Set shdict = ThisWorkbook.Worksheets(DICTSHEETNAME)
+    Set pass = Passwords.Create(shpass)
+
+    BusyApp
+    pass.UnProtect "Dictionary"
+    Set dict = LLdictionary.Create(shdict, 5, 1)
+    
+    If del Then
+        'Delete the exports columns from the dictionary (previous number > actual number)
+        For counter = (actNbExp + 1) To prevNbExp
+            dict.RemoveColumn "Export " & counter
+        Next 
+    Else
+        'Add new exports columns to the dictionary (previous number < actual number)
+        For counter = (prevNbExp + 1) To actNbExp
+            dict.InsertColumn "Export " & counter, After:= "Export " & (counter - 1)
+        Next
+    End If
+
+    pass.Protect "Dictionary"
+    NotBusyApp
+End Sub
 
 Private Sub CleanUpdateColumns()
     'Clear the update sheet

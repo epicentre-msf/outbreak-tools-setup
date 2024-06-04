@@ -75,7 +75,7 @@ Private Sub ClassArraysInitialize()
                            "sheet name", _
                            "sheet type", "main section", "sub section", "status", "personal identifier", "type", "format", _
                            "control", "control details", "unique", _
-                           "export 1", "export 2", "export 3", "export 4", "export 5", "min", "max", "alert", "message", "table name", "column index", _
+                           "min", "max", "alert", "message", "table name", "column index", _
                            "list auto", "visibility"
 End Sub
 
@@ -97,11 +97,40 @@ Private Function ColumnExists(ByVal colName As String, Optional ByVal checkValid
 
     If exist And checkValidity Then
         If DICTIONARYCOLUMNS Is Nothing Then ClassArraysInitialize
-        exist = DICTIONARYCOLUMNS.Includes(colName)
+        exist = (DICTIONARYCOLUMNS.Includes(colName) Or (Split(colName, " ")(0) = "export"))
     End If
 
     ColumnExists = exist
 End Function
+
+'Insert a column
+Private Sub InsertColumn(ByVal colName As String, ByVal after As String)
+
+    Dim prevRng As Range
+
+    'Test if the column to add one after exists
+    If Not ColumnExists(after) Then Exit Sub
+
+    Set prevRng = DataRange(after, includeHeaders:=True)
+
+    'insert a column
+    prevRng.EntireColumn.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    prevRng.Offset(, 1).Cells(1, 1).Value = colName
+End Sub
+
+'Remove a column
+Private Sub RemoveColumn(ByVal colName As String)
+
+    Dim actRng As Range
+
+    'Test if the column exists before removing it
+    If Not ColumnExists(colName) Then Exit Sub
+    
+    Set actRng = DataRange(colName)
+    On Error Resume Next
+    actRng.EntireColumn.Delete
+    On Error GoTo 0
+End Sub
 
 'Check Existence of a variable
 Private Function VariableExists(ByVal varName As String) As Boolean
@@ -224,3 +253,11 @@ Private Property Get ILLdictionary_SpecialVars( _
                                         conditionName)
 
 End Property
+
+Private Sub ILLdictionary_InsertColumn(ByVal colName As String, ByVal after As String)
+    InsertColumn colName:=colName, after:=after    
+End Sub
+
+Private Sub ILLdictionary_RemoveColumn(ByVal colName As String)
+    RemoveColumn colName:=colName, after:=after
+End Sub
