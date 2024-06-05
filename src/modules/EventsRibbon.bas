@@ -301,7 +301,6 @@ Private Sub ManageDictionaryExport(ByVal prevNbExp As Long, ByVal actNbExp As Lo
     End If
 
     pass.Protect "Dictionary"
-    NotBusyApp
 End Sub
 
 Private Sub CleanUpdateColumns()

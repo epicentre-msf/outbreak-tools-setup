@@ -26,7 +26,6 @@ End Enum
 
 'Exposed methods
 
-Public Sub Translate(ByVal trans As ITranslation): End Sub
 Public Sub ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden): End Sub
 Public Sub ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long): End Sub
 'Add and remove rows for the export

@@ -56,21 +56,13 @@ Private Sub ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide As Long = x
     expData.Export toWkb, Hide:=Hide
 End Sub
 
-Private Sub Translate(ByVal trans As ITranslation)
-    Dim expData As IDataSheet
-    Dim rng As Range
-    Set expData = Data()
-    Set rng = expData.DataRange("label button")
-    trans.TranslateRange rng
-End Sub
-
 'Add / Remove Rows
 Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Dim sh As Worksheet
     Dim Lo As ListObject
     Dim tabl As ICustomTable
 
-    Set sh = Wksh()
+    Set sh = Data.Wksh()
 
     On Error Resume Next
     Set Lo = sh.ListObjects(1)
@@ -80,8 +72,9 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Set tabl = CustomTable.Create(Lo, "export number")
     If del Then
         tabl.RemoveRows totalCount:=1
+        Lo.Range.Cells(2, 1).Value = 1
     Else
-        tabl.AddRows nbRows:=2
+        tabl.AddRows nbRows:=1
     End If
 End Sub
 
@@ -96,10 +89,6 @@ Private Sub ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long,
     Dim expData As IDataSheet
     Set expData = Data()
     expData.Import fromWksh, fromStartRow, fromStartcol
-End Sub
-
-Private Sub ILLExport_Translate(ByVal trans As ITranslation)
-    Translate trans
 End Sub
 
 Private Sub ILLExport_ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide As Long = xlSheetHidden)

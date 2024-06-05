@@ -104,17 +104,18 @@ Private Function ColumnExists(ByVal colName As String, Optional ByVal checkValid
 End Function
 
 'Insert a column
-Private Sub InsertColumn(ByVal colName As String, ByVal after As String)
+Private Sub InsertColumn(ByVal colName As String, ByVal After As String)
 
     Dim prevRng As Range
 
     'Test if the column to add one after exists
     If Not ColumnExists(after) Then Exit Sub
+    If ColumnExists(colName) Then Exit Sub
 
     Set prevRng = DataRange(after, includeHeaders:=True)
 
     'insert a column
-    prevRng.EntireColumn.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    prevRng.Offset(, 1).EntireColumn.Insert Shift:=xlToLeft, CopyOrigin:=xlFormatFromLeftOrAbove
     prevRng.Offset(, 1).Cells(1, 1).Value = colName
 End Sub
 
@@ -254,10 +255,10 @@ Private Property Get ILLdictionary_SpecialVars( _
 
 End Property
 
-Private Sub ILLdictionary_InsertColumn(ByVal colName As String, ByVal after As String)
-    InsertColumn colName:=colName, after:=after    
+Private Sub ILLdictionary_InsertColumn(ByVal colName As String, ByVal After As String)
+    InsertColumn colName:=colName, After:=After    
 End Sub
 
 Private Sub ILLdictionary_RemoveColumn(ByVal colName As String)
-    RemoveColumn colName:=colName, after:=after
+    RemoveColumn colName:=colName
 End Sub

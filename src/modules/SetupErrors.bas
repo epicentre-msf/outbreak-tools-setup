@@ -439,8 +439,6 @@ End Sub
 'Checking on exports
 Private Sub CheckExports()
 
-    Const AVAILABLENUMBEROFEXPORTS As Integer = 6
-
     Dim expTab As ICustomTable
     Dim counter As Long
     Dim shexp As Worksheet
@@ -456,22 +454,24 @@ Private Sub CheckExports()
     Dim exportRng As Range
     Dim statusRng As Range
     Dim FUN As WorksheetFunction
-    Dim fileNameRng As Range
     Dim fileNameLst As BetterArray
     Dim actFileName As String
     Dim fileCounter As Long
     Dim fileNameChunk As String
     Dim vars As ILLVariables
+    Dim numberOfExports As Long
+    Dim pwd As String
+    Dim expId As String
 
     BusyApp
 
     Set shexp = wb.Worksheets(EXPORTSHEETNAME)
-    Set expTab = CustomTable.Create(shexp.ListObjects(1))
+    Set expTab = CustomTable.Create(shexp.ListObjects(1), idCol:="Export Number")
     Set keysLst = New BetterArray
     Set headersLst = New BetterArray
     Set fileNameLst = New BetterArray
     Set statusRng = expTab.DataRange("Status")
-    Set fileNameRng = expTab.DataRange("File Name")
+
     Set check = Checking.Create(titleName:="Export incoherences type--Where?--Details")
     Set FUN = Application.WorksheetFunction
     Set vars = LLVariables.Create(dict)
@@ -482,11 +482,17 @@ Private Sub CheckExports()
                  "exp-mis-form", "exp-mis-name", "exp-mis-head"
 
     checkingCounter = 0
+    numberOfExports = statusRng.Rows.Count
 
-    For counter = 1 To AVAILABLENUMBEROFEXPORTS
+    For counter = 1 To numberOfExports
 
+        'This cellRng is used not only for the status, but also for identifying the 
+        'row of the checking.
         Set cellRng = expTab.CellRange("Status", counter + statusRng.Row - 1)
         expStatus = cellRng.Value
+        pwd = expTab.Value(colName:="Password", keyName:=CStr(counter))
+        expId = expTab.Value(colName:="Export Identifiers", keyName:=CStr(counter))
+
         For headerCounter = keysLst.LowerBound To keysLst.UpperBound
             'Empty label, password, metadata, translation file format or file name, file header
             'The check is done for each of the export.
@@ -510,7 +516,6 @@ Private Sub CheckExports()
             checkingCounter = checkingCounter + 1
             keyName = "exp-unfound-dictcolumn"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
-
             check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
 
         ElseIf (expStatus = "active") And (FUN.CountBlank(exportRng) = exportRng.Rows.Count) Then
@@ -518,13 +523,22 @@ Private Sub CheckExports()
             checkingCounter = checkingCounter + 1
             keyName = "exp-act-empty"
             infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
-
             check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+        End If
+
+        'Exports with identifiers without a password
+        If (pwd <> "yes") And (expId = "yes") Then
+
+            checkingCounter = checkingCounter + 1
+            keyName = "exp-id-passwd"
+            infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
+            check.Add keyName & "-" & checkingCounter, infoMessage, checkingWarning
+        
         End If
 
         'Variable in File name not found:
         'Get the file name, split on + and loop through elements
-        actFileName = fileNameRng.Cells(counter, 1).Value
+        actFileName = expTab.Value(colName:="File Name", keyName:=counter)
         fileNameLst.Clear
         fileNameLst.Items = Split(actFileName, "+")
 

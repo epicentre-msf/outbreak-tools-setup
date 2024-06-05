@@ -218,7 +218,10 @@ Private Sub AddValidationsAndUpdates()
     currTab.SetValidation colName:="export analysis", dropName:="__yesno", _
                           drop:=drop, alertType:="error"
     currTab.SetValidation colName:="export pcodes", dropName:="__yesno", _ 
-                          drop:=drop, alertType:="error"    
+                          drop:=drop, alertType:="error" 
+    currTab.SetValidation colName:="export identifiers", dropName:="__yesno", _ 
+                          drop:=drop, alertType:="error" 
+    
 
     'Add Watchers on columns
     BusyApp

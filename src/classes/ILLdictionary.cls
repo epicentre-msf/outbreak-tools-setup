@@ -34,7 +34,7 @@ Public Function VariableExists(ByVal varName As String) As Boolean: End Function
 'Add and remove rows
 Public Sub AddRows(): End Sub
 Public Sub RemoveRows(): End Sub
-Public Sub InsertColumn(ByVal colName As String, ByVal after As String): End Sub
+Public Sub InsertColumn(ByVal colName As String, ByVal After As String): End Sub
 Public Sub RemoveColumn(ByVal colName As String): End Sub
 Public Property Get SpecialVars(ByVal first_condition As String, _
                                 Optional ByVal second_condition As String = vbNullString, _
