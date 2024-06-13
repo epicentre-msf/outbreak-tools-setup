@@ -137,7 +137,6 @@ Private Sub CreateDropdowns()
                 "Add or remove rows of spatio-temporal analysis", _
                 "Add or remove rows of all tables"
 
-
     'Series and graphs titles
     AddElements "__graphs_titles", vbNullString, vbNullString
     AddElements "__series_titles", vbNullString, vbNullString
@@ -201,28 +200,36 @@ Private Sub AddValidationsAndUpdates()
     pass.UnProtect "Exports"
     MoveToTable "Tab_Export"
 
-    currTab.SetValidation colName:="password", dropName:="__yesno", _
-                        drop:=drop, alertType:="error"
+    'export status
     currTab.SetValidation colName:="status", dropName:="__export_status", _
                         drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export metadata", dropName:="__yesno", _
-                        drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export translation", dropName:="__yesno", _
-                        drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export translation", dropName:="__yesno", _
-                        drop:=drop, alertType:="error"
+                        
+    'export format
     currTab.SetValidation colName:="file format", dropName:="__export_format", _
                         drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export header", dropName:="__export_header", _
-                        drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export analysis", dropName:="__yesno", _
-                          drop:=drop, alertType:="error"
-    currTab.SetValidation colName:="export pcodes", dropName:="__yesno", _ 
-                          drop:=drop, alertType:="error" 
-    currTab.SetValidation colName:="export identifiers", dropName:="__yesno", _ 
-                          drop:=drop, alertType:="error" 
-    
 
+    'add password
+    currTab.SetValidation colName:="password", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
+
+    'export identifiers
+    currTab.SetValidation colName:="include personal identifiers", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
+    'include p-codes
+    currTab.SetValidation colName:="include p-codes", dropName:="__yesno", _ 
+                          drop:=drop, alertType:="error"                     
+    'export headers
+    currTab.SetValidation colName:="header format", dropName:="__export_header", _
+                        drop:=drop, alertType:="error"
+
+    'export metadata
+    currTab.SetValidation colName:="export metadata", dropName:="__yesno", _
+                        drop:=drop, alertType:="error"
+
+    'export analyses sheets
+    currTab.SetValidation colName:="export analyses sheets", dropName:="__yesno", _
+                          drop:=drop, alertType:="error"
+    
     'Add Watchers on columns
     BusyApp
     pass.Protect "Exports"

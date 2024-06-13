@@ -476,8 +476,8 @@ Private Sub CheckExports()
     Set FUN = Application.WorksheetFunction
     Set vars = LLVariables.Create(dict)
 
-    headersLst.Push "Label Button", "Password", "Export Metadata", "Export Translation", _
-                    "File Format", "File Name", "Export Header"
+    headersLst.Push "Label button", "Password", "Export metadata sheets", _
+                    "File format", "File name", "Header format"
     keysLst.Push "exp-mis-lab", "exp-mis-pass", "exp-mis-meta", "exp-mis-trad", _
                  "exp-mis-form", "exp-mis-name", "exp-mis-head"
 
@@ -491,7 +491,7 @@ Private Sub CheckExports()
         Set cellRng = expTab.CellRange("Status", counter + statusRng.Row - 1)
         expStatus = cellRng.Value
         pwd = expTab.Value(colName:="Password", keyName:=CStr(counter))
-        expId = expTab.Value(colName:="Export Identifiers", keyName:=CStr(counter))
+        expId = expTab.Value(colName:="Include personal identifiers", keyName:=CStr(counter))
 
         For headerCounter = keysLst.LowerBound To keysLst.UpperBound
             'Empty label, password, metadata, translation file format or file name, file header

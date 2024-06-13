@@ -54,7 +54,7 @@ Attribute clickAddLang.VB_Description = "Callback for editLang onChange: Add a l
     Dim sh As Worksheet
     Dim askFirst As Long
 
-    If text = vbNullString Then Exit Sub
+    If text = vbNullString Then Exit Sub 
     BusyApp
 
     'Ask before proceeding
@@ -104,6 +104,9 @@ Attribute clickAddTrans.VB_Description = "Callback for btnTransAdd onAction: Imp
     Set trads = Translations.Create(tradsh, TABTRANSLATION)
 
     pass.UnProtect TRADSHEETNAME
+    On Error Resume Next
+    tradsh.ListObjects(1).AutoFilter.ShowAllData
+    On Error GoTo 0
     'update all values for translation
     trads.UpdateTrans upsh
     pass.Protect TRADSHEETNAME, True, True
@@ -226,7 +229,7 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Dim prevNbExp As Long
     Dim actNbExp As Long
 
-    BusyApp
+    
 
     On Error Resume Next
     Set sh = ThisWorkbook.Worksheets(sheetName)
@@ -252,7 +255,10 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
 
     'Exit if unable to find the corresponding object
     If part Is Nothing Then Exit Sub
+
+    BusyApp
     Set pass = Passwords.Create(shpass)
+    BusyApp
     pass.UnProtect sh.Name
 
     If del Then
@@ -261,13 +267,14 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
         part.AddRows
     End If
 
-    pass.Protect sh.Name, (sh.Name = "Analysis")
 
     If (sh.Name = "Exports") Then 
         actNbExp = part.NumberOfExports()
         ManageDictionaryExport prevNbExp, actNbExp, del
     End If
 
+    BusyApp
+    pass.Protect sh.Name, (sh.Name = "Analysis")
     sh.EnableCalculation = True
     NotBusyApp
 End Sub
@@ -300,6 +307,7 @@ Private Sub ManageDictionaryExport(ByVal prevNbExp As Long, ByVal actNbExp As Lo
         Next
     End If
 
+    BusyApp
     pass.Protect "Dictionary"
 End Sub
 

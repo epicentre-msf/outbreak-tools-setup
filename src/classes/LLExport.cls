@@ -61,6 +61,8 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     Dim sh As Worksheet
     Dim Lo As ListObject
     Dim tabl As ICustomTable
+    Dim includeRng As Range
+    Dim counter As Long
 
     Set sh = Data.Wksh()
 
@@ -70,11 +72,19 @@ Private Sub ManageRows(Optional ByVal del As Boolean = False)
     If Lo Is Nothing Then Exit Sub
 
     Set tabl = CustomTable.Create(Lo, "export number")
+
     If del Then
-        tabl.RemoveRows totalCount:=1
+        tabl.RemoveRows totalCount:=2
         Lo.Range.Cells(2, 1).Value = 1
     Else
         tabl.AddRows nbRows:=1
+        'Add "no" to include identifiers
+        Set includeRng = tabl.DataRange("include personal identifiers")
+        For counter = 1 To includeRng.Rows.Count
+            If includeRng.Cells(counter, 1).Value = vbNullString Then
+                includeRng.Cells(counter, 1).Value = "no"
+            End If
+        Next
     End If
 End Sub
 
@@ -95,7 +105,8 @@ Private Sub ILLExport_ExportSpecs(ByVal toWkb As Workbook, Optional ByVal Hide A
     ExportSpecs toWkb, Hide:=Hide
 End Sub
 
-Private Sub ILLExport_ImportSpecs(ByVal fromWksh As Worksheet, ByVal fromStartRow As Long, ByVal fromStartcol As Long)
+Private Sub ILLExport_ImportSpecs(ByVal fromWksh As Worksheet, _ 
+                                  ByVal fromStartRow As Long, ByVal fromStartcol As Long)
     ImportSpecs fromWksh, fromStartRow, fromStartcol
 End Sub
 

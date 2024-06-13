@@ -107,16 +107,23 @@ End Function
 Private Sub InsertColumn(ByVal colName As String, ByVal After As String)
 
     Dim prevRng As Range
+    Dim hRng As Range
+    Dim sh As Worksheet
 
     'Test if the column to add one after exists
     If Not ColumnExists(after) Then Exit Sub
     If ColumnExists(colName) Then Exit Sub
 
     Set prevRng = DataRange(after, includeHeaders:=True)
+    Set sh = Wksh()
 
     'insert a column
     prevRng.Offset(, 1).EntireColumn.Insert Shift:=xlToLeft, CopyOrigin:=xlFormatFromLeftOrAbove
     prevRng.Offset(, 1).Cells(1, 1).Value = colName
+    Set hRng = sh.Range(prevRng.Cells(-1, 1), prevRng.Cells(0,2))
+    On Error Resume Next
+        hRng.Merge
+    On Error GoTo 0
 End Sub
 
 'Remove a column
