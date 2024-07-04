@@ -195,7 +195,9 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
             NotBusyApp
             Exit Sub
         End If
-
+        
+        'Add total for choices.
+        droArray.Push "Total"
         drop.Add dropArray, choiceName & "__"
         drop.Update dropArray, choiceName & "__"
 
