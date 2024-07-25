@@ -51,9 +51,9 @@ update_setup <- function(update_status = 0) {
   }
 }
 
+# replace the _aky setup by the _mock setup
+update_setup(update_status = 3) # nolint
 # update the dev file in bin
 update_setup(update_status = 0) # nolint
 # update the file on root setup
 update_setup(update_status = 1) # nolint
-# replace the _aky setup by the _mock setup
-update_setup(update_status = 3) # nolint

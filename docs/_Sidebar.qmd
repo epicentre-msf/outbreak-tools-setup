@@ -1,0 +1,25 @@
+# Overview
+
+* [Quick Start][home]
+
+# Configurations
+
+* [Dictionary][dictionary]
+* [Choices sheet][choices]
+* [Export sheet][export]
+* [Analysis sheet][analysis]
+* [Translation sheet][translations]
+
+# How To
+
+* [Miscellaneous][misc]
+
+
+[home]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Home
+[dictionary]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Dictionary
+[choices]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Choices
+[analysis]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Analysis
+[export]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Exports
+[translations]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Translations
+[advanced]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Options
+[misc]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Miscellaneous 

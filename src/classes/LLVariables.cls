@@ -164,7 +164,7 @@ End Sub
 
 'Properties
 Private Property Get ILLVariables_Dictionary() As ILLdictionary
-    Set ILLVariables_Dictionary = Dictionary
+    Set ILLVariables_Dictionary = Dictionary()
 End Property
 
 'Exposed methods

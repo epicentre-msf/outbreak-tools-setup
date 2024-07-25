@@ -5,7 +5,7 @@ Option Explicit
 
 'All events on the analysis Worksheet
 Private Const ANALYSISSHEET As String = "Analysis"
-Private Const LOBJNAME As String = "Tab_Graph_TimeSeries"
+Private Const LOBTSGRAPHNAME As String = "Tab_Graph_TimeSeries"
 Private Const LOBJTSNAME As String = "Tab_TimeSeries_Analysis"
 Private Const UPDATEDSHEETNAME As String = "__updated"
 Private Const PASSSHEETNAME As String = "__pass"
@@ -39,7 +39,8 @@ Public Sub CalculateAnalysis()
     On Error GoTo 0
 End Sub
 
-'When you enter the analysis sheet, update dropdown for time variables, etc.
+'When you enter the analysis sheet, update dropdown for time variables,
+'geo variables, etc.
 'Fire this event when leaving the dictionary
 Public Sub EnterAnalysis(Optional ByVal forceUpdate As Boolean = False)
 
@@ -94,7 +95,6 @@ Public Sub AddGeoDropdown(ByVal Target As Range)
     Dim sh As Worksheet
     Dim csTab As ICustomTable
     Dim drop As IDropdownLists
-    Dim dropArray As BetterArray
     Dim seriesSecRng As Range
     Dim pass As IPasswords
     Dim cellRng As Range
@@ -158,7 +158,8 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
     
     Set wb = ThisWorkbook
     Set sh = wb.Worksheets(ANALYSISSHEET)
-    Set csTab = CustomTable.Create(sh.ListObjects(LOBJNAME), "series title")
+    Set csTab = CustomTable.Create(sh.ListObjects(LOBTSGRAPHNAME), idCol:="series title")
+    Set tsTab = CustomTable.Create(sh.ListObjects(LOBJTSNAME), "title")
     Set seriestitleRng = csTab.DataRange("series title")
 
     If Intersect(Target, seriestitleRng) Is Nothing Then Exit Sub
@@ -196,8 +197,9 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
             Exit Sub
         End If
         
-        'Add total for choices.
-        droArray.Push "Total"
+        'Add total for choices where addTotal = Yes 
+        If (tsTab.Value("add total", keyName:=Target.Value) = "yes") Then dropArray.Push "Total"
+        
         drop.Add dropArray, choiceName & "__"
         drop.Update dropArray, choiceName & "__"
 
@@ -210,20 +212,25 @@ Public Sub AddChoicesDropdown(ByVal Target As Range)
         'get the cell Range for plot values or percentage
         Set cellRng = csTab.CellRange("values or percentages", Target.Row)
         drop.SetValidation cellRng, "__perc_val"
+        
         FormatLockCell cellRng, False
+
     Else
+        
         'Get the cellRang for choice
         Set cellRng = csTab.CellRange("choice", Target.Row)
         cellRng.Validation.Delete
-        Set tsTab = CustomTable.Create(sh.ListObjects(LOBJTSNAME), "title")
         sumLab = tsTab.Value(colName:="summary label", keyName:=Target.Value)
         cellRng.Value = sumLab
+        
         FormatLockCell cellRng, True
 
         Set cellRng = csTab.CellRange("values or percentages", Target.Row)
         cellRng.Validation.Delete
         cellRng.Value = "values"
+        
         FormatLockCell cellRng, True
+    
     End If
 
     pass.Protect ANALYSISSHEET, True

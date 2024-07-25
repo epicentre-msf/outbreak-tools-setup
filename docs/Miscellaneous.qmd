@@ -1,0 +1,93 @@
+
+
+## Export a subset of geographic columns
+
+The need: you need to create a MoH export with only the admin 3 and 4 columns.
+
+The problem: in the **set-up file** *Dictionary* sheet, geographic columns are represented by one *"geo" variable*, that is translated in 4 columns in the generated **linelist file** (admin 1, 2, 3 and 4) with cascading dropdown menus. In the **set-up file**, if you indicate that this "geo" variable should be exported for a given export, the linelist export will contain the 4 admin levels columns (more if you choose to export p-codes, see the "*Exports*" sheet options in the **set-up file**).
+
+The solution: you need to derive individual columns from the automatically created "*geo*" columns, and exports these only to your MoH export.
+
+How does it works? The "*geo*" variable **name** is used to automatically name the 4 level columns in the linelist. For example, if the "*geo*" variable in the **set-up file** is called "*origin*", four columns will be created in the linelist: adm1\_*origin*, adm2\_*origin*, adm3\_*origin*, adm4\_*origin*.
+
+**Even though these columns do not appear in the setup file, they will be created in the linelist!** This means that you can reference them and use them in formulas in other parts of the *Dictionary* sheet, like you would do for any other variable defined in that sheet.
+
+An example, with a column named "residence": the green variable is the "geo" variable. It triggers the creation of 4 columns in the linelist. You will export it for a MSF export, but maybe you don't need to export all the fours columns in an MoH export. The blue variables are calculated variables (formula control) that refer to the geo columns that are automatically created. You can decide for each of these individually to export them or not in a given export.
+
+![](imgs/im-123-export-a-subset-of-geographic-columns.png){fig-align="center"}
+
+Because the variable do not appear in the **setup file**, the *checkRep* *check* will raise a warning, saying that the formula will fail (because it references a variable that seem not to exist), but in this specific instance, it is wrong, **the columns will be created**, and the formula will thus work in the linelist.
+
+![](imgs/im-124-export-a-subset-of-geographic-columns.png){fig-align="center"}
+
+## Have several entry sheets in a file
+
+### Independent data
+
+You just need to use different sheet names in the *Dictionary* sheet (see the section "Sheets and sections" above). A linelist with an "*Info*" sheet and a "*Patient linelist*" sheet already has two entry sheets, even if their format differ.
+
+You can of course have two entry sheets with independent 2 dimension table. For example, patient level information on one sheet, and a table about bed occupancy on a second sheet, with no interaction between the two tables.
+
+### Refer to data from another table
+
+#### Case of a single value
+
+It is straightforward to use the values of **vlist1D** in a formula: just refer to the name of the variable in another formula (remember these variables can take only one value).
+
+Example : we often use this formula to calculate the EPIWEEK, based on the date of admission and a piece of information from the *Info* sheet on which day the week starts (info_week_start).
+
+> IF( OR(ISBLANK(case_id), ISBLANK(admission_date) ),"",
+
+> EPIWEEK(admission_date, LEFT(info_week_start, 1)))
+
+See the *Formula* sections of this document for more information
+
+#### Link two tables
+
+A more advanced case is when you have two tables, which should be linked at minima by a **key**. A user case would having a main data entry sheet with general patient data, and another entry sheet with additional variables for a subset of patients (readmission variables for example, or extensive lab testing).
+
+##### Make sure IDs match with list_auto
+
+In such a case, the patients from the "readmission" sheet must match the patients from the main sheet. If data are exported in R or Stata, you want to be able to merge these tables.
+
+You can have an ID column in the "readmission sheet" with a **dropdown menu** containing only the IDs of patients admitted in the facility, whose values come from the main patient sheet (taken from a *case_id* column for example). This helps reducing entry errors and later merging nightmares.
+
+See the *Control* and *Control details* sections of this document on *list_auto* for more information.
+
+##### Propagate values from the other table with VALUE_OF
+
+It might be desirable to bring some of the patient data in this table, to calculate new variables, or just to facilitate reading and understanding. For example, we might want to bring in the name and surname of the patient, without entering it again!
+
+You can use the custom function VALUE_OF for that. It works sort of like a LOOKUP function, except we provide variable names, and it matches the value you need.
+
+It takes three arguments, all **variable names**:
+
+> VALUE_OF(*key_variable1*, *key_variable2*, *variable_values*)
+
+> *key_variable1*: the list_auto in the current sheet (the key column that contains IDs)
+
+> *key_variable2*: the source of the list_auto in the other sheet (the IDs from the main sheet)
+
+> *variable_values*: the variables to take values to propagate from.
+
+The function matches the values from columns *key_variable1* and *key_variable2*, and return values from *variable_values* column at the corresponding row.
+
+NB: faut s'assurer que ce que tu veux matcher et la variable valeur sont dans la meme feuille, sinon tu auras le vide.
+
+::: callout-note
+key_variable2 and variable_values must be on the same sheet or the function will nothing.
+:::
+
+::: callout-note
+If the function finds more than two matches, it will return the values from the first match (the first line found).
+:::
+
+## Custom formulas
+
+EPIWEEK: returns the week number.
+
+N: count the number of lines, mostly used in the analyses
+
+DATE_RANGE: range of a date column, mostly used in the global summary table
+
+![](imgs/im-125-custom-formulas.png){fig-align="center"}

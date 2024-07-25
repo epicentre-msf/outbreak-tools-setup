@@ -19,6 +19,8 @@ Option Explicit
 Implements ISetupImport
 
 Private Const CLASSNAME As String = "SetupImport"
+Private Const EXPORTSHEETNAME As String = "Exports"
+Private Const DICTSHEETNAME As String = "Dictionary"
 
 Private Type TSetupImport
   inPath As String
@@ -93,6 +95,65 @@ Private Sub WriteProgress(ByVal numValue As Integer)
   CurrentStatus = (NUMBEROFBARS) * Round(Application.WorksheetFunction.Min(numValue, 100) / 100, 1)
   progrObj.Caption = "[" & String(CurrentStatus, "|") & SPACE(NUMBEROFBARS - CurrentStatus) & "]" & _
                         " " & CInt(numValue) & "%"
+End Sub
+
+Private Sub PrepareImport(ByVal pass As IPasswords, ByVal sheetLists As BetterArray)
+
+  'curr prefix is for current ie in the current workbook
+  'imp is for imported, ie in the imported workbook
+
+  Dim currExpObj As ILLExport 'current export object,
+  Dim impExpObj As ILLExport
+  Dim currDict As ILLdictionary 'current dictionary
+  Dim currExpsh As Worksheet 'current Export sheet
+  Dim impExpSh As Worksheet 
+  Dim currwb As Workbook 'current workbook
+  Dim impwb As Workbook
+  Dim counter As Long
+  Dim prevNbExp As Long
+  Dim actNbExp As Long
+
+  'Exit if the import does not includes Exports
+  If Not sheetLists.Includes(EXPORTSHEETNAME) Then Exit Sub
+
+  Set impwb = ImportWkb()
+  Set currwb = ThisWorkbook
+
+  'Preparing the export worksheet for conformity with the imported one
+  If sheetExists(impwb, EXPORTSHEETNAME) And sheetExists(impwb, DICTSHEETNAME) Then
+
+    Set currExpsh = currwb.Worksheets(EXPORTSHEETNAME)
+    Set impExpSh = impwb.Worksheets(EXPORTSHEETNAME)
+
+    Set currExpObj = LLExport.Create(currExpsh, 4, 1)
+    Set impExpObj = LLExport.Create(impExpsh, 4, 1)
+
+
+    If currExpObj.NumberOfExports() < impExpObj.NumberOfExports() Then
+
+      'Add the exports in the current setup
+      pass.UnProtect DICTSHEETNAME
+      pass.UnProtect EXPORTSHEETNAME
+
+      Set currDict = LLdictionary.Create(currwb.Worksheets(DICTSHEETNAME), 5, 1)
+
+      Do While currExpObj.NumberOfExports() < impExpObj.NumberOfExports()
+
+        prevNbExp = currExpObj.NumberOfExports()
+        currExpObj.AddRows
+        actNbExp =  currExpObj.NumberOfExports()
+
+        For counter = (prevNbExp + 1) To actNbExp
+          currDict.InsertColumn "Export " & counter, After:= "Export " & (counter - 1)
+        Next
+
+      Loop
+
+      pass.Protect DICTSHEETNAME
+      pass.Protect EXPORTSHEETNAME
+    End If
+    
+  End If
 End Sub
 
 
@@ -197,16 +258,14 @@ Private Sub Import(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
   Dim impTab As ICustomTable
   Dim currTab As ICustomTable
   Dim counter As Long
-  Dim progCounter As Long
-  Dim writeCounter As Long
 
   BusyApp
+
+  PrepareImport pass, sheetsList
 
   Set impwb = ImportWkb()
   Set currwb = ThisWorkbook
 
-  progCounter = Round(100 / sheetsList.Length, 0)
-  writeCounter = 0
 
   For counter = sheetsList.LowerBound To sheetsList.UpperBound
     sheetName = sheetsList.Item(counter)

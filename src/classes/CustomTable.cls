@@ -382,7 +382,6 @@ Private Sub Import(ByVal impTab As ICustomTable)
   Dim currDataRng As Range
   Dim rng As Range
   Dim sh As Worksheet
-  Dim toClear As Boolean
   Dim formatHeaders As BetterArray
   Dim hasComment As Boolean
   Dim hasCommentThreaded As Boolean

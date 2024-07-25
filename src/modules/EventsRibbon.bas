@@ -179,6 +179,7 @@ Attribute clickInitializeSetup.VB_Description = "Callback for btnInit onAction: 
 End Sub
 
 '@Description("Callback for btnPrep onAction: Prepare the setup for deployment")
+'@EntryPoint
 Public Sub clickPrepareProd(ByRef control As IRibbonControl)
 Attribute clickPrepareProd.VB_Description = "Callback for btnPrep onAction: Prepare the setup for deployment"
     'Call prepare for production from the PrepareSetup module
@@ -218,7 +219,7 @@ Attribute clickFilters.VB_Description = "Callback for btnFilt onAction: clear al
     NotBusyApp
 End Sub
 
-'===== Auxilliary subs used in the process
+'===== Auxilliary subs used in the process of adding Rows
 
 'Add or Remove Rows to a table
 Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
@@ -229,7 +230,6 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Dim prevNbExp As Long
     Dim actNbExp As Long
 
-    
 
     On Error Resume Next
     Set sh = ThisWorkbook.Worksheets(sheetName)

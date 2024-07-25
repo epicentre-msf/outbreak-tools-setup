@@ -1,0 +1,15 @@
+
+<div align="center">
+<p align="center">
+
+[:house:][home]
+[:wrench:][dictionary]
+[:mag:][misc]
+
+</p>
+</div>
+
+
+[home]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Home
+[dictionary]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Dictionary
+[misc]: https://github.com/epicentre-msf/outbreak-tools-setup/wiki/Miscellaneous

@@ -1,0 +1,17 @@
+project:
+  title: "Setup Wiki"
+  render:
+    - "Home.qmd"
+    - "Dictionary.qmd"
+    - "Choices.qmd"    
+    - "Analysis.qmd"
+    - "Exports.qmd"
+    - "Translations.qmd"
+    - "Options.qmd"
+    - "Miscellaneous.qmd"
+    - "_Sidebar.qmd"
+    - "_Footer.qmd"
+  output-dir: "../../outbreak-tools-setup.wiki"
+  
+format: gfm
+

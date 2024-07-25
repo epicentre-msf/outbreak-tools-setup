@@ -16,7 +16,7 @@ Attribute VB_Description = "Interface of variable class"
 Option Explicit
 
 'Properties
-Private Property Get Dictionary() As ILLdictionary: End Property
+Public Property Get Dictionary() As ILLdictionary: End Property
 
 'Exposed methods
 Public Function Value(ByVal colName As String, ByVal varName As String) As String

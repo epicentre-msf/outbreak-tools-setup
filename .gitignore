@@ -2,3 +2,9 @@
 *.temp
 *.DS_Store
 /.vscode
+*.vscode/
+*.Rproj
+*.Rproj.user
+.quarto/
+
+.Rproj.user
