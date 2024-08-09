@@ -478,7 +478,7 @@ Private Sub CheckExports()
 
     headersLst.Push "Label button", "Password", "Export metadata sheets", _
                     "File format", "File name", "Header format"
-    keysLst.Push "exp-mis-lab", "exp-mis-pass", "exp-mis-meta", "exp-mis-trad", _
+    keysLst.Push "exp-mis-lab", "exp-mis-pass", "exp-mis-meta",  _
                  "exp-mis-form", "exp-mis-name", "exp-mis-head"
 
     checkingCounter = 0
@@ -486,17 +486,21 @@ Private Sub CheckExports()
 
     For counter = 1 To numberOfExports
 
+        
         'This cellRng is used not only for the status, but also for identifying the 
         'row of the checking.
         Set cellRng = expTab.CellRange("Status", counter + statusRng.Row - 1)
         expStatus = cellRng.Value
         pwd = expTab.Value(colName:="Password", keyName:=CStr(counter))
         expId = expTab.Value(colName:="Include personal identifiers", keyName:=CStr(counter))
-
+        
+        Debug.Print "Export: " & expId
+        
         For headerCounter = keysLst.LowerBound To keysLst.UpperBound
             'Empty label, password, metadata, translation file format or file name, file header
             'The check is done for each of the export.
-            If IsEmpty(expTab.CellRange(headersLst.Item(headerCounter), counter)) And (expStatus = "active") Then
+
+            If IsEmpty(expTab.CellRange(headersLst.Item(headerCounter), cellRng.Row)) And (expStatus = "active") Then
                 checkingCounter = checkingCounter + 1
                 keyName = keysLst.Item(headerCounter)
                 infoMessage = ConvertedMessage(keyName, cellRng.Row, counter)
