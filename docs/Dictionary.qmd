@@ -14,7 +14,7 @@ The dictionary is divided into the following sections:
 | Data exports             | Selects and order the variables to be exported                                                                                      |
 | Data validation          | Allows you to define accepted MIN and MAX values, and the corresponding alert or error when an input is outside the defined limits. |
 
-::: callout-note
+::: callout-warning
 When compiling the setup, make sure that all the columns from this sheet are unhidden.
 :::
 
@@ -30,37 +30,37 @@ This first part lists all the variables you want to have in the final linelist.
 
 This is a free text field used to identify the variable. This name can be used to refer to this variable in formulas or in the *Analyses* sheet.
 
+After you generate the **linelist file**, the variable name info will be found in the formula bar in the grey cells from the eigth row of the linelist sheet, or in the cell name zone for cells of the *Info* sheet.
+
+
+Variable names rules:  
+- Names must be unique in the **set-up file**, even if the variables are on different sheets. If two or more variables were to have the same name, the second occurrence will automatically be suffixed with the value "1"; if there is a third, it will be suffixed with the value "2", and so on.  
+- Names must be **at least 4 characters long** to be valid.  
+- Names should not contain special characters (except for "*\_*").  
+- Names will be automatically converted to lowercase during compilation.
+
+::: callout-tip
 As a general advice, try to create short but explicit names.
-
-After you generate the **linelist file**, the variable name info will be found in the formula bar in the grey cells from the eighth row for the linelist sheet, or in the cell name zone for cells of the Info sheet.
-
-::: callout-note
-Each variable name must be unique in the **set-up file**, even if the variables are on different sheets.
 :::
 
-When creating the linelist, if two or more variables have the same name, the second occurrence will automatically be suffixed with the value "1"; if there is a third, it will be suffixed with the value "2", and so on.
-
-::: callout-note
-The variable name must be at least 4 characters long to be valid. There should be no special characters (except for "*\_*"). Note that the names will be automatically converted to lowercase.
-:::
-
-::: callout-info
+::: callout-tip
 To ensure that variable names are unique, you can add the name of the sheet in which the variable will appear as a prefix, or use numbers.
 :::
 
-::: callout-info
+::: callout-tip
 We recommend that you do not leave any blanks in the variable name. Instead, replace them with "*\_*".
 :::
+
 
 ### Main Label
 
 ![](imgs/im-005-main-label.png)
 
-This is a free text field that defines the column label. Labels can be more descriptive and longer than the name, but we recommend to keep it short for legibility reasons. The main label appears in black and bold in the **linelist file**.
+This is a free text field that defines the variable label. Labels can be more descriptive and longer than names, but we recommend to keep it moderately short for legibility reasons. The main label appears in black and bold in the **linelist file**.
 
 It cannot be modified by the end user (with one exception, see the "Editable section" below).
 
-::: callout-info
+::: callout-note
 To add more details, you can use the following fields: "Sub Label" and "Note" (see below).
 :::
 
@@ -68,17 +68,19 @@ To add more details, you can use the following fields: "Sub Label" and "Note" (s
 
 ![](imgs/im-006-dev-comment.png)
 
-This free text column is for the sole use of the **set-up file** creator (in all probability, you), to add purely technical or practical information. It is not read by the designer and does not affect the generated file.
+This free text column is for the sole benefit of the **set-up file** creator (in all probability, you), to add purely technical or practical information. It is not read by the designer and does not affect the generated file.
 
-One of the author of this guide uses these tags:
+::: callout-note
+One of the author of this wiki uses these tags:
 
--   ***Format**: calculated columns created solely for applying conditional formatting (see section on "Conditional formatting" in the Dictionary). These columns are very specific, and pure format. Tagging them helps to quickly make sure that they are never exported*
+-   **Format**: calculated columns created solely for applying conditional formatting (see section on "Conditional formatting" below). These columns are very specific, and pure format. Tagging them helps to quickly make sure that they are never exported
 
--   ***MoH**: columns created when a general setup is adapted to a specific context, by adding exports to a specific MoH format. Usually, we need to create some calculated columns that match the MoH export better (recoding levels, or perhaps merging information of several variables...). I like to keep track of which columns are from the general setup and which are specific adaptations.*
+-   **MoH**: columns created when a general setup is adapted to a specific country, by adding exports to a specific MoH format. Usually, we need to create some calculated columns that match the MoH export (recoding levels, or perhaps merging information of several variables...). I like to keep track of which columns are from the general setup and which are specific adaptations.
 
--   ***WHO/Epinetwork**: sometimes I want to keep the information that a column is here because it comes from the Epinetwork or the WHO CRF, and should probably not be modified.*
+-   **WHO/Epinetwork**: sometimes I want to keep the information that a column is here because it comes from the Epinetwork or the WHO CRF, and should probably not be modified.
 
--   ***Boilerplate**: calculated columns that are needed for graphs, or because the information is important (such as epiweeks). These columns are often hidden, but not necessarily.*
+-   **Boilerplate**: calculated columns that are needed for graphs, or because the information is important (such as epiweeks). These columns are often hidden, but not necessarily.
+:::
 
 Feel free to use this column in a way that helps you work!
 
@@ -92,7 +94,7 @@ This is a *yes/no* column. If the value is "*yes*", the label of the variable in
 
 ![](imgs/im-008-sub-label.png)
 
-This is a free text field used to add a brief addition or description under the variable label. For example, this could be the format in which a date is expected, a unit, or any other information to help with filling in.
+This is a free text field used to add a brief addition or description under the variable label. For example, this could be the format in which a date is expected, a unit, or any other information to help with filling the variable in.
 
 In the linelist, the sub-label appears just below the main label, in blue and slightly smaller font. It cannot be modified by the end user.
 
