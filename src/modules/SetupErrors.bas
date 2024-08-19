@@ -99,6 +99,7 @@ Private Sub CheckDictionary()
     Dim mainVarRng As Range
     Dim mainLabValue As String
     Dim uniqueValue As String
+    Dim typeValue As String 'Type of the variable
 
     BusyApp
 
@@ -254,6 +255,18 @@ Private Sub CheckDictionary()
             If (infoMessage <> vbNullString) Then
                 checkingCounter = checkingCounter + 1
                 check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+            End If
+        End If
+
+        'If there is validation and the type is not precised
+        typeValue = csTab.Value("Variable Type", varValue)
+
+        If ((minValue <> vbNullString)  Or (maxValue <> vbNullString)) And (typeValue = vbNullString) Then
+            keyName = "dict-valid-control"
+            infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
+            If (infoMessage <> vbNullString) Then
+                checkingCounter = checkingCounter + 1
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
             End If
         End If
 
