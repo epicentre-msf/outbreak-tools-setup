@@ -100,6 +100,7 @@ Private Sub CheckDictionary()
     Dim mainLabValue As String
     Dim uniqueValue As String
     Dim typeValue As String 'Type of the variable
+    Dim formatValue As String 'Format of the variable
 
     BusyApp
 
@@ -269,6 +270,18 @@ Private Sub CheckDictionary()
                 check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingError
             End If
         End If
+
+        'If the variable format is precised without the type
+        formatValue = csTab.Value("Variable Format", varValue)
+        If (formatValue <> vbNullString) And (typeValue = vbNullString) Then
+            keyName = "dict-format-control"
+            infoMessage = ConvertedMessage(keyName, cellRng.Row, varValue)
+            If (infoMessage <> vbNullString) Then
+                checkingCounter = checkingCounter + 1
+                check.Add keyName & cellRng.Row & "-" & checkingCounter, infoMessage, checkingWarning
+            End If
+        End If
+        
 
         'Inform for validation on unique values
         uniqueValue = csTab.Value("Unique", varValue)
