@@ -1,31 +1,35 @@
+This sheet is used to define the **drop-down menus categories** to be inserted in certain variables, or the possible values for "choice_formula" type variables. 
 
+There is only one table on this sheet, where you can define as many lists as is needed for dropdown menus variables. In this table, a **list** is represented by several lines, one line for each value in the drop-down list. Different lists are written one below the other.
 
 ![](imgs/im-056-choices-sheet.png)
 
-This sheet is used to define the **drop-down menus** to be inserted in certain variables, or the possible values for "choice_formula" type variables. In this table, a **list** is represented by several lines, one line for each value in the drop-down list. Different lists are written one below the other.
 
 ## List Name
 
 This is a free text field used to define a drop-down list. Lines with the same *name* filled belong to the same list. This name is used in the *Dictionary* sheet to identify the drop-down list to be used for a given variable.
 
-::: callout-info
+::: callout-note
 With the exception of lists used for "choice_custom" type variables, it is recommended not to leave any blanks in the list name. Instead, replace them with "\_", for example.
 :::
 
+
+::: callout-tip
+It is not mandatory, but we advise that you begin all your list names by "list_" to easily separate them from variable names in the dictionary.
+:::
+
+
 ## Ordering list
 
-This is a free text field.
+This is a free text field. Fill in integers to define the order in which the options are displayed in the drop-down menu.
 
-Fill in integers to define the order in which the options are displayed in the drop-down menu.
 
 ## Label
 
-This is a free text field.
-
-This column is used to list the different values to be displayed in the drop-down menus.
+This is a free text field used to list the different values to be displayed in the drop-down menus.
 
 ::: callout-note
-Categories names should ne begin with a "\<" or a "\>".
+Categories names should not begin with a "\<" or a "\>".
 :::
 
 ## Example
