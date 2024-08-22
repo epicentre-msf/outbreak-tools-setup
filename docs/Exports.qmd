@@ -2,23 +2,32 @@
 
 ![](imgs/im-088-exports-sheet.png)
 
-It is possible to predefine exports, such as a specific export for a given MoH. In the *Dictionary* sheet, we saw how to select variables to be exported and their order; here we're going to define the other export parameters.
+It is possible to predefine exports, such as a specific export for a given MoH. The setup of exports is done in two different places:
 
-Without some of these parameters, it may simply not be possible to generate an export, or it may contain only the variables selected, in raw format.
+- In the export sheet you define the export: numbers of exports and their metadata (lutton label, exported file name, type of headers etc.)  
+
+- In the *Dictionary* sheet you define which variable is exported in each export, and in which order  
+
+::: callout-warning
+Without some of export metadata, it may simply not be possible to generate an export, or it may contain only the variables selected, in raw format.
+:::
+
 
 A sheet in the **linelist file** corresponds to a sheet in the **exported file**.
+
 
 ## Export Number
 
 The fields are pre-filled. One line corresponds to one export. The exports are numbered from 1 to how many exports are available.
 
-In line "1", we define the parameters for export 1, whose variables to be exported have been defined in the *Dictionary* sheet, in the "Export 1" column, etc.
+In line "1", we define the parameters for export 1, whose variables to be exported have been defined in the *Dictionary* sheet in the "Export 1" column, etc.
 
 ![](imgs/im-089-export-number.png)
 
 ![](imgs/im-090-export-number.png)
 
-Note that you can use the "*Add rows to table in current sheet*" button or the "*Resize tables in current sheet*" to add more export or removed unused rows, see the *Setup Options ribbon* section below.
+Note that you can use the "*Add rows to table in current sheet*" button or the "*Resize tables in current sheet*" to add more export or removed empty rows, see the *Setup Options ribbon* section below.
+
 
 ## Status
 
@@ -26,7 +35,7 @@ This is an *active/inactive* drop-down menu field. It is used to activate or dea
 
 Example:
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-091-status-exports-sheet.png)
 
@@ -36,13 +45,11 @@ Display in the **linelist file** :
 
 ## Label Button
 
-This is a free text field.
-
-This is the label that will appear on the button used to generate the corresponding export. It should be fairly concise or it may overflow the button box in the generated linelist.
+This is a free text field that contains the label of the export button in the linelist. It should be fairly concise or it may overflow the button box.
 
 Example :
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-093-label-button-exports-sheet.png)
 
@@ -52,11 +59,13 @@ Display in the **linelist file**:
 
 ## File Format
 
-This is a drop-down menu that allows choosing between the **xlsx** and **xlsb** **format** for the exported file.
+This is a dropdown menu that allows choosing between the **xlsx** and **xlsb** file format for the exported file.
+
 
 ## File Name
 
-This is a free text field used to define the **name** of the export.
+This is a free text field used to define the **name** of the export. 
+
 
 While it is a free text field that could accept a chain of character to generate a **fixed** export name, it is possible to refer to the content of linelist *variables* to create a name **dynamically**, that is, a name that depends on the context the linelist is used.
 
