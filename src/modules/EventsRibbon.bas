@@ -222,7 +222,9 @@ End Sub
 '===== Auxilliary subs used in the process of adding Rows
 
 'Add or Remove Rows to a table
-Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean = False)
+Public Sub ManageRows(ByVal sheetName As String, _
+                      Optional ByVal del As Boolean = False, _ 
+                      Optional ByVal allAnalysis As Boolean = False)
     Dim part As Object
     Dim sh As Worksheet
     Dim shpass As Worksheet
@@ -247,6 +249,7 @@ Public Sub ManageRows(ByVal sheetName As String, Optional ByVal del As Boolean =
     Case "Choices"
         Set part = LLchoice.Create(sh, 4, 1)
     Case "Analysis"
+        If allAnalysis Then sh.Range("RNG_SelectTable").Value = "Add or remove rows of all tables"
         Set part = Analysis.Create(sh)
     Case "Exports"
         Set part = LLExport.Create(sh, 4, 1)

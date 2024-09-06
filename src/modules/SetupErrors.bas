@@ -784,7 +784,7 @@ End Sub
 Private Sub CheckAnalysis()
 
     'Resize all the tables on the analysis sheet
-    EventsRibbon.ManageRows sheetName:="Analysis", del:=True
+    EventsRibbon.ManageRows sheetName:="Analysis", del:=True, allAnalysis:=True
     'This busyapp is important because after managerows, enablevents = True
     BusyApp
     'Check all the tables progressively

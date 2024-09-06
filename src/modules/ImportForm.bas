@@ -47,6 +47,7 @@ Public Sub ImportOrCleanSetup()
     Dim wb As Workbook
     Dim labValue As String
     Dim conformityCheck As Boolean
+    Dim counter As Long
 
     BusyApp
     On Error GoTo errHand
@@ -95,9 +96,15 @@ Public Sub ImportOrCleanSetup()
         If [Imports].ConformityCheck.Value Then CheckTheSetup
         infoText = "Import Done!"
     Case "Clear"
-        If MsgBox("Do you really want to clear the setup?", _
-                 vbYesNo, "Confirmation") = vbYes Then
+        If (MsgBox("Do you really want to clear the setup?", vbYesNo, "Confirmation") = vbYes) Then
+        
             importObj.Clean pass, sheetsList
+            
+            'Automatically resize tables in the worksheet
+            For counter = sheetsList.LowerBound To sheetsList.UpperBound
+                EventsRibbon.ManageRows sheetName:=(sheetsList.Item(counter)), del:=True, allAnalysis:=True
+            Next
+
             'Automatically clean the checking worksheet
             On Error Resume Next
             wb.Worksheets("__checkRep").Cells.Clear

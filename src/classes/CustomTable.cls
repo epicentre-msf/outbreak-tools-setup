@@ -309,10 +309,8 @@ Private Sub Clean(ByVal excludeNames As BetterArray)
     End If
   Next
 
-  'Now resize the listObject (I don't care here about the total row count)
-  If (Name() <> TABEXPORT) And (Name() <> TABTRANSLATIONS) Then
-     Resize AddRows:=False
-  ElseIf (Name() = TABTRANSLATIONS) Then
+  'For translation table, delete the data bodyrange
+  If (Name() = TABTRANSLATIONS) Then
     On Error Resume Next
     Lo.DataBodyRange.Delete
     On Error GoTo 0

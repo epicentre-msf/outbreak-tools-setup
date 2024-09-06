@@ -224,10 +224,6 @@ Private Sub Clean(ByVal pass As IPasswords, ByVal sheetsList As BetterArray)
   Set excludeNames = New BetterArray
   For counter = sheetsList.LowerBound To sheetsList.UpperBound
     sheetName = sheetsList.Item(counter)
-      'For exports, don't clean the export number
-      If sheetName = "Exports" Then
-        excludeNames.Push "Export Number"
-      End If
     Set sh = wb.Worksheets(sheetName)
     pass.UnProtect sheetName
     For Each Lo In sh.ListObjects
