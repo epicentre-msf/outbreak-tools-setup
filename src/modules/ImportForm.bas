@@ -102,9 +102,12 @@ Public Sub ImportOrCleanSetup()
             
             'Automatically resize tables in the worksheet
             For counter = sheetsList.LowerBound To sheetsList.UpperBound
+                BusyApp
                 EventsRibbon.ManageRows sheetName:=(sheetsList.Item(counter)), del:=True, allAnalysis:=True
+                BusyApp
             Next
 
+            BusyApp
             'Automatically clean the checking worksheet
             On Error Resume Next
             wb.Worksheets("__checkRep").Cells.Clear
