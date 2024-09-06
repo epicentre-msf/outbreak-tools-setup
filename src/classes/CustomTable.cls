@@ -138,6 +138,8 @@ Private Sub Resize(Optional ByVal AddRows As Boolean = False, _
       Loop
       loRowsEnd = Application.WorksheetFunction.Max(loRowsEnd, loRowHeader + 1)
       Lo.Resize .Range(.Cells(loRowHeader, loColHeader), .Cells(loRowsEnd, loColsEnd))
+      'Add the IDs after resizing
+      AddIds
     End If
   End With
 End Sub
