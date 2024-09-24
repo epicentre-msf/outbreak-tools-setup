@@ -1,13 +1,15 @@
 
-To avoid having different setups for different languages, a *Translation* sheet is included. The fields in the various sheets that require translation are automatically identified by the "translate as text" tag located above the column to be translated.
+The **setup** file has functionalities to create linelists in different languages from the same dictionary, which makes maintenance much easier.
 
-The *Translation* sheet should contains at least one column, with the default language. i.e. the language you chose to complete the **set-up file** (here: "French").
+The *Translation* sheet contains all text values to translate. This works because by design,  the text fields that require translation in the various sheets of the **setup file** are tagged with a "translate as text" tag.^[which you can actually see in light grey font above the columns to be translated.]
+
+The *Translation* contains at least one column, with the default language. i.e. the language you chose to complete the **setup file** (here: "French").
 
 The column headings can be modified. It is better to name the languages in the table headings, as they will be used to populate a drop-down menu later, when the linelist is created.
 
-Simply click on "update translation set" to import all the fields to be translated into the table. They are listed in alphabetical order.
+Click on the button *"update translation table"* from the *Setup Options* ribbon to import all the fields to be translated into the table. They are listed in alphabetical order.
 
-To add a language to the table, use the Setup Options menu in the Ribbon.
+To add a language to the table, use the *Setup Options* ribbon.
 
 ![](imgs/im-103-translations-sheet.png)
 
@@ -37,7 +39,7 @@ The new language is added to the table:
 
 ![](imgs/im-109-translations-sheet.png){fig-align="center"}
 
-You can then complete your translations.
+You can then fill in your translations.
 
 If you are making changes to the set-up and want to ensure that all the translatable fields are correctly listed, click Update translation table. A message will then inform you of the number of missing fields per language.
 
@@ -52,10 +54,11 @@ If you are making changes to the set-up and want to ensure that all the translat
 ![](imgs/im-112-translations-sheet.png){fig-align="center"}
 
 ::: callout-note
-Please note that there is no control or intelligence behind the notions of default language and other languages, i.e. if you name the first column "French" and the second "English", even though you have used English in the **set-up file**, it is the column named first column named "French" that will contain the values in English.
+Please note that there is no control or intelligence behind the notions of default language and other languages, *i.e*. if you name the first column "French" and the second "English", even though you have used English in the **setup file**, it is the column named first column named "French" that will contain the values in English.
+
+Similarly, if you have mixed several languages across the **setup file**, all the values will be in the same column, the first column of the table.
 :::
 
-Similarly, if you have mixed several languages across the **set-up file**, all the values will be in the same column, the first column of the table.
 
 ::: callout-note
 There should not be duplicates (two pieces of text in one language translated in the exact same text in another language), as these will prevent automatic translation during data compilation.
