@@ -1,6 +1,6 @@
 
 
-## Export a subset of geographic columns
+## Export a subset of geographic columns 
 
 The need: you need to create a MoH export with only the admin 3 and 4 columns.
 
@@ -20,43 +20,57 @@ Because the variable do not appear in the **setup file**, the *checkRep* *check*
 
 ![](imgs/im-124-export-a-subset-of-geographic-columns.png){fig-align="center"}
 
-## Have several entry sheets in a file
 
-### Independent data
+## How to have several data entry sheets in a file
 
-You just need to use different sheet names in the *Dictionary* sheet (see the section "Sheets and sections" above). A linelist with an "*Info*" sheet and a "*Patient linelist*" sheet already has two entry sheets, even if their format differ.
 
-You can of course have two entry sheets with independent 2 dimension table. For example, patient level information on one sheet, and a table about bed occupancy on a second sheet, with no interaction between the two tables.
+### Independent data tables
+
+You just need to use different sheet names in the *Dictionary* sheet. Technically, a linelist with an "*Info*" sheet and a "*Patient linelist*" sheet already has two entry sheets, even if their format differs a bit.
+
+You can of course have two entry sheets with independent 2 dimensions table. For example, patient level information on one sheet, and a table about bed occupancy on a second sheet, with no interaction between the two tables.
+
 
 ### Refer to data from another table
 
-#### Case of a single value
+#### Refer to a single value
 
-It is straightforward to use the values of **vlist1D** in a formula: just refer to the name of the variable in another formula (remember these variables can take only one value).
+It is straightforward to use the values of **vlist1D** in a formula: just refer to the name of the variable in another formula^[remember these variables can take only one value!].
 
-Example : we often use this formula to calculate the EPIWEEK, based on the date of admission and a piece of information from the *Info* sheet on which day the week starts (info_week_start).
+Example: sometimes the user wants a variable with the name of the site in the data, but since each individual file is used only in one site, it saves time for data encoders to enter the name of the facility in the *Info* sheet once, and then populate a calculated columns with this name in the *Patient linelist* sheet using the following formula:
 
-> IF( OR(ISBLANK(case_id), ISBLANK(admission_date) ),"",
-
-> EPIWEEK(admission_date, LEFT(info_week_start, 1)))
+> IF(ISBLANK(case_id), "", info_facility_name)
 
 See the *Formula* sections of this document for more information
 
 #### Link two tables
 
-A more advanced case is when you have two tables, which should be linked at minima by a **key**. A user case would having a main data entry sheet with general patient data, and another entry sheet with additional variables for a subset of patients (readmission variables for example, or extensive lab testing).
+A more advanced case is when you have two tables, which should be linked at minima by a **key**. 
 
-##### Make sure IDs match with list_auto
+Example of a user case:
 
-In such a case, the patients from the "readmission" sheet must match the patients from the main sheet. If data are exported in R or Stata, you want to be able to merge these tables.
+- one main data entry sheet with general patient data (*Patient linelist*)  
+- another entry sheet with additional variables for a subset of patients (*e.g.* readmission variables or extensive lab testing).  
 
-You can have an ID column in the "readmission sheet" with a **dropdown menu** containing only the IDs of patients admitted in the facility, whose values come from the main patient sheet (taken from a *case_id* column for example). This helps reducing entry errors and later merging nightmares.
+
+##### Make sure IDs match with *list_auto*
+
+In such a case, the patients from the *Readmission* sheet sheet must match the patients from the *Patient linelist* sheet. 
+
+You could ask data encoders to enter the patient ID manually in a free text column in the *Readmission* sheet, but this process increases the risk of typing error and thus of merging nightmare.
+
+A safer way is to create a categorical variable in the *Readmission* sheet whose **dropdown menu** is populated by values present in the *case_id* column of the *Patient linelist* sheet. As the data encoder can only choose from existing patients from the *Patient linelist* sheet, the opportunity for encoding error and thus unmatched patients is greatly reduced.^[If data are exported in R or Stata, you will be able to merge/join them extremely easily with the two IDs variables.] 
+
+![](imgs/im-130-list-auto.png){fig-align="center"}
 
 See the *Control* and *Control details* sections of this document on *list_auto* for more information.
 
+
 ##### Propagate values from the other table with VALUE_OF
 
-It might be desirable to bring some of the patient data in this table, to calculate new variables, or just to facilitate reading and understanding. For example, we might want to bring in the name and surname of the patient, without entering it again!
+Once the *key* columns have been setup in both tables^[for example, a *case_id* column in the *Patient linelist* and a list_auto *readmission_id* column in the *Readmission* sheet], it might be desirable to bring some of the patient data in this table, to calculate new variables, or just to facilitate reading and understanding. 
+
+For example, we might want to bring in the name and surname of the patient, without entering it again.
 
 You can use the custom function VALUE_OF for that. It works sort of like a LOOKUP function, except we provide variable names, and it matches the value you need.
 
@@ -68,26 +82,27 @@ It takes three arguments, all **variable names**:
 
 > *key_variable2*: the source of the list_auto in the other sheet (the IDs from the main sheet)
 
-> *variable_values*: the variables to take values to propagate from.
+> *variable_values*: the variable to take values to propagate from.
 
-The function matches the values from columns *key_variable1* and *key_variable2*, and return values from *variable_values* column at the corresponding row.
+The function matches the values from columns *key_variable1* and *key_variable2*, and returns values from *variable_values* column at the corresponding row.
 
-NB: faut s'assurer que ce que tu veux matcher et la variable valeur sont dans la meme feuille, sinon tu auras le vide.
 
-::: callout-note
-key_variable2 and variable_values must be on the same sheet or the function will nothing.
+::: callout-warning
+*key_variable2* and *variable_values* must be on the same sheet or the function will return nothing.
 :::
+
 
 ::: callout-note
 If the function finds more than two matches, it will return the values from the first match (the first line found).
 :::
 
+
 ## Custom formulas
 
-EPIWEEK: returns the week number.
+*EPIWEEK*: returns the week number.
 
-N: count the number of lines, mostly used in the analyses
+*N*: count the number of lines, mostly used in the analyses
 
-DATE_RANGE: range of a date column, mostly used in the global summary table
+*DATE_RANGE*: range of a date column, mostly used in the global summary table
 
 ![](imgs/im-125-custom-formulas.png){fig-align="center"}
