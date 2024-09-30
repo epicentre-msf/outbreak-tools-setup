@@ -37,7 +37,7 @@ This is a free text field used to identify the variable. This name can be used t
 After you generate the **linelist file**, the variable name info will be found in the formula bar in the grey cells from the eigth row of the linelist sheet, or in the cell name zone for cells of the *Info* sheet.
 
 Variable names rules:\
-- Names must be unique in the **set-up file**, even if the variables are on different sheets. If two or more variables were to have the same name, the second occurrence will automatically be suffixed with the value "1"; if there is a third, it will be suffixed with the value "2", and so on.\
+- Names must be unique in the **setup file**, even if the variables are on different sheets. If two or more variables were to have the same name, the second occurrence will automatically be suffixed with the value "1"; if there is a third, it will be suffixed with the value "2", and so on.\
 - Names must be **at least 4 characters long** to be valid.\
 - Names should not contain special characters (except for "*\_*").\
 - Names will be automatically converted to lowercase during compilation.
@@ -70,7 +70,7 @@ To add more details, you can use the following fields: "Sub Label" and "Note" (s
 
 ![](imgs/im-006-dev-comment.png)
 
-This free text column is for the sole benefit of the **set-up file** creator (in all probability, you), to add purely technical or practical information. It is not read by the designer and does not affect the generated file.
+This free text column is for the sole benefit of the **setup file** creator (in all probability, you), to add purely technical or practical information. It is not read by the designer and does not affect the generated file.
 
 ::: callout-note
 One of the author of this wiki uses these tags:
@@ -121,7 +121,7 @@ This is a free text field which content is added to the linelist as a *comment* 
 
 ### Example
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-010-example.png)
 
@@ -189,7 +189,7 @@ In the linelist file, the sub-sections appear in a lighter colour in the row or 
 
 #### vlist1D
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-018-vlist1d.png)
 
@@ -199,7 +199,7 @@ Display in the **linelist file**:
 
 #### hlist2D
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-020-hlist2d.png)
 
@@ -230,7 +230,7 @@ Variables can be shown or hidden using the *Show/Hide* button in the **linelist 
 
 #### **Example**
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-024-example.png)
 
@@ -241,19 +241,19 @@ Display in the **linelist file**:
 ![](imgs/im-026-example.png)
 
 ::: callout-note
-"Mandatory" variables in the **set-up file** appear as "Mandatory" in the "Show/Hide" pop up, and cannot be hidden.
+"Mandatory" variables in the **setup file** appear as "Mandatory" in the "Show/Hide" pop up, and cannot be hidden.
 
 **1**
 
-The "optional, hidden" variables in the **set-up file** appear as "Hidden" (by default). However, the user can change the status by choosing "Show", in which case the column will become visible. ![](imgs/im-027-example.png)
+The "optional, hidden" variables in the **setup file** appear as "Hidden" (by default). However, the user can change the status by choosing "Show", in which case the column will become visible. ![](imgs/im-027-example.png)
 
 **2** ![](imgs/im-028-example.png)
 
 **3**
 
-The "Notification year" variable does not appear in the list of variables because it is in "hidden" status in the **set-up file**.
+The "Notification year" variable does not appear in the list of variables because it is in "hidden" status in the **setup file**.
 
-The "optional, visible" variables in the **set-up file** appear as "Displayed" (by default). However, you can change the status by choosing "Hide", in which case the column will no longer be visible.
+The "optional, visible" variables in the **setup file** appear as "Displayed" (by default). However, you can change the status by choosing "Hide", in which case the column will no longer be visible.
 
 **4** ![](imgs/im-029-example.png)
 :::
@@ -438,7 +438,7 @@ In the linelist, the variable labels appear in an **orange cell**, which means t
 
 **Example:**
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-037-example.png)
 
@@ -462,7 +462,7 @@ The variable label appears in an orange cell, which means that the *GeoHelper* b
 
 **Example:**
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-039-example-hf.png)
 
@@ -746,7 +746,7 @@ This is a free text field used to give the end user an indication of why their e
 
 #### A continuous variable: patient's age
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-044-patients-age.png)
 
@@ -761,7 +761,7 @@ Warning box appearing when the user attempts to enter invalid data:
 
 #### A categorical variable: age unit
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-047-age-unit.png)
 
@@ -773,7 +773,7 @@ Display in the linelist:
 
 #### A date variable
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-049-date.png)
 
@@ -815,7 +815,7 @@ The 'Lock Cells' section is not currently available.
 
 ### Example
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-053-example-lock-cells.png)
 
