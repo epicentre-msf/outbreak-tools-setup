@@ -2,7 +2,7 @@
 
 This sheet contains several tables for defining different types of analyses and their corresponding graphs:
 
--   a "Global Summary" table with general indicators
+-   a table to defining a "Global Summary" section, containing general indicators
 -   a table for defining analyses on single variables: "Univariate Analysis"
 -   a table for defining analyses crossing two variables: "Bivariate Analysis"
 -   three tables for defining time series and their graphs: "Time Series Analysis", "Labels for Time Series Graphs", "Graph on Time Series"
@@ -14,15 +14,18 @@ This sheet contains several tables for defining different types of analyses and 
 
 ![](imgs/im-061-global-summary.png)
 
-The Global Summary table summarises certain indicators for the current epidemic. It has 3 columns:
+The "Global Summary" table summarises certain indicators for the current epidemic. It has 3 columns:
 
--   Summary Label: free field for entering a short but explicit label describing the analysis
--   Summary function: free field for entering the function that will display the desired indicator. As in the dictionary, the function must be written in English, regardless of the language in which the rest of the set-up is written.
--   Format: drop-down menu for defining the display format of the expected result (see also [Format](#variable-format))
+-   Summary Label: free text field for entering a short but explicit **label** describing the analysis
+
+-   Summary function: free text field for entering the **function** that will display the desired indicator.^[As in the dictionary, the function must be written in English, regardless of the language in which the rest of the setup is written.] 
+
+-   Format: drop-down menu for defining the **display format** of the expected result (see also [Format](#variable-format))
+
 
 ### Example
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-062-example-global-summary.png)
 
@@ -36,45 +39,50 @@ Display in the **linelist**:
 
 The "Univariate Analysis" table is used to describe analyses based on a single variable. It has 10 columns:
 
-**Section**: this is a free field used to define blocks of univariate analyses on a theme, for example all the tables grouping patient characteristics. It will also be possible to navigate between sections in the linelist using the 'Go to section' drop-down menu.
+**Section**: this is a free field used to define blocks of univariate analyses on a theme, for example all the tables grouping patient characteristics. It will also be possible to navigate between sections in the linelist using the "Go to section" drop-down menu.
 
 **Table title**: this is a free field for entering the name of the table with the analyses. It should be fairly explicit and short.
 
 **Group by variable (row)**: this is a static drop-down menu containing the variables that can be analysed. In other words, **variables with known modalities**, i.e. choice_manual and choice_formula variables.
 
-**Add missing data**: this is a yes/no field used to indicate whether you want to count missing data for the selected variable.
+**Add missing data**: this is a *yes/no* field used to indicate whether you want to count missing data for the selected variable.
 
-**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the '=' sign and in English, whatever the language in which the **set-up file** is written (see [formula](#formulas)).
+**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the "=" sign and in English, whatever the language in which the **setup file** is written (see [formula](#formulas)).
 
 Often the aim is to show the number of patients by modalities of a variable, and the "**N**" function, for counting rows, is sufficient.
 
 **Summary label**: this is a free field which corresponds to the label which will be displayed above the results column.
 
-**Format**: this is a static drop-down menu with a preselection of possible display formats. (see also [Format](#variable-format))
+**Format**: this is a static drop-down menu with a pre-selection of possible display formats. (see also [Format](#variable-format))
 
-**Add percentage**: this is a yes/no field used to indicate whether you want to see the results as a percentage as well as a value. If yes, a "%" column will be added to the right of the "summary function" column in the linelist.
+**Add percentage**: this is a *yes/no* field used to indicate whether you want to see the results as a percentage as well as a value. If "*yes*", a "%" column will be added to the right of the "summary function" column in the linelist.
 
-**Add graph**: this is a yes/no field used to indicate whether you want a vertical bar graph.
+**Add graph**: this is a *yes/no* field used to indicate whether you want a vertical bar graph.
 
-If the previous "Add percentage" option is set to "yes", the percentage will be displayed on the secondary vertical axis of the graph.
+If the previous "Add percentage" option is set to "*yes*", the percentage will be displayed on the secondary vertical axis of the graph.
 
-**Flip coordinates**: this is a yes/no field used to indicate whether you want the graphic to be displayed horizontally rather than vertically.
+**Flip coordinates**: this is a *yes/no* field used to indicate whether you want the graphic to be displayed horizontally rather than vertically.
 
-If the 'Add percentage' and 'Flip coordinates' options are set to 'yes', the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
+If the "Add percentage" and "Flip coordinates" options are set to "*yes*", the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
 
 A "Note" message will be displayed in the *"\_\_checkRep*" sheet.
 
 ![](imgs/im-065-univariate-analysis.png)
 
+
 ### Example
 
 ![](imgs/im-066-example-univariate-analysis.png)
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 Display in the linelist:
 
 ![](imgs/im-067-example-univariate-analysis.png)
+
+
+### Summary
+
 
 | Column                  | Type              | Mandatory | Details                                           |
 |-------------------------|-------------------|:---------:|---------------------------------------------------|
@@ -95,7 +103,7 @@ Display in the linelist:
 
 The "Bivariate Analysis" table is used to describe analyses based on two variables. It has 11 columns:
 
-**Section**: this is a free field used to define blocks of univariate analyses on a theme, for example all the tables grouping patient characteristics. It will also be possible to navigate between sections in the linelist using the 'Go to section' drop-down menu.
+**Section**: this is a free field used to group analyses on a theme, for example all the tables grouping patient characteristics. It will also be possible to navigate between sections in the linelist using the "Go to section" drop-down menu.
 
 **Table title**: this is a free field for entering the name of the table with the analyses. It should be fairly explicit and short.
 
@@ -110,7 +118,7 @@ The "Bivariate Analysis" table is used to describe analyses based on two variabl
 -   column: missing data is added to variables in columns
 -   all: missing data is added to both column and row variables
 
-**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the '=' sign and in English, whatever the language in which the **set-up file** is written (see [formula](#formulas)).
+**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the "=" sign and in English, whatever the language in which the **setup file** is written (see [formula](#formulas)).
 
 Often the aim is to show the distribution of patients between the modalities of a variable, and the "N" function is sufficient.
 
@@ -126,7 +134,7 @@ If the previous "Add percentage" option is set to "yes", the percentage will be 
 
 **Flip coordinates**: this is a yes/no field used to indicate whether you want the graphic to be displayed horizontally rather than vertically.
 
-If the 'Add percentage' and 'Flip coordinates' options are set to 'yes', the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
+If the "Add percentage" and "Flip coordinates" options are set to "yes", the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
 
 A "Note" message will be displayed in the *"\_\_checkRep"* sheet.
 
@@ -146,7 +154,7 @@ A "Note" message will be displayed in the *"\_\_checkRep"* sheet.
 
 ### Example
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-069-example-bivariate-analysis.png)
 
@@ -172,7 +180,7 @@ The first table is used to define the different time series. It has 12 columns, 
 
 **Series ID**: this is an auto-populate field; each row in this table is automatically assigned a series ID, which is an incremental value (1). This ID is used in particular to define graphs.
 
-**Section**: this is a free field which can be used to combine analyses on a theme in a single table, for example patient characteristics over time. **Each section corresponds to a table in the linelist**. They are displayed one above the other, and it is possible to navigate between them using the 'Go to section' drop-down menu.
+**Section**: this is a free field which can be used to combine analyses on a theme in a single table, for example patient characteristics over time. **Each section corresponds to a table in the linelist**. They are displayed one above the other, and it is possible to navigate between them using the "Go to section" drop-down menu.
 
 **Time variable (row)**: this is a static drop-down menu containing time variables. In other words, variables of type date.
 
@@ -180,9 +188,9 @@ The first table is used to define the different time series. It has 12 columns, 
 
 **Title (header)**: this is a calculated field. It is the name which will be displayed at the top of the table, above the corresponding analyses. It is made up of the summary label (described below), the label of the time variable (row) and the label of the variable to be analysed (Group by variable (column)).
 
-**Add missing data**: this is a yes/no field which allows you to indicate whether you want to count missing data for the selected variable. If 'yes' is selected, a column with the missing values will be added to the right of the other columns created for each mode of the variable to be analysed.
+**Add missing data**: this is a yes/no field which allows you to indicate whether you want to count missing data for the selected variable. If "yes" is selected, a column with the missing values will be added to the right of the other columns created for each mode of the variable to be analysed.
 
-**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the '*=*' sign and in English, whatever the language in which the **set-up file** is written (see [formula](#formulas)).
+**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the "*=*" sign and in English, whatever the language in which the **setup file** is written (see [formula](#formulas)).
 
 Often the aim is to show the distribution of patients between the modalities of a variable, and the "N" function is sufficient. If the "Group by variable (column)" field is empty, the function will count the number of entries in the chosen time variable.
 
@@ -200,7 +208,7 @@ Often the aim is to show the distribution of patients between the modalities of 
 
 **Add total**: this is a yes/no field used to add a row at the bottom of the table in the LL with the totals for the entire period selected.
 
-**Table Order**: this is a read field which can be used to reorganise the order of analyses in the final table without having to modify the order of lines in the set-up. By default, analyses are displayed from left to right in the order in which they are described in the Time series Analysis table in the set-up.
+**Table Order**: this is a read field which can be used to reorganise the order of analyses in the final table without having to modify the order of lines in the setup. By default, analyses are displayed from left to right in the order in which they are described in the Time series Analysis table in the setup.
 
 | Column           | Type                     | Mandatory | Details                                 |
 |------------------|--------------------------|:---------:|-----------------------------------------|
@@ -259,11 +267,11 @@ This table is used to define the characteristics of each graph. It has 12 column
 
 **Label**: this is a free text column that contains le label corresponding to the choice, which will appear in the graph legend.
 
-**Plot values or percentage**: this is a static drop-down menu with two options: 'values' or 'percentages', which lets you choose whether to display the results in the graph as values or percentages.
+**Plot values or percentage**: this is a static drop-down menu with two options: "values" or "percentages", which lets you choose whether to display the results in the graph as values or percentages.
 
-**Chart type**: this is a static drop-down menu with three options: 'bar', 'line' or 'dot'. This lets you choose between 3 pre-selected chart types (bar, line or dot). Chart display can be customised directly from the linelist.
+**Chart type**: this is a static drop-down menu with three options: "bar", "line" or "dot". This lets you choose between 3 pre-selected chart types (bar, line or dot). Chart display can be customised directly from the linelist.
 
-**Y-Axis**: this is a static drop-down menu with two options: 'left' or 'right', which lets you choose which side of the Y axis to display. This is particularly useful for displaying two different pieces of information on a single graph (e.g. Epicurve with the number of deaths in value and the CFR in %).
+**Y-Axis**: this is a static drop-down menu with two options: "left" or "right", which lets you choose which side of the Y axis to display. This is particularly useful for displaying two different pieces of information on a single graph (e.g. Epicurve with the number of deaths in value and the CFR in %).
 
 | Column                     | Type                         | Mandatory | Details                                                         |
 |----------------------------|------------------------------|:---------:|-----------------------------------------------------------------|
@@ -284,7 +292,7 @@ This table is used to define the characteristics of each graph. It has 12 column
 
 ![](imgs/im-074-example-graph-on-time-series.png)
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-075-example-graph-on-time-series.png)
 
@@ -308,7 +316,7 @@ Display in the linelist:
 
 The spatial analyses are described in a table with 11 columns. They are described in a similar way to the bivariate analyses, the difference being that the variables chosen for the rows are necessarily variables containing geographical data.
 
-**Section**: this is a free field used to define blocks of analyses on the same theme. It will also be possible to navigate between sections in the linelist using the 'Go to section' drop-down menu.
+**Section**: this is a free field used to define blocks of analyses on the same theme. It will also be possible to navigate between sections in the linelist using the "Go to section" drop-down menu.
 
 **Table Title**: this is a free field for entering the name of the table with the analyses. It should be fairly explicit and short.
 
@@ -320,7 +328,7 @@ The spatial analyses are described in a table with 11 columns. They are describe
 
 **Add missing data**: this is a yes/no field used to indicate whether you want to count missing data for the selected variable.
 
-**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the '=' sign and in English, whatever the language in which the **set-up file** is written (see [formula](#formulas)).
+**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the "=" sign and in English, whatever the language in which the **setup file** is written (see [formula](#formulas)).
 
 Often the aim is to show the distribution of patients between the modalities of a variable, and the "N" function is sufficient.
 
@@ -336,13 +344,13 @@ If the previous "Add percentage" option is set to "yes", the percentage will be 
 
 **Flip coordinates**: this is a yes/no field used to indicate whether you want the graphic to be displayed vertically or horizontally.
 
-If the 'Add percentage' and 'Flip coordinates' options are set to 'yes', the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
+If the "Add percentage" and "Flip coordinates" options are set to "yes", the graph will not contain the percentages, as the two options are incompatible and the vertical display of the graph will prevail.
 
 A "Note" message will be displayed in the *"\_\_checkRep"* sheet.
 
 ### Example
 
-Definition in the **set-up file**: ![](imgs/im-082-example-spatial-analysis.png)
+Definition in the **setup file**: ![](imgs/im-082-example-spatial-analysis.png)
 
 Display in the linelist: ![](imgs/im-083-example-spatial-analysis.png)
 
@@ -359,11 +367,11 @@ Spatio-temporal analyses and graphs are defined using 2 different tables:
 
 The table has 3 columns:
 
-**Section**: this is a free field which can be used to combine analyses on a theme in a single table, for example patient characteristics over time. Each section corresponds to a table in the linelist. They are displayed one above the other, and it is possible to navigate between them using the 'Go to section' drop-down menu.
+**Section**: this is a free field which can be used to combine analyses on a theme in a single table, for example patient characteristics over time. Each section corresponds to a table in the linelist. They are displayed one above the other, and it is possible to navigate between them using the "Go to section" drop-down menu.
 
 **N geo max**: This is the maximum number of lines you want to see for each analysis. (e.g. if you want a top 10, enter 10).
 
-**Spatial type**: this is a static drop-down menu with two options, "geo" or "hf". This defines the type of geographic variable to be used in the section (a geo variable or a health facility).
+**Spatial type**: this is a static drop-down menu with two options, "*geo*" or "*hf*". This defines the type of geographic variable to be used in the section (a geo variable or a health facility).
 
 ### Spatio-Temporal Analysis
 
@@ -383,19 +391,19 @@ The table has 10 columns:
 
 **Spatial type**: this field is automatically filled in on the basis of the section selected and defined in the previous "Specifications for Spatio-Temporal Analysis" table.
 
-**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the '=' sign and in English, whatever the language in which the **set-up file** is written (see [formula](#formulas)).
+**Summary function**: this is a free field in which to enter the formula corresponding to the desired analysis. The formula must always be written without the "=" sign and in English, whatever the language in which the **setup file** is written (see [formula](#formulas)).
 
-Often you will just want to count the number of patients according to their origin or the facility consulted and see how it changes over time, in which case you simply use the N function.
+Often you will just want to count the number of patients according to their origin or the facility consulted and see how it changes over time, in which case you simply use the **N** function.
 
 **Summary label**: this is a free field which corresponds to the label which will be displayed above the results column.
 
-**Format**: this is a static drop-down menu with a preselection of possible display formats. (see also [Format](#variable-format))
+**Format**: this is a static drop-down menu with a pre-selection of possible display formats. (see also [Format](#variable-format))
 
 **Add graph**: this is a yes/no field used to indicate whether you want a vertical bar graph.
 
 ### Example
 
-Definition in the **set-up file**:
+Definition in the **setup file**:
 
 ![](imgs/im-086-example-spatio-temporal-analysis.png)
 
